@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
@@ -33,9 +33,18 @@ export default function HomeScreen({ navigation }: Props) {
             <Text className="text-2xl font-semibold text-slate-900">Good morning, Jack</Text>
             <Text className="text-[13px] text-slate-500">Here's your account today</Text>
           </View>
-          <View className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100">
+          <Pressable
+            onPress={() =>
+              navigation.navigate("ComingSoon", {
+                title: "Notifications",
+                message: "There's nothing to notify you about yet — this'll fill in once real account activity exists.",
+                icon: "notifications",
+              })
+            }
+            className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          >
             <IconBell size={20} color={colors.neutral700} />
-          </View>
+          </Pressable>
         </View>
 
         {/* Balance card */}
@@ -60,9 +69,19 @@ export default function HomeScreen({ navigation }: Props) {
               <QuickAction
                 label="Pockets"
                 icon={<IconPocket size={22} color={colors.brand700} />}
-                onPress={() => navigation.navigate("PocketDetail", { pocketId: pockets[0].id })}
+                onPress={() => navigation.navigate("Pockets")}
               />
-              <QuickAction label="More" icon={<IconMore size={22} color={colors.brand700} />} />
+              <QuickAction
+                label="More"
+                icon={<IconMore size={22} color={colors.brand700} />}
+                onPress={() =>
+                  navigation.navigate("ComingSoon", {
+                    title: "More",
+                    message: "Additional actions (statements, limits, support) aren't wired up yet.",
+                    icon: "more",
+                  })
+                }
+              />
             </View>
           </View>
         </View>
@@ -71,7 +90,12 @@ export default function HomeScreen({ navigation }: Props) {
         <View className="pt-6" style={{ gap: 12 }}>
           <View className="flex-row items-center justify-between px-6">
             <Text className="text-lg font-semibold text-slate-900">Your Pockets</Text>
-            <Text className="text-[13px] font-semibold text-brand-700">See all</Text>
+            <Text
+              onPress={() => navigation.navigate("Pockets")}
+              className="text-[13px] font-semibold text-brand-700"
+            >
+              See all
+            </Text>
           </View>
           {pockets.length === 0 ? (
             <EmptyState
@@ -79,6 +103,7 @@ export default function HomeScreen({ navigation }: Props) {
               title="No pockets yet"
               subtitle="Create a pocket to start saving toward a goal."
               actionLabel="Create a pocket"
+              onAction={() => navigation.navigate("CreatePocket")}
             />
           ) : (
             <ScrollView
@@ -131,7 +156,8 @@ export default function HomeScreen({ navigation }: Props) {
       <BottomNav
         active="home"
         onChange={(key) => {
-          if (key === "pockets") navigation.navigate("PocketDetail", { pocketId: pockets[0].id });
+          if (key === "pockets") navigation.navigate("Pockets");
+          if (key === "cards") navigation.navigate("Cards");
           if (key === "profile") navigation.navigate("Profile");
         }}
       />

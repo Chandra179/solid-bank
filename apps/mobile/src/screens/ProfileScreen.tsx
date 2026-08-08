@@ -8,7 +8,7 @@ import { colors } from "../theme/colors";
 import { IconCheck, IconShield } from "../components/icons";
 import Button from "../components/Button";
 import BottomNav from "../components/BottomNav";
-import { getAccountSummary, getUserProfile, listPockets } from "@/data";
+import { getAccountSummary, getUserProfile } from "@/data";
 import { useSessionStore } from "../store/session";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Profile">;
@@ -24,7 +24,6 @@ export default function ProfileScreen({ navigation }: Props) {
   const isVerified = user.kycStatus === "verified";
   const initials = user.name.slice(0, 2).toUpperCase();
   const logOut = useSessionStore((s) => s.clear);
-  const pockets = listPockets();
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -85,7 +84,8 @@ export default function ProfileScreen({ navigation }: Props) {
         active="profile"
         onChange={(key) => {
           if (key === "home") navigation.navigate("Home");
-          if (key === "pockets") navigation.navigate("PocketDetail", { pocketId: pockets[0].id });
+          if (key === "pockets") navigation.navigate("Pockets");
+          if (key === "cards") navigation.navigate("Cards");
         }}
       />
     </SafeAreaView>

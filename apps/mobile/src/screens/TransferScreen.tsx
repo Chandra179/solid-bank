@@ -30,6 +30,14 @@ export default function TransferScreen({ navigation }: Props) {
     navigation.navigate("AmountEntry", { flow: "transfer", contextId, contextLabel, contextSubLabel });
   }
 
+  function goToAddRecipient() {
+    navigation.navigate("ComingSoon", {
+      title: "Add a new recipient",
+      message: "Adding recipients manually isn't wired up yet — for now, transfer to an existing beneficiary or one of your pockets.",
+      icon: "recipient",
+    });
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
@@ -90,7 +98,7 @@ export default function TransferScreen({ navigation }: Props) {
               title={`No results for "${query}"`}
               subtitle="Check the spelling, or add them as a new recipient."
               actionLabel="Add new recipient"
-              onAction={() => {}}
+              onAction={goToAddRecipient}
             />
           ) : (
             <>
@@ -106,7 +114,7 @@ export default function TransferScreen({ navigation }: Props) {
               <SelectRow
                 title="Add new recipient"
                 icon={<IconPlus size={18} color={colors.brand700} />}
-                onPress={() => {}}
+                onPress={goToAddRecipient}
               />
             </>
           )}

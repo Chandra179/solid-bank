@@ -19,7 +19,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Success">;
 // transfer would let a user land back on a stale form and get confused
 // about whether re-tapping Continue submits a second one.
 export default function SuccessScreen({ navigation, route }: Props) {
-  const { flow, contextLabel, amountMinor } = route.params;
+  const { flow, contextLabel, amountMinor, reference, completedAt } = route.params;
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white px-6" edges={["top", "bottom"]}>
@@ -36,7 +36,10 @@ export default function SuccessScreen({ navigation, route }: Props) {
 
       <View className="w-full pb-4" style={{ gap: 12 }}>
         <Button label="Done" variant="primary" onPress={() => navigation.popToTop()} />
-        <Pressable className="items-center py-2">
+        <Pressable
+          onPress={() => navigation.navigate("Receipt", { flow, contextLabel, amountMinor, reference, completedAt })}
+          className="items-center py-2"
+        >
           <Text className="text-[13px] font-semibold text-slate-500">View receipt</Text>
         </Pressable>
       </View>

@@ -72,7 +72,9 @@ export default function OtpScreen({ navigation, route }: Props) {
         <Text className="text-[13px] text-slate-500">We sent a 6-digit code to {phone}</Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-6" style={{ gap: 12 }}>
+      {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)
+          rather than vertically centered in the leftover flex-1 space. */}
+      <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={CODE_LENGTH} value={code} />
         {error ? <Text className="text-[13px] font-medium text-red-600">{error}</Text> : null}
         <Pressable disabled={secondsLeft > 0} onPress={() => setSecondsLeft(RESEND_SECONDS)}>
@@ -81,6 +83,8 @@ export default function OtpScreen({ navigation, route }: Props) {
           </Text>
         </Pressable>
       </View>
+
+      <View className="flex-1" />
 
       <View className="px-6 pb-4">
         <NumericKeypad onDigit={appendDigit} onBackspace={backspace} />

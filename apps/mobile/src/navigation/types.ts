@@ -11,6 +11,12 @@ type MoneyMoveContext = {
   contextSubLabel?: string;
 };
 
+// What SuccessScreen and ReceiptScreen both need — VerifyPinScreen is the
+// only place that generates `reference`/`completedAt`, at the moment a
+// submission actually succeeds, so the receipt reflects when the money
+// really moved rather than whenever the receipt happens to be viewed.
+type CompletedMoneyMove = { flow: MoneyFlow; contextLabel: string; amountMinor: number; reference: string; completedAt: number };
+
 export type RootStackParamList = {
   // Main app (isAuthenticated === true)
   Home: undefined;
@@ -20,9 +26,18 @@ export type RootStackParamList = {
   AmountEntry: MoneyMoveContext;
   Confirm: MoneyMoveContext & { amountMinor: number };
   VerifyPin: MoneyMoveContext & { amountMinor: number };
-  Success: { flow: MoneyFlow; contextLabel: string; amountMinor: number };
+  Success: CompletedMoneyMove;
+  Receipt: CompletedMoneyMove;
   MoneyMoveError: { reason: string };
   Profile: undefined;
+  Pockets: undefined;
+  CreatePocket: undefined;
+  Cards: undefined;
+  // Generic placeholder destination for actions that are UI-complete but
+  // have no real flow behind them yet (Withdraw, adding a recipient
+  // manually). `icon` is a key rather than a React element so this stays a
+  // plain serializable params object like every other route here.
+  ComingSoon: { title: string; message: string; icon: "withdraw" | "recipient" | "notifications" | "more" | "edit" };
 
   // Onboarding (isAuthenticated === false)
   Welcome: undefined;

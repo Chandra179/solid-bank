@@ -56,10 +56,14 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
         <Text className="text-[13px] text-slate-500">Enter it once more to make sure it's right.</Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-6" style={{ gap: 12 }}>
+      {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)
+          rather than vertically centered in the leftover flex-1 space. */}
+      <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
         {error ? <Text className="text-[13px] font-medium text-red-600">{error}</Text> : null}
       </View>
+
+      <View className="flex-1" />
 
       <View className="px-6 pb-4">
         <NumericKeypad onDigit={appendDigit} onBackspace={backspace} />

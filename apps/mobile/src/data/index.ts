@@ -3,7 +3,7 @@
 // swapping any one of these for a real API call later an internal change to
 // this directory instead of a call-site hunt across every screen.
 export * from "./types";
-export { listPockets, getPocket } from "./mockPockets";
+export { listPockets, getPocket, addPocket } from "./mockPockets";
 export { listRecentTransactions, listPocketTransactions } from "./mockTransactions";
 export { listBeneficiaries } from "./mockBeneficiaries";
 export { listFundingSources } from "./mockFundingSources";

@@ -13,8 +13,13 @@ import AmountEntryScreen from "@/screens/AmountEntryScreen";
 import ConfirmScreen from "@/screens/ConfirmScreen";
 import VerifyPinScreen from "@/screens/VerifyPinScreen";
 import SuccessScreen from "@/screens/SuccessScreen";
+import ReceiptScreen from "@/screens/ReceiptScreen";
 import ErrorScreen from "@/screens/ErrorScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
+import PocketsScreen from "@/screens/PocketsScreen";
+import CreatePocketScreen from "@/screens/CreatePocketScreen";
+import CardsScreen from "@/screens/CardsScreen";
+import ComingSoonScreen from "@/screens/ComingSoonScreen";
 
 import WelcomeScreen from "@/screens/onboarding/WelcomeScreen";
 import PhoneEntryScreen from "@/screens/onboarding/PhoneEntryScreen";
@@ -63,8 +68,18 @@ export default function RootNavigator() {
             <Stack.Screen name="Confirm" component={ConfirmScreen} />
             <Stack.Screen name="VerifyPin" component={VerifyPinScreen} />
             <Stack.Screen name="Success" component={SuccessScreen} options={{ gestureEnabled: false }} />
+            <Stack.Screen name="Receipt" component={ReceiptScreen} />
             <Stack.Screen name="MoneyMoveError" component={ErrorScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
+            {/* Real screens for BottomNav's other two tabs, closing the
+                "tab does nothing" gap — Pockets/Cards were already built as
+                ComingSoon placeholders (src/screens/PocketsScreen.tsx,
+                CardsScreen.tsx) but never wired into the navigator, so
+                tapping either tab silently did nothing. */}
+            <Stack.Screen name="Pockets" component={PocketsScreen} />
+            <Stack.Screen name="CreatePocket" component={CreatePocketScreen} />
+            <Stack.Screen name="Cards" component={CardsScreen} />
+            <Stack.Screen name="ComingSoon" component={ComingSoonScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>

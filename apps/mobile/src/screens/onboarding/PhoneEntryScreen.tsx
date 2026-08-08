@@ -48,7 +48,13 @@ export default function PhoneEntryScreen({ navigation }: Props) {
         <Text className="text-[13px] text-slate-500">We'll send a one-time code to verify it's you.</Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-6">
+      {/* Anchored a fixed distance below the title instead of centered in
+          whatever space is left above the keypad — vertical-centering a
+          small block of content in a tall flex-1 region reads as a big
+          empty screen with the input floating in the middle of it, most
+          noticeable on numeric-entry screens like this one where there's
+          little else on screen to fill that space. */}
+      <View className="items-center px-6 pt-12">
         <View className="flex-row items-center" style={{ gap: 8 }}>
           <View className="rounded-lg border border-slate-200 px-3 py-1.5">
             <Text className="text-lg font-semibold text-slate-900">+62</Text>
@@ -58,6 +64,8 @@ export default function PhoneEntryScreen({ navigation }: Props) {
           </Text>
         </View>
       </View>
+
+      <View className="flex-1" />
 
       <View className="px-6 pb-2">
         <NumericKeypad onDigit={appendDigit} onBackspace={backspace} />

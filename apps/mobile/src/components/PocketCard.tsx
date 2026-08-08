@@ -9,6 +9,11 @@ export type { Pocket };
 type PocketCardProps = {
   pocket: Pocket;
   onPress?: () => void;
+  // "compact" (default) is the fixed-width card Home's horizontal-scroll
+  // row uses, matching the Figma PocketCard component. "full" stretches to
+  // the parent's width for a vertical list (see screens/PocketsScreen.tsx)
+  // — same content and behavior, just not clipped to 180px.
+  variant?: "compact" | "full";
 };
 
 function formatIDR(minor: number) {
@@ -18,14 +23,13 @@ function formatIDR(minor: number) {
 }
 
 // Matches the PocketCard component in Figma: icon + name header, progress
-// bar, "saved of target" caption. Width is fixed so a row of these scrolls
-// horizontally, same as the design.
-export default function PocketCard({ pocket, onPress }: PocketCardProps) {
+// bar, "saved of target" caption.
+export default function PocketCard({ pocket, onPress, variant = "compact" }: PocketCardProps) {
   const pct = pocket.targetMinor > 0 ? Math.min(1, pocket.savedMinor / pocket.targetMinor) : 0;
   return (
     <Pressable
       onPress={onPress}
-      className="w-[180px] rounded-2xl border border-slate-200 bg-white p-4"
+      className={`rounded-2xl border border-slate-200 bg-white p-4 ${variant === "compact" ? "w-[180px]" : "w-full"}`}
       style={{ gap: 12 }}
     >
       <View className="flex-row items-center" style={{ gap: 8 }}>

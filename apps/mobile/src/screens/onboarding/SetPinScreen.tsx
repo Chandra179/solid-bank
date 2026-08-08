@@ -43,9 +43,13 @@ export default function SetPinScreen({ navigation }: Props) {
         <Text className="text-[13px] text-slate-500">You'll use this to confirm transfers and top ups.</Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-6">
+      {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)
+          rather than vertically centered in the leftover flex-1 space. */}
+      <View className="items-center px-6 pt-12">
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
       </View>
+
+      <View className="flex-1" />
 
       <View className="px-6 pb-4">
         <NumericKeypad onDigit={appendDigit} onBackspace={backspace} />

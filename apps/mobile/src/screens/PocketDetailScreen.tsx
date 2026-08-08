@@ -37,7 +37,16 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
             <IconChevronLeft size={20} color={colors.neutral700} />
           </Pressable>
           <Text className="text-lg font-semibold text-slate-900">Pocket</Text>
-          <Pressable className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100">
+          <Pressable
+            onPress={() =>
+              navigation.navigate("ComingSoon", {
+                title: "Edit pocket",
+                message: "Renaming a pocket or changing its goal isn't wired up yet.",
+                icon: "edit",
+              })
+            }
+            className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          >
             <IconEdit size={18} color={colors.neutral700} />
           </Pressable>
         </View>
@@ -61,8 +70,29 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
           </View>
 
           <View className="flex-row pt-2" style={{ gap: 12 }}>
-            <Button label="Add Money" variant="primary" />
-            <Button label="Withdraw" variant="secondary" />
+            <Button
+              label="Add Money"
+              variant="primary"
+              onPress={() =>
+                // Same flow/contextLabel shape TransferScreen's own "Your
+                // Pockets" row already uses for moving money into a pocket
+                // — this button is just a second entry point into that
+                // same AmountEntry -> Confirm -> VerifyPin chain, not a
+                // separate flow to maintain.
+                navigation.navigate("AmountEntry", { flow: "transfer", contextId: pocket.id, contextLabel: `To ${pocket.name}` })
+              }
+            />
+            <Button
+              label="Withdraw"
+              variant="secondary"
+              onPress={() =>
+                navigation.navigate("ComingSoon", {
+                  title: "Withdraw",
+                  message: "Withdrawing straight from a pocket isn't wired up yet — for now, transfer out from your main balance.",
+                  icon: "withdraw",
+                })
+              }
+            />
           </View>
         </View>
 

@@ -58,7 +58,14 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
         });
         return;
       }
-      navigation.replace("Success", { flow, contextLabel, amountMinor });
+      // Synthetic reference/timestamp standing in for what a real backend
+      // response would return (an idempotency/transaction id + server
+      // timestamp) — generated here, once, at the moment submission
+      // actually succeeds, then carried through Success into Receipt so
+      // both screens show the same fixed values rather than recomputing
+      // "now" every time either screen renders.
+      const reference = `TRX${Date.now().toString(36).toUpperCase()}`;
+      navigation.replace("Success", { flow, contextLabel, amountMinor, reference, completedAt: Date.now() });
     }, 400);
   }
 
@@ -116,11 +123,16 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
         </Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-6" style={{ gap: 12 }}>
+      {/* See onboarding/PhoneEntryScreen for why this is top-anchored
+          (fixed pt-12) rather than vertically centered in the leftover
+          flex-1 space. */}
+      <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
         {error ? <Text className="text-[13px] font-medium text-red-600">{error}</Text> : null}
         {submitting ? <Text className="text-[13px] font-medium text-slate-500">Confirming…</Text> : null}
       </View>
+
+      <View className="flex-1" />
 
       <View className="px-6 pb-4">
         <NumericKeypad onDigit={appendDigit} onBackspace={backspace} />
