@@ -29,9 +29,17 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
         const isActive = key === active;
         const color = isActive ? colors.brand700 : colors.neutral400;
         return (
-          <Pressable key={key} onPress={() => onChange?.(key)} className="items-center" style={{ gap: 4 }}>
+          <Pressable
+            key={key}
+            onPress={() => onChange?.(key)}
+            accessibilityLabel={label}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: isActive }}
+            className="items-center"
+            style={{ gap: 4 }}
+          >
             <Icon size={22} color={color} />
-            <Text className="text-[11px] font-medium" style={{ color }}>
+            <Text className="text-caption font-medium" style={{ color }}>
               {label}
             </Text>
           </Pressable>

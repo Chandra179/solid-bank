@@ -24,24 +24,48 @@ they're found rather than re-discovering them from scratch next session.
 
 ## Code quality / tech debt
 
-- [ ] `formatIDR` is copy-pasted in 6 files (PocketCard, HomeScreen,
-      SuccessScreen, ConfirmScreen, PocketDetailScreen, ReceiptScreen)
-      instead of one shared util.
-- [ ] No typography/spacing token system — `theme/colors.ts` exists with
-      no equivalent for type scale or spacing, so screens use ad hoc
-      Tailwind values.
-- [ ] `QuickAction`'s label color is hardcoded white — only works on the
-      brand-colored balance card, would break if reused anywhere else.
+- [x] `formatIDR`/`formatSignedIDR` centralized in `src/utils/currency.ts`;
+      the 6 duplicated copies (PocketCard, HomeScreen, SuccessScreen,
+      ConfirmScreen, PocketDetailScreen, ReceiptScreen) plus
+      TransactionRow's own copy now all import from there.
+- [x] Typography tokens added: `text-caption`/`text-body`/`text-label`
+      registered in `tailwind.config.js` (fontSize), documented in
+      `src/theme/typography.ts`. Applied to the shared component layer
+      (Button, TransactionRow, SelectRow, EmptyState, QuickAction,
+      BottomNav, PocketCard) and to the screens touched alongside the
+      other fixes in this pass (Home, Confirm, PocketDetail, Success,
+      Receipt). Spacing tokens live in `src/theme/spacing.ts` for the
+      inline `style={{ gap }}` values, same treatment.
+      **Not yet swept app-wide** — TransferScreen, AmountEntryScreen,
+      TopUpScreen, ProfileScreen, PocketsScreen, CreatePocketScreen,
+      TransactionsScreen, ComingSoon, and the onboarding screens still
+      have raw `text-[13px]`-style arbitrary values. The old values still
+      work (this was additive, not a breaking rename), so this is safe to
+      pick up incrementally rather than as one big sweep.
+- [x] `QuickAction` takes a real `labelColor` prop (defaults to white,
+      matching every current call site) instead of a hardcoded className.
       `src/components/QuickAction.tsx`
-- [ ] Date-format inconsistency: Home/mockTransactions use "Today, 09:41"
-      style, PocketDetail history uses "3 days ago" style. Needs one
-      shared relative-date util. `src/data/mockTransactions.ts`
+- [x] Date formatting now goes through one shared
+      `formatRelativeDate()` (`src/utils/relativeDate.ts`). Mock
+      transactions store a real `occurredAt` timestamp instead of a
+      hand-written label string, so Home's recent list and PocketDetail's
+      history render through identical logic. `src/data/mockTransactions.ts`
 
 ## Accessibility
 
-- [ ] Zero `accessibilityLabel` usage anywhere in the app — every
-      icon-only Pressable (back buttons, bell, edit, more, header icons)
-      is invisible to screen readers. Real gap for a financial app.
+- [x] Every icon-only `Pressable` app-wide now has an `accessibilityLabel`
+      + `accessibilityRole="button"` (back buttons, bell, edit pencil,
+      "+" create-pocket, numeric-keypad delete key, KTP/selfie capture
+      buttons). `BottomNav`'s tabs also got `accessibilityRole="tab"` +
+      `accessibilityState={{ selected }}` so a screen reader announces
+      which tab is active, not just its name. Pressables that already had
+      visible text (Cancel, Retake, View receipt, quick-amount chips,
+      pocket rows) were left alone — the text already gives them an
+      accessible name. Verified the labels reach the accessibility tree
+      (checked via the web preview's `aria-label` output, which
+      react-native-web derives directly from `accessibilityLabel`) and
+      that nothing shifted visually — purely additive props, no layout
+      changes.
 
 ## Testing / infra
 

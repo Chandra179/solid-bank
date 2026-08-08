@@ -22,8 +22,8 @@ export default function EmptyState({ icon, title, subtitle, actionLabel, onActio
     <View className="items-center px-8 py-10" style={{ gap: 12 }}>
       <View className="h-14 w-14 items-center justify-center rounded-full bg-slate-100">{icon}</View>
       <View className="items-center" style={{ gap: 4 }}>
-        <Text className="text-[15px] font-semibold text-slate-900">{title}</Text>
-        <Text className="text-center text-[13px] text-slate-500">{subtitle}</Text>
+        <Text className="text-label font-semibold text-slate-900">{title}</Text>
+        <Text className="text-center text-body text-slate-500">{subtitle}</Text>
       </View>
       {actionLabel ? (
         <Button label={actionLabel} variant="secondary" onPress={onAction} className="mt-2" />

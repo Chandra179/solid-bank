@@ -14,10 +14,7 @@ import BottomNav from "../components/BottomNav";
 import EmptyState from "../components/EmptyState";
 import { getAccountSummary, getUserProfile, listPockets, listRecentTransactions } from "@/data";
 import { getGreeting } from "@/utils/greeting";
-
-function formatIDR(minor: number) {
-  return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
-}
+import { formatIDR } from "@/utils/currency";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -48,7 +45,7 @@ export default function HomeScreen({ navigation }: Props) {
         <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
           <View style={{ gap: 2 }}>
             <Text className="text-2xl font-semibold text-slate-900">{getGreeting()}, {user.name}</Text>
-            <Text className="text-[13px] text-slate-500">Here's your account today</Text>
+            <Text className="text-body text-slate-500">Here's your account today</Text>
           </View>
           <Pressable
             onPress={() =>
@@ -58,6 +55,8 @@ export default function HomeScreen({ navigation }: Props) {
                 icon: "notifications",
               })
             }
+            accessibilityLabel="Notifications"
+            accessibilityRole="button"
             className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
           >
             <IconBell size={20} color={colors.neutral700} />
@@ -68,9 +67,9 @@ export default function HomeScreen({ navigation }: Props) {
         <View className="px-6 pb-2 pt-4">
           <View className="rounded-3xl bg-brand-700 p-6" style={{ gap: 20 }}>
             <View style={{ gap: 4 }}>
-              <Text className="text-[13px] text-brand-50">Total balance</Text>
+              <Text className="text-body text-brand-50">Total balance</Text>
               <Text className="text-4xl font-bold text-white">{formatIDR(account.balanceMinor)}</Text>
-              <Text className="text-[11px] text-brand-50">{account.accountMask} · IDR</Text>
+              <Text className="text-caption text-brand-50">{account.accountMask} · IDR</Text>
             </View>
             <View className="flex-row justify-between">
               <QuickAction
@@ -109,7 +108,7 @@ export default function HomeScreen({ navigation }: Props) {
             <Text className="text-lg font-semibold text-slate-900">Your Pockets</Text>
             <Text
               onPress={() => navigation.navigate("Pockets")}
-              className="text-[13px] font-semibold text-brand-700"
+              className="text-body font-semibold text-brand-700"
             >
               See all
             </Text>
@@ -145,7 +144,7 @@ export default function HomeScreen({ navigation }: Props) {
             <Text className="text-lg font-semibold text-slate-900">Recent Transactions</Text>
             <Text
               onPress={() => navigation.navigate("Transactions")}
-              className="text-[13px] font-semibold text-brand-700"
+              className="text-body font-semibold text-brand-700"
             >
               See all
             </Text>

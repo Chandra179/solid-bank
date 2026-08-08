@@ -6,10 +6,7 @@ import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
 import { IconCheck, IconChevronLeft } from "../components/icons";
-
-function formatIDR(minor: number) {
-  return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
-}
+import { formatIDR } from "@/utils/currency";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Receipt">;
 
@@ -32,6 +29,8 @@ export default function ReceiptScreen({ navigation, route }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
           className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
@@ -45,7 +44,7 @@ export default function ReceiptScreen({ navigation, route }: Props) {
           <View className="h-14 w-14 items-center justify-center rounded-full bg-green-100">
             <IconCheck size={24} color={colors.success500} />
           </View>
-          <Text className="text-[13px] font-semibold text-success-600" style={{ color: colors.success500 }}>
+          <Text className="text-body font-semibold text-success-600" style={{ color: colors.success500 }}>
             Completed
           </Text>
           <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
@@ -53,28 +52,28 @@ export default function ReceiptScreen({ navigation, route }: Props) {
 
         <View className="mx-6 rounded-2xl border border-slate-200">
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">{flow === "transfer" ? "To" : "From"}</Text>
-            <Text className="text-[13px] font-semibold text-slate-900">{contextLabel.replace(/^(To|From) /, "")}</Text>
+            <Text className="text-body text-slate-500">{flow === "transfer" ? "To" : "From"}</Text>
+            <Text className="text-body font-semibold text-slate-900">{contextLabel.replace(/^(To|From) /, "")}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">Type</Text>
-            <Text className="text-[13px] font-semibold text-slate-900">{flow === "transfer" ? "Transfer" : "Top Up"}</Text>
+            <Text className="text-body text-slate-500">Type</Text>
+            <Text className="text-body font-semibold text-slate-900">{flow === "transfer" ? "Transfer" : "Top Up"}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">Date</Text>
-            <Text className="text-[13px] font-semibold text-slate-900">{completedLabel}</Text>
+            <Text className="text-body text-slate-500">Date</Text>
+            <Text className="text-body font-semibold text-slate-900">{completedLabel}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">Reference</Text>
-            <Text className="text-[13px] font-semibold text-slate-900">{reference}</Text>
+            <Text className="text-body text-slate-500">Reference</Text>
+            <Text className="text-body font-semibold text-slate-900">{reference}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">Fee</Text>
-            <Text className="text-[13px] font-semibold text-slate-900">Rp 0</Text>
+            <Text className="text-body text-slate-500">Fee</Text>
+            <Text className="text-body font-semibold text-slate-900">Rp 0</Text>
           </View>
         </View>
       </ScrollView>

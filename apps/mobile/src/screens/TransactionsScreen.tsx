@@ -31,7 +31,12 @@ export default function TransactionsScreen({ navigation }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
-        <Pressable onPress={() => navigation.goBack()} className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100">
+        <Pressable
+          onPress={() => navigation.goBack()}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+        >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
         <Text className="text-lg font-semibold text-slate-900">Transactions</Text>

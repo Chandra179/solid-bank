@@ -7,10 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { IconChevronLeft } from "../components/icons";
 import { colors } from "../theme/colors";
 import Button from "../components/Button";
-
-function formatIDR(minor: number) {
-  return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
-}
+import { formatIDR } from "@/utils/currency";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Confirm">;
 
@@ -33,6 +30,8 @@ export default function ConfirmScreen({ navigation, route }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
           className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
@@ -42,27 +41,27 @@ export default function ConfirmScreen({ navigation, route }: Props) {
       </View>
 
       <View className="items-center px-6 pt-6" style={{ gap: 4 }}>
-        <Text className="text-[13px] text-slate-500">{flow === "transfer" ? "You're sending" : "You're topping up"}</Text>
+        <Text className="text-body text-slate-500">{flow === "transfer" ? "You're sending" : "You're topping up"}</Text>
         <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
       </View>
 
       <View className="mx-6 mt-8 rounded-2xl border border-slate-200" style={{ gap: 0 }}>
         <View className="flex-row items-center justify-between px-4 py-4">
-          <Text className="text-[13px] text-slate-500">{flow === "transfer" ? "To" : "From"}</Text>
+          <Text className="text-body text-slate-500">{flow === "transfer" ? "To" : "From"}</Text>
           <View className="items-end">
-            <Text className="text-[13px] font-semibold text-slate-900">{contextLabel.replace(/^(To|From) /, "")}</Text>
-            {contextSubLabel ? <Text className="text-[11px] text-slate-500">{contextSubLabel}</Text> : null}
+            <Text className="text-body font-semibold text-slate-900">{contextLabel.replace(/^(To|From) /, "")}</Text>
+            {contextSubLabel ? <Text className="text-caption text-slate-500">{contextSubLabel}</Text> : null}
           </View>
         </View>
         <View className="h-px bg-slate-100" />
         <View className="flex-row items-center justify-between px-4 py-4">
-          <Text className="text-[13px] text-slate-500">Amount</Text>
-          <Text className="text-[13px] font-semibold text-slate-900">{formatIDR(amountMinor)}</Text>
+          <Text className="text-body text-slate-500">Amount</Text>
+          <Text className="text-body font-semibold text-slate-900">{formatIDR(amountMinor)}</Text>
         </View>
         <View className="h-px bg-slate-100" />
         <View className="flex-row items-center justify-between px-4 py-4">
-          <Text className="text-[13px] text-slate-500">Fee</Text>
-          <Text className="text-[13px] font-semibold text-slate-900">Rp 0</Text>
+          <Text className="text-body text-slate-500">Fee</Text>
+          <Text className="text-body font-semibold text-slate-900">Rp 0</Text>
         </View>
       </View>
 
@@ -75,7 +74,7 @@ export default function ConfirmScreen({ navigation, route }: Props) {
           onPress={() => navigation.navigate("VerifyPin", { flow, contextId, contextLabel, contextSubLabel, amountMinor })}
         />
         <Pressable onPress={() => navigation.goBack()} className="items-center py-2">
-          <Text className="text-[13px] font-semibold text-slate-500">Cancel</Text>
+          <Text className="text-body font-semibold text-slate-500">Cancel</Text>
         </Pressable>
       </View>
     </SafeAreaView>

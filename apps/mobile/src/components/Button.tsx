@@ -40,20 +40,24 @@ export default function Button({ label, onPress, variant = "primary", disabled =
   const labelClass = variant === "primary" ? "text-white" : variant === "danger" ? "text-red-600" : "text-slate-700";
 
   return (
-    // The opacity animation lives on a plain Animated.View wrapper rather
-    // than on the Pressable itself: Animated.createAnimatedComponent(Pressable)
-    // produces a component NativeWind doesn't know to intercept for
-    // className (it only auto-patches core RN primitives, not ad-hoc
-    // wrappers around them) — className is silently ignored on the web
-    // build, leaving the button as bare unstyled text with no background,
-    // padding, or rounding.
+    // DO NOT change this back to Animated.createAnimatedComponent(Pressable)
+    // with className on the animated component directly — that was tried
+    // (see git history) and reverts this exact bug: NativeWind's
+    // babel/vite transform only auto-styles the built-in RN primitives it
+    // recognizes by tag name (View, Text, Pressable, ...), not ad-hoc
+    // components created via Animated.createAnimatedComponent(). className
+    // on an AnimatedPressable is silently inert on native — no background,
+    // no rounding, no centering, just bare black text — even though it can
+    // appear to work on the web build via raw className passthrough. Opacity
+    // animation lives on a plain Animated.View wrapper instead, so
+    // className only ever lands on a real, NativeWind-recognized Pressable.
     <Animated.View style={{ opacity }}>
       <Pressable
         onPress={onPress}
         disabled={disabled}
         className={`items-center justify-center rounded-full px-6 py-3.5 ${containerClass} ${className}`}
       >
-        <Text className={`text-[15px] font-semibold ${labelClass}`}>{label}</Text>
+        <Text className={`text-label font-semibold ${labelClass}`}>{label}</Text>
       </Pressable>
     </Animated.View>
   );

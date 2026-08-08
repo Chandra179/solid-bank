@@ -40,6 +40,8 @@ export default function PocketsScreen({ navigation }: Props) {
         <Text className="text-2xl font-semibold text-slate-900">Pockets</Text>
         <Pressable
           onPress={() => navigation.navigate("CreatePocket")}
+          accessibilityLabel="Create a pocket"
+          accessibilityRole="button"
           className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconPlus size={20} color={colors.neutral700} />

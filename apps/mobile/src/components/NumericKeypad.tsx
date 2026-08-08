@@ -29,7 +29,13 @@ export default function NumericKeypad({ onDigit, onBackspace }: NumericKeypadPro
             if (key === "") return <View key={j} className="h-16 w-20" />;
             if (key === "back") {
               return (
-                <Pressable key={j} onPress={onBackspace} className="h-16 w-20 items-center justify-center">
+                <Pressable
+                  key={j}
+                  onPress={onBackspace}
+                  accessibilityLabel="Delete"
+                  accessibilityRole="button"
+                  className="h-16 w-20 items-center justify-center"
+                >
                   <IconBackspace size={22} color={colors.neutral700} />
                 </Pressable>
               );

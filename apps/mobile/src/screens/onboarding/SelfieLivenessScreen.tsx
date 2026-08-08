@@ -49,6 +49,8 @@ export default function SelfieLivenessScreen({ navigation }: Props) {
         {stage === "framing" ? (
           <Pressable
             onPress={() => setStage("checking")}
+            accessibilityLabel="Take selfie"
+            accessibilityRole="button"
             className="h-16 w-16 items-center justify-center rounded-full bg-brand-700"
           >
             <IconCamera size={26} color={colors.neutral0} />

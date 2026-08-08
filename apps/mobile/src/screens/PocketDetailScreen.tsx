@@ -11,10 +11,7 @@ import Button from "../components/Button";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import { getPocket, listPockets, listPocketTransactions } from "@/data";
-
-function formatIDR(minor: number) {
-  return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
-}
+import { formatIDR } from "@/utils/currency";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
@@ -43,6 +40,8 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
         <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
           <Pressable
             onPress={() => navigation.goBack()}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
             className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
           >
             <IconChevronLeft size={20} color={colors.neutral700} />
@@ -56,6 +55,8 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
                 icon: "edit",
               })
             }
+            accessibilityLabel="Edit pocket"
+            accessibilityRole="button"
             className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
           >
             <IconEdit size={18} color={colors.neutral700} />
@@ -69,7 +70,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
           </View>
           <Text className="text-2xl font-semibold text-slate-900">{pocket.name}</Text>
           <Text className="text-4xl font-bold text-slate-900">{formatIDR(pocket.savedMinor)}</Text>
-          <Text className="text-[13px] text-slate-500">
+          <Text className="text-body text-slate-500">
             of {formatIDR(pocket.targetMinor)} goal · {Math.round(pct * 100)}%
           </Text>
 

@@ -7,10 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconCheck } from "../components/icons";
 import Button from "../components/Button";
-
-function formatIDR(minor: number) {
-  return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
-}
+import { formatIDR } from "@/utils/currency";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Success">;
 
@@ -19,7 +16,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Success">;
 // transfer would let a user land back on a stale form and get confused
 // about whether re-tapping Continue submits a second one.
 export default function SuccessScreen({ navigation, route }: Props) {
-  const { flow, contextLabel, amountMinor, reference, completedAt } = route.params;
+  const { flow, contextLabel, amountMinor } = route.params;
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white px-6" edges={["top", "bottom"]}>
@@ -31,16 +28,13 @@ export default function SuccessScreen({ navigation, route }: Props) {
           {flow === "transfer" ? "Transfer successful" : "Top up successful"}
         </Text>
         <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
-        <Text className="text-[13px] text-slate-500">{contextLabel}</Text>
+        <Text className="text-body text-slate-500">{contextLabel}</Text>
       </View>
 
       <View className="w-full pb-4" style={{ gap: 12 }}>
         <Button label="Done" variant="primary" onPress={() => navigation.popToTop()} />
-        <Pressable
-          onPress={() => navigation.navigate("Receipt", { flow, contextLabel, amountMinor, reference, completedAt })}
-          className="items-center py-2"
-        >
-          <Text className="text-[13px] font-semibold text-slate-500">View receipt</Text>
+        <Pressable onPress={() => navigation.navigate("Receipt", route.params)} className="items-center py-2">
+          <Text className="text-body font-semibold text-slate-500">View receipt</Text>
         </Pressable>
       </View>
     </SafeAreaView>
