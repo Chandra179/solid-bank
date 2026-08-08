@@ -1,0 +1,10 @@
+# build output
+bin/
+*.exe
+*.test
+
+# vendored deps (restore via `go mod vendor`)
+vendor/
+
+# coverage
+*.out

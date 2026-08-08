@@ -1,4 +1,4 @@
-.PHONY: dev migrate-up migrate-down api-run api-build mobile-install
+.PHONY: dev migrate-up migrate-down api-run api-build mobile-install mobile-web run
 
 # Bring up Postgres + Traefik + the Go API for local development.
 dev:
@@ -20,3 +20,14 @@ api-build:
 
 mobile-install:
 	cd apps/mobile && npm install
+
+# Build and serve the mobile app in a browser (no Android/iOS toolchain needed).
+mobile-web:
+	cd apps/mobile && npm run web
+
+# Run the API and the mobile app together. Ctrl-C stops both.
+run:
+	@trap 'kill 0' EXIT; \
+	$(MAKE) api-run & \
+	$(MAKE) mobile-web & \
+	wait
