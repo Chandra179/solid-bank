@@ -9,6 +9,7 @@ import { IconChevronLeft } from "../components/icons";
 import NumericKeypad from "../components/NumericKeypad";
 import DigitEntry from "../components/DigitEntry";
 import { useSessionStore } from "../store/session";
+import { getPocket, adjustPocketBalance } from "@/data";
 
 const PIN_LENGTH = 6;
 
@@ -22,7 +23,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "VerifyPin">;
 // owns the actual submission, since PIN verification is the real last gate
 // before money moves, not the review step before it.
 export default function VerifyPinScreen({ navigation, route }: Props) {
-  const { flow, contextLabel, amountMinor } = route.params;
+  const { flow, contextId, contextLabel, amountMinor } = route.params;
   const storedPin = useSessionStore((s) => s.pin);
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +58,25 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
               : "Your bank declined this top up. Your balance hasn't changed.",
         });
         return;
+      }
+      // This is the one place a "successful" money move actually touches
+      // the mock data layer — previously every flow (including Add Money
+      // via PocketDetail) only ever showed a convincing Success/Receipt
+      // screen without changing any real balance. `contextId` doubles as
+      // "does this money move target one of my own pockets" — pocket ids
+      // (pocket_N) don't collide with beneficiary/merchant/funding-source
+      // ids, so a successful getPocket() lookup is enough to disambiguate
+      // "transfer to my own pocket" (real balance change) from "transfer to
+      // an external beneficiary/merchant" (no pocket to credit).
+      // Scope limitation, documented in TODO.md: the main account balance
+      // (mockAccount.ts) and transaction history are NOT updated by any
+      // flow — only Pocket.savedMinor becomes real here.
+      if (contextId && getPocket(contextId)) {
+        if (flow === "transfer" || flow === "topup") {
+          adjustPocketBalance(contextId, amountMinor);
+        } else if (flow === "withdraw") {
+          adjustPocketBalance(contextId, -amountMinor);
+        }
       }
       // Synthetic reference/timestamp standing in for what a real backend
       // response would return (an idempotency/transaction id + server
@@ -121,7 +141,7 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">Enter your PIN</Text>
         <Text className="text-[13px] text-slate-500">
-          Confirm it's you before this {flow === "transfer" ? "transfer" : "top up"} goes through.
+          Confirm it's you before this {flow === "transfer" ? "transfer" : flow === "withdraw" ? "withdrawal" : "top up"} goes through.
         </Text>
       </View>
 

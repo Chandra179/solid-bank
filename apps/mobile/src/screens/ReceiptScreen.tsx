@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconCheck, IconChevronLeft } from "../components/icons";
 import { formatIDR } from "@/utils/currency";
+import { getMoneyFlowCopy } from "@/utils/moneyFlowCopy";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Receipt">;
 
@@ -18,6 +19,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Receipt">;
 // "now."
 export default function ReceiptScreen({ navigation, route }: Props) {
   const { flow, contextLabel, amountMinor, reference, completedAt } = route.params;
+  const copy = getMoneyFlowCopy(flow);
 
   const completedLabel = new Date(completedAt).toLocaleString("id-ID", {
     dateStyle: "medium",
@@ -52,13 +54,13 @@ export default function ReceiptScreen({ navigation, route }: Props) {
 
         <View className="mx-6 rounded-2xl border border-slate-200">
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">{flow === "transfer" ? "To" : "From"}</Text>
+            <Text className="text-body text-slate-500">{copy.preposition}</Text>
             <Text className="text-body font-semibold text-slate-900">{contextLabel.replace(/^(To|From) /, "")}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
             <Text className="text-body text-slate-500">Type</Text>
-            <Text className="text-body font-semibold text-slate-900">{flow === "transfer" ? "Transfer" : "Top Up"}</Text>
+            <Text className="text-body font-semibold text-slate-900">{copy.typeLabel}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">

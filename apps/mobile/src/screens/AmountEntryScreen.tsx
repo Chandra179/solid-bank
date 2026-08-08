@@ -29,13 +29,18 @@ function formatRupiah(rupiah: number) {
 // not which flow it's in beyond validation rules (Transfer can't exceed
 // the available balance; Top Up has no such ceiling).
 export default function AmountEntryScreen({ navigation, route }: Props) {
-  const { flow, contextId, contextLabel, contextSubLabel } = route.params;
+  const { flow, contextId, contextLabel, contextSubLabel, maxAmountMinor } = route.params;
   const [digits, setDigits] = useState(""); // raw rupiah digits, no decimals
 
   const amountRupiah = digits === "" ? 0 : parseInt(digits, 10);
   const amountMinor = amountRupiah * 100;
 
-  const exceedsBalance = flow === "transfer" && amountMinor > MOCK_AVAILABLE_MINOR;
+  // Withdraw always carries an explicit cap (the source pocket's current
+  // balance, passed in via route params). Transfer falls back to the mock
+  // account balance when no explicit cap is given, matching the original
+  // behavior. Top Up has no ceiling — it's pulling from an external source.
+  const cap = maxAmountMinor ?? (flow === "transfer" ? MOCK_AVAILABLE_MINOR : undefined);
+  const exceedsBalance = cap !== undefined && amountMinor > cap;
   const isValid = amountRupiah > 0 && !exceedsBalance;
 
   function appendDigit(d: string) {
@@ -48,7 +53,7 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
     setDigits(String(rupiah));
   }
   function setMax() {
-    setDigits(String(Math.floor(MOCK_AVAILABLE_MINOR / 100)));
+    if (cap !== undefined) setDigits(String(Math.floor(cap / 100)));
   }
 
   return (
@@ -75,7 +80,9 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
           <Text className="text-5xl font-bold text-slate-900">{formatRupiah(amountRupiah)}</Text>
         </View>
         {exceedsBalance ? (
-          <Text className="text-[13px] font-medium text-red-600">Exceeds available balance</Text>
+          <Text className="text-[13px] font-medium text-red-600">
+            {flow === "withdraw" ? "Exceeds pocket balance" : "Exceeds available balance"}
+          </Text>
         ) : null}
 
         <View className="flex-row" style={{ gap: 8 }}>
@@ -88,7 +95,7 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
               <Text className="text-[13px] font-medium text-slate-700">{amt / 1000}rb</Text>
             </Pressable>
           ))}
-          {flow === "transfer" ? (
+          {cap !== undefined ? (
             <Pressable onPress={setMax} className="rounded-full border border-slate-200 px-4 py-2">
               <Text className="text-[13px] font-medium text-slate-700">Max</Text>
             </Pressable>

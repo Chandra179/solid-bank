@@ -10,6 +10,7 @@ import PocketDetailScreen from "@/screens/PocketDetailScreen";
 import TransferScreen from "@/screens/TransferScreen";
 import TopUpScreen from "@/screens/TopUpScreen";
 import AmountEntryScreen from "@/screens/AmountEntryScreen";
+import QrScanScreen from "@/screens/QrScanScreen";
 import ConfirmScreen from "@/screens/ConfirmScreen";
 import VerifyPinScreen from "@/screens/VerifyPinScreen";
 import SuccessScreen from "@/screens/SuccessScreen";
@@ -21,6 +22,12 @@ import PocketsScreen from "@/screens/PocketsScreen";
 import CreatePocketScreen from "@/screens/CreatePocketScreen";
 import CardsScreen from "@/screens/CardsScreen";
 import ComingSoonScreen from "@/screens/ComingSoonScreen";
+import NotificationsScreen from "@/screens/NotificationsScreen";
+import NotificationSettingsScreen from "@/screens/NotificationSettingsScreen";
+import AddRecipientScreen from "@/screens/AddRecipientScreen";
+import EditPocketScreen from "@/screens/EditPocketScreen";
+import SecurityScreen from "@/screens/SecurityScreen";
+import HelpScreen from "@/screens/HelpScreen";
 
 import WelcomeScreen from "@/screens/onboarding/WelcomeScreen";
 import PhoneEntryScreen from "@/screens/onboarding/PhoneEntryScreen";
@@ -66,6 +73,7 @@ export default function RootNavigator() {
             <Stack.Screen name="Transfer" component={TransferScreen} />
             <Stack.Screen name="TopUp" component={TopUpScreen} />
             <Stack.Screen name="AmountEntry" component={AmountEntryScreen} />
+            <Stack.Screen name="QrScan" component={QrScanScreen} />
             <Stack.Screen name="Confirm" component={ConfirmScreen} />
             <Stack.Screen name="VerifyPin" component={VerifyPinScreen} />
             <Stack.Screen name="Success" component={SuccessScreen} options={{ gestureEnabled: false }} />
@@ -82,6 +90,12 @@ export default function RootNavigator() {
             <Stack.Screen name="CreatePocket" component={CreatePocketScreen} />
             <Stack.Screen name="Cards" component={CardsScreen} />
             <Stack.Screen name="ComingSoon" component={ComingSoonScreen} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+            <Stack.Screen name="AddRecipient" component={AddRecipientScreen} />
+            <Stack.Screen name="EditPocket" component={EditPocketScreen} />
+            <Stack.Screen name="Security" component={SecurityScreen} />
+            <Stack.Screen name="Help" component={HelpScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>

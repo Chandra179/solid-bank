@@ -70,50 +70,26 @@ export default function ProfileScreen({ navigation }: Props) {
           </View>
         </View>
 
-        {/* Real settings rows, each routed to the same ComingSoon
-            placeholder every other not-built-yet destination in the app
-            uses — closes the gap flagged in the last review (this screen
-            previously had nowhere for Security/Notifications/Help to live
-            at all) without pretending there's a real settings flow behind
-            any of them yet. */}
         <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
           <SelectRow
             title="Security"
             subtitle="PIN, biometrics, device management"
             icon={<IconShield size={18} color={colors.neutral500} />}
-            onPress={() =>
-              navigation.navigate("ComingSoon", {
-                title: "Security",
-                message: "PIN changes, biometrics, and device management aren't wired up yet.",
-                icon: "security",
-              })
-            }
+            onPress={() => navigation.navigate("Security")}
           />
           <View className="h-px bg-slate-100" />
           <SelectRow
             title="Notifications"
             subtitle="Alerts, limits, marketing preferences"
             icon={<IconBell size={18} color={colors.neutral500} />}
-            onPress={() =>
-              navigation.navigate("ComingSoon", {
-                title: "Notifications",
-                message: "Notification preferences aren't wired up yet.",
-                icon: "notifications",
-              })
-            }
+            onPress={() => navigation.navigate("NotificationSettings")}
           />
           <View className="h-px bg-slate-100" />
           <SelectRow
             title="Help"
             subtitle="Support, FAQs, contact us"
             icon={<IconHelp size={18} color={colors.neutral500} />}
-            onPress={() =>
-              navigation.navigate("ComingSoon", {
-                title: "Help",
-                message: "In-app support isn't wired up yet — nothing to see here.",
-                icon: "help",
-              })
-            }
+            onPress={() => navigation.navigate("Help")}
           />
         </View>
 

@@ -302,6 +302,23 @@ export function IconHelp({ size = 24, color = "#000" }: IconProps) {
   );
 }
 
+export function IconQrCode({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Rect x={3} y={3} width={7} height={7} rx={1} stroke={color} strokeWidth={2} />
+      <Rect x={14} y={3} width={7} height={7} rx={1} stroke={color} strokeWidth={2} />
+      <Rect x={3} y={14} width={7} height={7} rx={1} stroke={color} strokeWidth={2} />
+      <Rect x={5.5} y={5.5} width={2} height={2} fill={color} />
+      <Rect x={16.5} y={5.5} width={2} height={2} fill={color} />
+      <Rect x={5.5} y={16.5} width={2} height={2} fill={color} />
+      <Rect x={14} y={14} width={3} height={3} fill={color} />
+      <Rect x={18} y={14} width={3} height={3} fill={color} />
+      <Rect x={14} y={18} width={3} height={3} fill={color} />
+      <Rect x={18} y={18} width={3} height={3} fill={color} />
+    </Svg>
+  );
+}
+
 export function IconBackspace({ size = 24, color = "#000" }: IconProps) {
   return (
     <Svg {...base(size)} fill="none">

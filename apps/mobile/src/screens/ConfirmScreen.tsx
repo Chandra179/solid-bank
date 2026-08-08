@@ -8,6 +8,7 @@ import { IconChevronLeft } from "../components/icons";
 import { colors } from "../theme/colors";
 import Button from "../components/Button";
 import { formatIDR } from "@/utils/currency";
+import { getMoneyFlowCopy } from "@/utils/moneyFlowCopy";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Confirm">;
 
@@ -24,6 +25,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Confirm">;
 // different jobs; splitting them keeps each screen doing one thing.
 export default function ConfirmScreen({ navigation, route }: Props) {
   const { flow, contextId, contextLabel, contextSubLabel, amountMinor } = route.params;
+  const copy = getMoneyFlowCopy(flow);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
@@ -41,13 +43,13 @@ export default function ConfirmScreen({ navigation, route }: Props) {
       </View>
 
       <View className="items-center px-6 pt-6" style={{ gap: 4 }}>
-        <Text className="text-body text-slate-500">{flow === "transfer" ? "You're sending" : "You're topping up"}</Text>
+        <Text className="text-body text-slate-500">{copy.reviewVerb}</Text>
         <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
       </View>
 
       <View className="mx-6 mt-8 rounded-2xl border border-slate-200" style={{ gap: 0 }}>
         <View className="flex-row items-center justify-between px-4 py-4">
-          <Text className="text-body text-slate-500">{flow === "transfer" ? "To" : "From"}</Text>
+          <Text className="text-body text-slate-500">{copy.preposition}</Text>
           <View className="items-end">
             <Text className="text-body font-semibold text-slate-900">{contextLabel.replace(/^(To|From) /, "")}</Text>
             {contextSubLabel ? <Text className="text-caption text-slate-500">{contextSubLabel}</Text> : null}

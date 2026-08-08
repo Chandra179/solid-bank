@@ -6,13 +6,13 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconBell, IconMore, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft, IconInbox } from "../components/icons";
+import { IconBell, IconQrCode, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft, IconInbox } from "../components/icons";
 import QuickAction from "../components/QuickAction";
 import PocketCard from "../components/PocketCard";
 import TransactionRow from "../components/TransactionRow";
 import BottomNav from "../components/BottomNav";
 import EmptyState from "../components/EmptyState";
-import { getAccountSummary, getUserProfile, listPockets, listRecentTransactions } from "@/data";
+import { getAccountSummary, getUserProfile, listPockets, listRecentTransactions, getUnreadNotificationCount } from "@/data";
 import { getGreeting } from "@/utils/greeting";
 import { formatIDR } from "@/utils/currency";
 
@@ -37,6 +37,7 @@ export default function HomeScreen({ navigation }: Props) {
   const pockets = listPockets();
   const transactions = listRecentTransactions();
   const user = getUserProfile();
+  const unreadCount = getUnreadNotificationCount();
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -48,18 +49,18 @@ export default function HomeScreen({ navigation }: Props) {
             <Text className="text-body text-slate-500">Here's your account today</Text>
           </View>
           <Pressable
-            onPress={() =>
-              navigation.navigate("ComingSoon", {
-                title: "Notifications",
-                message: "There's nothing to notify you about yet — this'll fill in once real account activity exists.",
-                icon: "notifications",
-              })
-            }
-            accessibilityLabel="Notifications"
+            onPress={() => navigation.navigate("Notifications")}
+            accessibilityLabel={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
             accessibilityRole="button"
             className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
           >
             <IconBell size={20} color={colors.neutral700} />
+            {unreadCount > 0 ? (
+              <View
+                className="absolute right-2 top-2 h-2 w-2 rounded-full"
+                style={{ backgroundColor: colors.danger500 }}
+              />
+            ) : null}
           </Pressable>
         </View>
 
@@ -87,16 +88,16 @@ export default function HomeScreen({ navigation }: Props) {
                 icon={<IconPocket size={22} color={colors.brand700} />}
                 onPress={() => navigation.navigate("Pockets")}
               />
+              {/* QR-first payments takes this slot rather than staying
+                  behind a "More" catch-all — see QrScanScreen for why:
+                  the project's own product priorities call out QRIS as
+                  "default, not an afterthought," so it belongs in the
+                  primary action row, not buried a tap deeper. "More" had
+                  no real functionality behind it yet anyway. */}
               <QuickAction
-                label="More"
-                icon={<IconMore size={22} color={colors.brand700} />}
-                onPress={() =>
-                  navigation.navigate("ComingSoon", {
-                    title: "More",
-                    message: "Additional actions (statements, limits, support) aren't wired up yet.",
-                    icon: "more",
-                  })
-                }
+                label="QR Pay"
+                icon={<IconQrCode size={22} color={colors.brand700} />}
+                onPress={() => navigation.navigate("QrScan")}
               />
             </View>
           </View>

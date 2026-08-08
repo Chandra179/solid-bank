@@ -48,13 +48,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
           </Pressable>
           <Text className="text-lg font-semibold text-slate-900">Pocket</Text>
           <Pressable
-            onPress={() =>
-              navigation.navigate("ComingSoon", {
-                title: "Edit pocket",
-                message: "Renaming a pocket or changing its goal isn't wired up yet.",
-                icon: "edit",
-              })
-            }
+            onPress={() => navigation.navigate("EditPocket", { pocketId: pocket.id })}
             accessibilityLabel="Edit pocket"
             accessibilityRole="button"
             className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
@@ -97,11 +91,13 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
             <Button
               label="Withdraw"
               variant="secondary"
+              disabled={pocket.savedMinor <= 0}
               onPress={() =>
-                navigation.navigate("ComingSoon", {
-                  title: "Withdraw",
-                  message: "Withdrawing straight from a pocket isn't wired up yet — for now, transfer out from your main balance.",
-                  icon: "withdraw",
+                navigation.navigate("AmountEntry", {
+                  flow: "withdraw",
+                  contextId: pocket.id,
+                  contextLabel: `From ${pocket.name}`,
+                  maxAmountMinor: pocket.savedMinor,
                 })
               }
             />

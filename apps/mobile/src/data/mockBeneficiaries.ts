@@ -9,3 +9,14 @@ const BENEFICIARIES: Beneficiary[] = [
 export function listBeneficiaries(): Beneficiary[] {
   return BENEFICIARIES;
 }
+
+let nextBeneficiarySeq = BENEFICIARIES.length + 1;
+
+// Backs AddRecipientScreen. `subtitle` is pre-formatted by the caller (e.g.
+// "•••• 1234 · BCA") to match the existing entries' shape rather than this
+// function reconstructing it from separate bank/account fields.
+export function addBeneficiary(name: string, subtitle: string): Beneficiary {
+  const beneficiary: Beneficiary = { id: `ben_${nextBeneficiarySeq++}`, name, subtitle };
+  BENEFICIARIES.push(beneficiary);
+  return beneficiary;
+}

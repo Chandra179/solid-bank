@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -18,6 +19,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 // external beneficiaries are a searchable list below. Both lead into the
 // same shared AmountEntry screen.
 export default function TransferScreen({ navigation }: Props) {
+  // See HomeScreen for why: without this, a beneficiary added via
+  // AddRecipientScreen wouldn't show up here until a full remount.
+  const [, forceRefresh] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      forceRefresh((n) => n + 1);
+    }, [])
+  );
+
   const [query, setQuery] = useState("");
   const pockets = listPockets();
   const beneficiaries = listBeneficiaries();
@@ -31,11 +41,7 @@ export default function TransferScreen({ navigation }: Props) {
   }
 
   function goToAddRecipient() {
-    navigation.navigate("ComingSoon", {
-      title: "Add a new recipient",
-      message: "Adding recipients manually isn't wired up yet — for now, transfer to an existing beneficiary or one of your pockets.",
-      icon: "recipient",
-    });
+    navigation.navigate("AddRecipient");
   }
 
   return (

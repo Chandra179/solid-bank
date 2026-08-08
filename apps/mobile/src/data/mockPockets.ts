@@ -35,3 +35,26 @@ export function addPocket(name: string, targetMinor: number): Pocket {
   POCKETS.push(pocket);
   return pocket;
 }
+
+// Backs both Add Money (positive delta) and Withdraw (negative delta) once
+// they actually move real money instead of just showing a Success screen —
+// see VerifyPinScreen. Clamped at 0 rather than letting a pocket go
+// negative; AmountEntryScreen already caps Withdraw's input at the current
+// balance, this is the belt-and-suspenders backstop.
+export function adjustPocketBalance(id: string, deltaMinor: number): Pocket | undefined {
+  const pocket = POCKETS.find((p) => p.id === id);
+  if (!pocket) return undefined;
+  pocket.savedMinor = Math.max(0, pocket.savedMinor + deltaMinor);
+  return pocket;
+}
+
+// Backs EditPocketScreen. Only name/target are editable — savedMinor only
+// ever changes through adjustPocketBalance, never a direct edit, so a real
+// balance can't be silently overwritten by a rename.
+export function updatePocket(id: string, updates: { name?: string; targetMinor?: number }): Pocket | undefined {
+  const pocket = POCKETS.find((p) => p.id === id);
+  if (!pocket) return undefined;
+  if (updates.name !== undefined) pocket.name = updates.name;
+  if (updates.targetMinor !== undefined) pocket.targetMinor = updates.targetMinor;
+  return pocket;
+}

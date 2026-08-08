@@ -3,28 +3,21 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconArrowUpRight, IconUser, IconBell, IconMore, IconEdit, IconShield, IconHelp } from "../components/icons";
+import { IconShield, IconHelp } from "../components/icons";
 import ComingSoon from "../components/ComingSoon";
 
 const ICONS = {
-  withdraw: <IconArrowUpRight size={28} color={colors.brand700} />,
-  recipient: <IconUser size={28} color={colors.brand700} />,
-  notifications: <IconBell size={28} color={colors.brand700} />,
-  more: <IconMore size={28} color={colors.brand700} />,
-  edit: <IconEdit size={28} color={colors.brand700} />,
   security: <IconShield size={28} color={colors.brand700} />,
   help: <IconHelp size={28} color={colors.brand700} />,
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "ComingSoon">;
 
-// Generic placeholder destination for actions that are UI-complete but have
-// no real flow behind them yet — reuses the same ComingSoon component
-// CardsScreen/PocketsScreen already use for the bottom-nav tabs, so every
-// not-built-yet destination in the app reads the same way instead of each
-// dead tap getting its own bespoke "soon" treatment. Add a new key to
-// `icon`/ICONS above rather than inlining a React element in route params —
-// keeps this route's params plain data like every other screen's.
+// Generic placeholder destination for the two sub-actions still genuinely
+// unbuilt: a PIN-reset re-auth flow (Security's "Change PIN") and live
+// support chat (Help's "Contact support"). Every other destination that
+// used to land here (Withdraw, Add recipient, Notifications, Edit pocket,
+// Security, Help themselves) now has a real screen — see TODO.md.
 export default function ComingSoonScreen({ route }: Props) {
   const { title, message, icon } = route.params;
   return <ComingSoon title={title} message={message} icon={ICONS[icon]} />;

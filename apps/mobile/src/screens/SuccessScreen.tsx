@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconCheck } from "../components/icons";
 import Button from "../components/Button";
 import { formatIDR } from "@/utils/currency";
+import { getMoneyFlowCopy } from "@/utils/moneyFlowCopy";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Success">;
 
@@ -24,9 +25,7 @@ export default function SuccessScreen({ navigation, route }: Props) {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-green-100">
           <IconCheck size={28} color={colors.success500} />
         </View>
-        <Text className="text-xl font-semibold text-slate-900">
-          {flow === "transfer" ? "Transfer successful" : "Top up successful"}
-        </Text>
+        <Text className="text-xl font-semibold text-slate-900">{getMoneyFlowCopy(flow).successTitle}</Text>
         <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
         <Text className="text-body text-slate-500">{contextLabel}</Text>
       </View>

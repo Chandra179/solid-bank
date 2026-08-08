@@ -111,11 +111,45 @@ deliberate but requires shims: `src/native-stubs/` replaces RN internals
 Vite. If you change how env vars are loaded or add a native-only API, update
 both sides or the web build breaks.
 
-**Everything is currently mock data** — `HomeScreen.tsx` and
-`PocketDetailScreen.tsx` use hardcoded `MOCK_*` constants, not real API
-calls, even though `src/api/client.ts` exists as a thin fetch wrapper. Check
-whether a screen is still mock-backed before assuming a change to the API
-will be reflected in the app.
+**Everything is currently mock data**, but not ad hoc — `src/data/` is a
+synchronous mock-repository layer (`mockAccount.ts`, `mockPockets.ts`,
+`mockTransactions.ts`, `mockBeneficiaries.ts`, `mockFundingSources.ts`,
+`mockUser.ts`, `types.ts`), barrel-exported via `src/data/index.ts`.
+**Screens must import from `@/data`, never reach into an individual
+`mockX.ts` file** — that's what makes swapping any one of these for a real
+API call later an internal change to `src/data/` instead of a call-site hunt
+across every screen. `src/api/client.ts` (thin fetch wrapper around
+`/health`, `/api/v1/me`) exists but nothing calls it yet. Screens don't
+refresh on their own when mock data changes elsewhere — the fix in use is
+`useFocusEffect` + a dummy re-render counter (see `HomeScreen.tsx`), applied
+screen-by-screen as staleness is noticed, not everywhere yet.
+
+Shared formatting helpers belong in `src/utils/` (`currency.ts`'s
+`formatIDR`/`formatSignedIDR`, `greeting.ts`'s `getGreeting`,
+`relativeDate.ts`'s `formatRelativeDate`) — these were previously
+copy-pasted per-screen with drift between copies; don't reintroduce a local
+copy in a new screen, import from here instead.
+
+**NativeWind + `Animated` gotcha, already regressed once**: NativeWind's
+babel/vite transform only auto-styles JSX elements using the exact tag names
+it recognizes as core RN primitives (`View`, `Text`, `Pressable`, ...).
+Wrapping one in `Animated.createAnimatedComponent(...)` produces a new
+component it doesn't recognize, so `className` on that wrapped component is
+silently inert on native (no background/rounding/centering — just bare
+text) even though it can appear to work on the web build. `Button.tsx`
+hit this, got fixed by animating a plain `Animated.View` wrapper around an
+un-wrapped `Pressable` (so `className` only ever lands on a real, recognized
+primitive), and a later refactor reverted straight back to the broken
+`AnimatedPressable` + `className` pattern while leaving the old comment in
+place claiming the fix was still there. Check `git log -p` on a component
+before trusting an in-file comment about *why* something is structured a
+certain way — the code and the comment had drifted apart. If you need to
+animate a `Pressable`/`View`/etc., animate a plain wrapper around it; don't
+`className` an `Animated.createAnimatedComponent(...)` result directly (and
+if you must, register it with `nativewind`'s `cssInterop()` — but note that
+`import { cssInterop } from "nativewind"` breaks the Vite web build, since
+it pulls in a `.js` file with real JSX not covered by Vite's default JSX
+parsing).
 
 **Deliberately custom, not oversights** (don't "fix" these without checking
 with the user first):
@@ -127,3 +161,8 @@ with the user first):
   `react-native-svg` primitives instead of an icon library, by choice.
 
 No CI/CD is configured for mobile (no GitHub Actions, no Fastlane, no EAS).
+
+`apps/mobile/TODO.md` is a living backlog of known UX/tech-debt/accessibility
+gaps, kept up to date in commits (checked-off items list what was actually
+changed and where) — check it before assuming a gap you noticed is unknown,
+and check items off there rather than re-discovering them from scratch.
