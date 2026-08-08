@@ -10,8 +10,8 @@ import PocketsScreen from "./src/screens/PocketsScreen";
 import CardsScreen from "./src/screens/CardsScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import PocketDetailScreen from "./src/screens/PocketDetailScreen";
+import CustomTabBar from "./src/components/CustomTabBar";
 import { IconCard, IconGrid, IconHome, IconProfile } from "./src/components/icons";
-import { colors } from "./src/theme/colors";
 
 export type TabParamList = {
   Home: undefined;
@@ -31,13 +31,8 @@ const Tab = createBottomTabNavigator<TabParamList>();
 function Tabs() {
   return (
     <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.brand700,
-        tabBarInactiveTintColor: colors.neutral400,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
-        tabBarStyle: { borderTopColor: colors.neutral200 },
-      }}
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
     >
       <Tab.Screen
         name="Home"
