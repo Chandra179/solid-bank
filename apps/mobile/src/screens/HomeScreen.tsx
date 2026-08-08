@@ -1,15 +1,16 @@
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { CompositeScreenProps } from "@react-navigation/native";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../App";
+import type { RootStackParamList, TabParamList } from "../../App";
 
 import { colors } from "../theme/colors";
 import { IconBell, IconMore, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft } from "../components/icons";
 import QuickAction from "../components/QuickAction";
 import PocketCard, { type Pocket } from "../components/PocketCard";
 import TransactionRow, { type Transaction } from "../components/TransactionRow";
-import BottomNav from "../components/BottomNav";
 
 // Mock data standing in for real API calls (GET /api/v1/accounts/:id,
 // GET /api/v1/pockets, GET /api/v1/transactions) — the accounts/pockets/
@@ -39,7 +40,10 @@ function formatIDR(minor: number) {
   return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
 }
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, "Home">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
 export default function HomeScreen({ navigation }: Props) {
   return (
@@ -121,7 +125,6 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </View>
       </ScrollView>
-      <BottomNav active="home" onChange={(key) => key === "pockets" && navigation.navigate("PocketDetail", { pocketId: FIRST_POCKET_ID })} />
     </SafeAreaView>
   );
 }

@@ -1,5 +1,7 @@
 # Digital Bank (side project)
 
+![solid bank](solid-bank.png)
+
 A React Native app backed by a Go modular monolith, integrating with a
 licensed BaaS partner (Brankas/Ayoconnect) rather than holding its own
 banking license. See `docs/` for the architecture decisions behind this
