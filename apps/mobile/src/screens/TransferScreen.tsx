@@ -7,6 +7,7 @@ import type { RootStackParamList } from "../../App";
 import { colors } from "../theme/colors";
 import { IconChevronLeft, IconPlus, IconPocket, IconSearch, IconUser } from "../components/icons";
 import SelectRow from "../components/SelectRow";
+import EmptyState from "../components/EmptyState";
 
 // Same mock-data caveat as Home/PocketDetail: standing in for real
 // GET /api/v1/pockets and GET /api/v1/beneficiaries calls.
@@ -41,7 +42,7 @@ export default function TransferScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
@@ -94,20 +95,32 @@ export default function TransferScreen({ navigation }: Props) {
 
         <View className="px-6 pt-6" style={{ gap: 4 }}>
           <Text className="pb-1 text-[13px] font-semibold text-slate-500">Beneficiaries</Text>
-          {filteredBeneficiaries.map((b) => (
-            <SelectRow
-              key={b.id}
-              title={b.name}
-              subtitle={b.subtitle}
-              icon={<IconUser size={18} color={colors.neutral500} />}
-              onPress={() => goToAmount(b.id, `To ${b.name}`, b.subtitle)}
+          {query.length > 0 && filteredBeneficiaries.length === 0 ? (
+            <EmptyState
+              icon={<IconSearch size={20} color={colors.neutral500} />}
+              title={`No results for "${query}"`}
+              subtitle="Check the spelling, or add them as a new recipient."
+              actionLabel="Add new recipient"
+              onAction={() => {}}
             />
-          ))}
-          <SelectRow
-            title="Add new recipient"
-            icon={<IconPlus size={18} color={colors.brand700} />}
-            onPress={() => {}}
-          />
+          ) : (
+            <>
+              {filteredBeneficiaries.map((b) => (
+                <SelectRow
+                  key={b.id}
+                  title={b.name}
+                  subtitle={b.subtitle}
+                  icon={<IconUser size={18} color={colors.neutral500} />}
+                  onPress={() => goToAmount(b.id, `To ${b.name}`, b.subtitle)}
+                />
+              ))}
+              <SelectRow
+                title="Add new recipient"
+                icon={<IconPlus size={18} color={colors.brand700} />}
+                onPress={() => {}}
+              />
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

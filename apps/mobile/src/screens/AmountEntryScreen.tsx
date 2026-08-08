@@ -52,7 +52,7 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
@@ -98,15 +98,12 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
         <NumericKeypad onDigit={appendDigit} onBackspace={backspace} />
       </View>
 
-      <View className="px-6 pb-8 pt-4">
+      <View className="px-6 pb-4 pt-4">
         <Button
           label="Continue"
           variant="primary"
-          className={!isValid ? "opacity-40" : undefined}
-          onPress={() => {
-            if (!isValid) return;
-            navigation.navigate("Confirm", { flow, contextId, contextLabel, contextSubLabel, amountMinor });
-          }}
+          disabled={!isValid}
+          onPress={() => navigation.navigate("Confirm", { flow, contextId, contextLabel, contextSubLabel, amountMinor })}
         />
       </View>
     </SafeAreaView>

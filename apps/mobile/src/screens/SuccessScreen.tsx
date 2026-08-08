@@ -31,9 +31,7 @@ export default function SuccessScreen({ navigation, route }: Props) {
           {flow === "transfer" ? "Transfer successful" : "Top up successful"}
         </Text>
         <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
-        <Text className="text-[13px] text-slate-500">
-          {flow === "transfer" ? contextLabel : `${contextLabel} completed`}
-        </Text>
+        <Text className="text-[13px] text-slate-500">{contextLabel}</Text>
       </View>
 
       <View className="w-full pb-4" style={{ gap: 12 }}>

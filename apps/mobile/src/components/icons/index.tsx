@@ -208,6 +208,69 @@ export function IconCheck({ size = 24, color = "#000" }: IconProps) {
   );
 }
 
+export function IconCamera({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <Circle cx={12} cy={13} r={4} stroke={color} strokeWidth={2} />
+    </Svg>
+  );
+}
+
+export function IconShield({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <Path d="m9 12 2 2 4-4" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function IconAlert({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a1 1 0 0 0 .86 1.5h18.64a1 1 0 0 0 .86-1.5L13.71 3.86a1 1 0 0 0-1.72 0Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function IconInbox({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M22 12h-6l-2 3h-4l-2-3H2"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 export function IconBackspace({ size = 24, color = "#000" }: IconProps) {
   return (
     <Svg {...base(size)} fill="none">

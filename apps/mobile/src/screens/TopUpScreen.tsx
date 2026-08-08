@@ -22,7 +22,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 // sources, unlike the potentially long beneficiary list on Transfer.
 export default function TopUpScreen({ navigation }: Props) {
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}

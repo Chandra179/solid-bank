@@ -30,15 +30,34 @@ export default function ConfirmScreen({ navigation, route }: Props) {
     // using amountMinor as-is (already integer minor units) and the
     // context's account/pocket/source id as the idempotency-key source —
     // see apps/api/internal/ledger's RecordEntry for the pattern this
-    // would feed into.
+    // would feed into. The server is the source of truth even though
+    // AmountEntryScreen already checked the balance client-side — the
+    // shadow ledger can be stale by the time this submits (see
+    // apps/api/internal/reconciliation's whole reason for existing), so a
+    // rejection here is a real, expected case, not just defensive coding.
+    //
+    // DEMO HOOK: since there's no real backend yet, enter exactly
+    // "Rp 13.000" as the amount to preview the failure path — remove this
+    // once handleConfirm calls a real endpoint that can fail on its own.
+    const shouldSimulateFailure = amountMinor === 1_300_000;
+
     setTimeout(() => {
       setSubmitting(false);
+      if (shouldSimulateFailure) {
+        navigation.navigate("MoneyMoveError", {
+          reason:
+            flow === "transfer"
+              ? "The recipient's account couldn't be reached. Your balance hasn't changed."
+              : "Your bank declined this top up. Your balance hasn't changed.",
+        });
+        return;
+      }
       navigation.replace("Success", { flow, contextLabel, amountMinor });
     }, 400);
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
@@ -77,11 +96,12 @@ export default function ConfirmScreen({ navigation, route }: Props) {
 
       <View className="flex-1" />
 
-      <View className="px-6 pb-8" style={{ gap: 12 }}>
+      <View className="px-6 pb-4" style={{ gap: 12 }}>
         <Button
           label={submitting ? "Confirming…" : "Confirm"}
           variant="primary"
-          onPress={submitting ? undefined : handleConfirm}
+          disabled={submitting}
+          onPress={handleConfirm}
         />
         <Pressable onPress={() => navigation.goBack()} className="items-center py-2">
           <Text className="text-[13px] font-semibold text-slate-500">Cancel</Text>

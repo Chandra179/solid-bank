@@ -5,11 +5,12 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../App";
 
 import { colors } from "../theme/colors";
-import { IconBell, IconMore, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft } from "../components/icons";
+import { IconBell, IconMore, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft, IconInbox } from "../components/icons";
 import QuickAction from "../components/QuickAction";
 import PocketCard, { type Pocket } from "../components/PocketCard";
 import TransactionRow, { type Transaction } from "../components/TransactionRow";
 import BottomNav from "../components/BottomNav";
+import EmptyState from "../components/EmptyState";
 
 // Mock data standing in for real API calls (GET /api/v1/accounts/:id,
 // GET /api/v1/pockets, GET /api/v1/transactions) — the accounts/pockets/
@@ -25,9 +26,6 @@ const MOCK_POCKETS: Pocket[] = [
   { id: "pocket_2", name: "Bali Trip", savedMinor: 185_000_000, targetMinor: 600_000_000 },
   { id: "pocket_3", name: "New Laptop", savedMinor: 420_000_000, targetMinor: 1_200_000_000 },
 ];
-
-// Non-null: MOCK_POCKETS is a static non-empty literal above.
-const FIRST_POCKET_ID = MOCK_POCKETS[0]!.id;
 
 const MOCK_TRANSACTIONS: Omit<Transaction, "icon">[] = [
   { id: "tx_1", name: "Kopi Kenangan", dateLabel: "Today, 09:41", amountMinor: -3_200_000 },
@@ -78,7 +76,7 @@ export default function HomeScreen({ navigation }: Props) {
               <QuickAction
                 label="Pockets"
                 icon={<IconPocket size={22} color={colors.brand700} />}
-                onPress={() => navigation.navigate("PocketDetail", { pocketId: FIRST_POCKET_ID })}
+                onPress={() => navigation.navigate("PocketDetail", { pocketId: MOCK_POCKETS[0].id })}
               />
               <QuickAction label="More" icon={<IconMore size={22} color={colors.brand700} />} />
             </View>
@@ -91,19 +89,28 @@ export default function HomeScreen({ navigation }: Props) {
             <Text className="text-lg font-semibold text-slate-900">Your Pockets</Text>
             <Text className="text-[13px] font-semibold text-brand-700">See all</Text>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}
-          >
-            {MOCK_POCKETS.map((pocket) => (
-              <PocketCard
-                key={pocket.id}
-                pocket={pocket}
-                onPress={() => navigation.navigate("PocketDetail", { pocketId: pocket.id })}
-              />
-            ))}
-          </ScrollView>
+          {MOCK_POCKETS.length === 0 ? (
+            <EmptyState
+              icon={<IconPocket size={22} color={colors.neutral500} />}
+              title="No pockets yet"
+              subtitle="Create a pocket to start saving toward a goal."
+              actionLabel="Create a pocket"
+            />
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}
+            >
+              {MOCK_POCKETS.map((pocket) => (
+                <PocketCard
+                  key={pocket.id}
+                  pocket={pocket}
+                  onPress={() => navigation.navigate("PocketDetail", { pocketId: pocket.id })}
+                />
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* Recent transactions */}
@@ -112,31 +119,32 @@ export default function HomeScreen({ navigation }: Props) {
             <Text className="text-lg font-semibold text-slate-900">Recent Transactions</Text>
             <Text className="text-[13px] font-semibold text-brand-700">See all</Text>
           </View>
-          <View className="px-6">
-            {MOCK_TRANSACTIONS.map((tx) => (
-              <TransactionRow
-                key={tx.id}
-                {...tx}
-                icon={
-                  tx.amountMinor > 0 ? (
-                    <IconArrowDownLeft size={18} color={colors.success500} />
-                  ) : (
-                    <IconBag size={18} color={colors.neutral700} />
-                  )
-                }
-              />
-            ))}
-          </View>
+          {MOCK_TRANSACTIONS.length === 0 ? (
+            <EmptyState
+              icon={<IconInbox size={22} color={colors.neutral500} />}
+              title="No transactions yet"
+              subtitle="Your activity will show up here once you top up or spend."
+            />
+          ) : (
+            <View className="px-6">
+              {MOCK_TRANSACTIONS.map((tx) => (
+                <TransactionRow
+                  key={tx.id}
+                  {...tx}
+                  icon={
+                    tx.amountMinor > 0 ? (
+                      <IconArrowDownLeft size={18} color={colors.success500} />
+                    ) : (
+                      <IconBag size={18} color={colors.neutral700} />
+                    )
+                  }
+                />
+              ))}
+            </View>
+          )}
         </View>
       </ScrollView>
-      <BottomNav
-        active="home"
-        onChange={(key) => {
-          if (key === "pockets") navigation.navigate("Pockets");
-          if (key === "cards") navigation.navigate("Cards");
-          if (key === "profile") navigation.navigate("Profile");
-        }}
-      />
+      <BottomNav active="home" onChange={(key) => key === "pockets" && navigation.navigate("PocketDetail", { pocketId: MOCK_POCKETS[0].id })} />
     </SafeAreaView>
   );
 }

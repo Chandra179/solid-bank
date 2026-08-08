@@ -5,10 +5,11 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../App";
 
 import { colors } from "../theme/colors";
-import { IconArrowDownLeft, IconArrowUpRight, IconChevronLeft, IconEdit, IconPocket } from "../components/icons";
+import { IconArrowDownLeft, IconArrowUpRight, IconChevronLeft, IconEdit, IconInbox, IconPocket } from "../components/icons";
 import Button from "../components/Button";
 import TransactionRow, { type Transaction } from "../components/TransactionRow";
 import type { Pocket } from "../components/PocketCard";
+import EmptyState from "../components/EmptyState";
 
 // Same caveat as HomeScreen: mock data standing in for a real
 // GET /api/v1/pockets/:id call once the `pockets` package (currently a
@@ -81,21 +82,29 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
         {/* History */}
         <View className="pb-8 pt-4" style={{ gap: 4 }}>
           <Text className="px-6 pb-2 text-lg font-semibold text-slate-900">History</Text>
-          <View className="px-6">
-            {MOCK_HISTORY.map((tx) => (
-              <TransactionRow
-                key={tx.id}
-                {...tx}
-                icon={
-                  tx.amountMinor > 0 ? (
-                    <IconArrowDownLeft size={18} color={colors.success500} />
-                  ) : (
-                    <IconArrowUpRight size={18} color={colors.neutral700} />
-                  )
-                }
-              />
-            ))}
-          </View>
+          {MOCK_HISTORY.length === 0 ? (
+            <EmptyState
+              icon={<IconInbox size={22} color={colors.neutral500} />}
+              title="No activity yet"
+              subtitle="Money you add to or take from this pocket will show up here."
+            />
+          ) : (
+            <View className="px-6">
+              {MOCK_HISTORY.map((tx) => (
+                <TransactionRow
+                  key={tx.id}
+                  {...tx}
+                  icon={
+                    tx.amountMinor > 0 ? (
+                      <IconArrowDownLeft size={18} color={colors.success500} />
+                    ) : (
+                      <IconArrowUpRight size={18} color={colors.neutral700} />
+                    )
+                  }
+                />
+              ))}
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
