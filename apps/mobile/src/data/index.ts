@@ -4,7 +4,13 @@
 // this directory instead of a call-site hunt across every screen.
 export * from "./types";
 export { listPockets, getPocket, addPocket, adjustPocketBalance, updatePocket } from "./mockPockets";
-export { listRecentTransactions, listPocketTransactions } from "./mockTransactions";
+export {
+  listRecentTransactions,
+  listPocketTransactions,
+  recordPocketTransaction,
+  getCategoryBreakdown,
+} from "./mockTransactions";
+export type { CategoryBreakdown } from "./mockTransactions";
 export { listBeneficiaries, addBeneficiary } from "./mockBeneficiaries";
 export { listFundingSources } from "./mockFundingSources";
 export { getAccountSummary } from "./mockAccount";

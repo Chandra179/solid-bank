@@ -22,21 +22,37 @@ function formatRupiahInput(digits: string) {
 // addPocket() on submit. Deliberately can't edit savedMinor here — that
 // only ever changes through Add Money/Withdraw (adjustPocketBalance), never
 // a direct field edit, so a rename can't silently wipe out a real balance.
+//
+// Also owns turning auto-save on/off (a weekly recurring amount) — this is
+// the one field on Pocket where 0/empty has a real meaning ("off"), unlike
+// name/goal which are always required, so it's validated separately from
+// `isValid` rather than blocking Save if it's blank.
 export default function EditPocketScreen({ navigation, route }: Props) {
   const pocket = getPocket(route.params.pocketId) ?? listPockets()[0];
   const [name, setName] = useState(pocket.name);
   const [goalDigits, setGoalDigits] = useState(String(Math.floor(pocket.targetMinor / 100)));
+  const [autoSaveDigits, setAutoSaveDigits] = useState(
+    pocket.autoSaveMinor ? String(Math.floor(pocket.autoSaveMinor / 100)) : ""
+  );
 
   const goalRupiah = goalDigits === "" ? 0 : parseInt(goalDigits, 10);
+  const autoSaveRupiah = autoSaveDigits === "" ? 0 : parseInt(autoSaveDigits, 10);
   const isValid = name.trim().length > 1 && goalRupiah > 0;
 
   function handleGoalChange(text: string) {
     setGoalDigits(text.replace(/\D/g, "").slice(0, 12));
   }
+  function handleAutoSaveChange(text: string) {
+    setAutoSaveDigits(text.replace(/\D/g, "").slice(0, 12));
+  }
 
   function handleSave() {
     if (!isValid) return;
-    updatePocket(pocket.id, { name: name.trim(), targetMinor: goalRupiah * 100 });
+    updatePocket(pocket.id, {
+      name: name.trim(),
+      targetMinor: goalRupiah * 100,
+      autoSaveMinor: autoSaveRupiah * 100,
+    });
     navigation.goBack();
   }
 
@@ -88,6 +104,24 @@ export default function EditPocketScreen({ navigation, route }: Props) {
               className="ml-2 flex-1 text-[15px] text-slate-900"
             />
           </View>
+        </View>
+        <View style={{ gap: 6 }}>
+          <Text className="text-label font-semibold text-slate-700">Weekly auto-save (optional)</Text>
+          <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
+            <Text className="text-[15px] font-medium text-slate-400">Rp</Text>
+            <TextInput
+              value={formatRupiahInput(autoSaveDigits)}
+              onChangeText={handleAutoSaveChange}
+              placeholder="Off"
+              placeholderTextColor={colors.neutral400}
+              keyboardType="number-pad"
+              className="ml-2 flex-1 text-[15px] text-slate-900"
+            />
+          </View>
+          <Text className="text-caption text-slate-500">
+            Leave at 0 to turn auto-save off. There's no real weekly job yet — PocketDetail's
+            "Boost now" applies one week's worth on demand instead.
+          </Text>
         </View>
       </View>
 

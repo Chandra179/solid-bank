@@ -139,15 +139,37 @@ screen.
       AmountEntry → Confirm → VerifyPin → Success → Receipt chain with
       `flow: "transfer"`, reusing the whole pipeline rather than growing a
       parallel one.
-- [ ] QR Pay currently only supports "static" QRIS codes (merchant + no
-      preset amount, user types it in). Real QRIS also has "dynamic" codes
-      that encode a fixed amount — `resolveMockQrCode()` would need an
-      optional `amountMinor` that, when present, skips AmountEntry and
-      goes straight to Confirm.
-- [ ] Other product directions considered but not built this round:
-      spending insights/budgeting (category breakdown of transactions) and
-      pocket auto-save/boost (a real growth mechanic on top of the
-      already-built Pockets feature).
+- [x] QR Pay now supports "dynamic" QRIS codes, not just "static" ones.
+      `QrMerchant` (`src/data/mockMerchants.ts`) gained an optional
+      `amountMinor` — present, it's a dynamic code (the amount is fixed by
+      whoever generated it, e.g. Indomaret's checkout code); absent, it's
+      static and the payer types the amount in, same as before.
+      `QrScanScreen.tsx` branches on it: dynamic skips `AmountEntry`
+      entirely and goes straight to `Confirm` with the fixed amount; static
+      is unchanged.
+- [x] **Pocket auto-save/boost** — `Pocket` gained an optional
+      `autoSaveMinor` (a weekly recurring amount; undefined/0 = off), set
+      via a new field on `EditPocketScreen.tsx` and cleared by leaving it at
+      0. There's no real background scheduler in this mock layer, so
+      PocketDetailScreen shows a "Boost now" button when auto-save is on —
+      an honest stand-in for "the weekly job ran," applying one week's
+      amount on demand via `adjustPocketBalance()` and, unlike Add
+      Money/Withdraw, also recording a real history entry via a new
+      `recordPocketTransaction()` (`src/data/mockTransactions.ts`), since a
+      boost has no separate Success/Receipt screen to be the record of what
+      happened. When auto-save is off, the same spot shows a dashed
+      "Set up auto-save" card linking to Edit pocket instead.
+- [x] **Spending insights/budgeting** — `SpendingInsightsScreen.tsx`, a
+      category breakdown of the trailing 30 days' spending, reached from a
+      new icon button on `TransactionsScreen.tsx`'s header. `Transaction`
+      gained an optional `category` field; a new `getCategoryBreakdown()`
+      (`src/data/mockTransactions.ts`) sums outgoing amounts by category,
+      excluding incoming transactions and pocket transfers (moving money
+      into a pocket isn't "spending" it). Mock data for this — and for
+      `TransactionsScreen`'s fuller feed — grew from 3 to 8 entries;
+      `HomeScreen`'s preview is now explicitly capped at 3 (`.slice(0, 3)`)
+      so its "recent" list stays a short preview rather than growing with
+      the richer dataset underneath it.
 
 ## Testing / infra
 

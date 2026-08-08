@@ -54,6 +54,9 @@ export type RootStackParamList = {
   // QR-first payments entry point — resolves a scanned (mocked) QRIS code
   // to a merchant, then hands off into AmountEntry with flow: "transfer".
   QrScan: undefined;
+  // Category breakdown of the last 30 days' spending, sourced from the
+  // same RECENT_TRANSACTIONS list Home/Transactions already read from.
+  SpendingInsights: undefined;
   // Real activity feed behind Home's bell icon.
   Notifications: undefined;
   // Per-category push toggles, reached from Profile's Notifications row.

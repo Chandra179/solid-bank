@@ -15,10 +15,20 @@ const NOW = Date.now();
 // ("Today, 09:41" vs "3 days ago") drifting apart.
 type RawTransaction = Omit<Transaction, "dateLabel"> & { occurredAt: number };
 
+// A few more entries than before, spread across the last couple weeks and
+// tagged with `category` — enough for SpendingInsightsScreen's breakdown to
+// show more than one or two categories. HomeScreen only previews the first
+// 3 (still the "recent" list it always was); this full list is what
+// TransactionsScreen and the insights breakdown both read from.
 const RECENT_TRANSACTIONS: RawTransaction[] = [
-  { id: "tx_1", name: "Kopi Kenangan", occurredAt: NOW - 3 * HOUR, amountMinor: -3_200_000 },
-  { id: "tx_2", name: "Salary — Acme Co.", occurredAt: NOW - DAY - 4 * HOUR, amountMinor: 650_000_000 },
-  { id: "tx_3", name: "Transfer to Pockets", occurredAt: NOW - DAY - 4 * HOUR - 2 * 60 * 1000, amountMinor: -50_000_000 },
+  { id: "tx_1", name: "Kopi Kenangan", occurredAt: NOW - 3 * HOUR, amountMinor: -3_200_000, category: "Food & Drink" },
+  { id: "tx_2", name: "Salary — Acme Co.", occurredAt: NOW - DAY - 4 * HOUR, amountMinor: 650_000_000, category: "Income" },
+  { id: "tx_3", name: "Transfer to Pockets", occurredAt: NOW - DAY - 4 * HOUR - 2 * 60 * 1000, amountMinor: -50_000_000, category: "Savings" },
+  { id: "tx_4", name: "Indomaret", occurredAt: NOW - 2 * DAY, amountMinor: -8_500_000, category: "Groceries" },
+  { id: "tx_5", name: "Netflix", occurredAt: NOW - 3 * DAY, amountMinor: -18_600_000, category: "Subscriptions" },
+  { id: "tx_6", name: "Grab", occurredAt: NOW - 4 * DAY, amountMinor: -3_200_000, category: "Transport" },
+  { id: "tx_7", name: "Warung Nasi Padang", occurredAt: NOW - 5 * DAY, amountMinor: -4_500_000, category: "Food & Drink" },
+  { id: "tx_8", name: "PLN — Electricity", occurredAt: NOW - 6 * DAY, amountMinor: -22_000_000, category: "Bills" },
 ];
 
 // Keyed by pocket id, and deliberately real per-pocket data rather than one
@@ -50,4 +60,47 @@ export function listRecentTransactions(): Transaction[] {
 
 export function listPocketTransactions(pocketId: string): Transaction[] {
   return (POCKET_HISTORY[pocketId] ?? []).map(withLabel);
+}
+
+let nextHistorySeq = 1;
+
+// Backs PocketDetailScreen's "Boost now" (auto-save) button — previously
+// nothing that changed a pocket's balance ever left a matching history
+// entry (see TODO.md's documented limitation), which made the balance
+// change look unexplained. This closes that gap specifically for
+// auto-save boosts, the one balance-changing action that isn't already
+// part of the Add Money/Withdraw chain (those still don't record history —
+// unlike a scheduled auto-save "boost," they already get their own
+// Success/Receipt confirmation, so a history row would be a duplicate
+// record of the same event rather than the only record of it).
+export function recordPocketTransaction(pocketId: string, name: string, amountMinor: number): void {
+  const entry: RawTransaction = { id: `hb_${nextHistorySeq++}`, name, occurredAt: Date.now(), amountMinor };
+  if (!POCKET_HISTORY[pocketId]) POCKET_HISTORY[pocketId] = [];
+  POCKET_HISTORY[pocketId].unshift(entry);
+}
+
+export type CategoryBreakdown = { category: string; totalMinor: number; count: number };
+
+// Backs SpendingInsightsScreen. Only looks at RECENT_TRANSACTIONS (the main
+// account's activity, not per-pocket history) and only groups outgoing
+// (negative) amounts — "Income" and "Savings" transfers aren't spending.
+// `periodDays` filters to a trailing window rather than "all time," since a
+// budgeting view is normally scoped to "this month," not the account's
+// entire history.
+export function getCategoryBreakdown(periodDays = 30): CategoryBreakdown[] {
+  const since = NOW - periodDays * DAY;
+  const totals = new Map<string, { totalMinor: number; count: number }>();
+  for (const tx of RECENT_TRANSACTIONS) {
+    if (tx.amountMinor >= 0) continue; // not spending
+    if (tx.occurredAt < since) continue;
+    if (tx.category === "Savings") continue; // moving money to a pocket isn't "spending" it
+    const category = tx.category ?? "Other";
+    const existing = totals.get(category) ?? { totalMinor: 0, count: 0 };
+    existing.totalMinor += Math.abs(tx.amountMinor);
+    existing.count += 1;
+    totals.set(category, existing);
+  }
+  return Array.from(totals.entries())
+    .map(([category, v]) => ({ category, ...v }))
+    .sort((a, b) => b.totalMinor - a.totalMinor);
 }

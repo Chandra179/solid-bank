@@ -6,7 +6,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconArrowDownLeft, IconBag, IconChevronLeft, IconInbox } from "../components/icons";
+import { IconArrowDownLeft, IconBag, IconChevronLeft, IconInbox, IconPieChart } from "../components/icons";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import { listRecentTransactions } from "@/data";
@@ -40,7 +40,14 @@ export default function TransactionsScreen({ navigation }: Props) {
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
         <Text className="text-lg font-semibold text-slate-900">Transactions</Text>
-        <View className="h-10 w-10" />
+        <Pressable
+          onPress={() => navigation.navigate("SpendingInsights")}
+          accessibilityLabel="Spending insights"
+          accessibilityRole="button"
+          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+        >
+          <IconPieChart size={18} color={colors.neutral700} />
+        </Pressable>
       </View>
 
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 8 }}>

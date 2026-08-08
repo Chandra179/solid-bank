@@ -319,6 +319,28 @@ export function IconQrCode({ size = 24, color = "#000" }: IconProps) {
   );
 }
 
+// Backs SpendingInsightsScreen's entry point on TransactionsScreen — a
+// simple pie/donut glyph (outline circle + one radius line marking a
+// wedge) rather than a full chart icon, matching this set's plain
+// feather-style outline approach.
+export function IconPieChart({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={2} />
+      <Path d="M12 3v9l7.79 4.5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// Backs PocketDetailScreen's auto-save "Boost now" affordance.
+export function IconBolt({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" stroke={color} strokeWidth={2} strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function IconBackspace({ size = 24, color = "#000" }: IconProps) {
   return (
     <Svg {...base(size)} fill="none">

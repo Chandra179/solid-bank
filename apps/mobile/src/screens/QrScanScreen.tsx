@@ -30,6 +30,12 @@ type Props = NativeStackScreenProps<RootStackParamList, "QrScan">;
 // paying a merchant is a transfer out, so this reuses that whole pipeline
 // (same pattern PocketDetail's "Add Money" button already uses) rather than
 // growing a parallel one.
+//
+// A merchant with `amountMinor` set is a "dynamic" QRIS code (see
+// mockMerchants.ts) — the amount is already fixed by whoever generated the
+// code, so there's nothing for the user to type in. That case skips
+// AmountEntry and goes straight to Confirm, same params Confirm would have
+// received from AmountEntry's own "Continue" button either way.
 const SCAN_DELAY_MS = 1400;
 
 export default function QrScanScreen({ navigation }: Props) {
@@ -39,12 +45,22 @@ export default function QrScanScreen({ navigation }: Props) {
     const t = setTimeout(() => {
       setScanning(false);
       const merchant = resolveMockQrCode();
-      navigation.replace("AmountEntry", {
-        flow: "transfer",
-        contextId: merchant.id,
-        contextLabel: `To ${merchant.name}`,
-        contextSubLabel: merchant.category,
-      });
+      if (merchant.amountMinor !== undefined) {
+        navigation.replace("Confirm", {
+          flow: "transfer",
+          contextId: merchant.id,
+          contextLabel: `To ${merchant.name}`,
+          contextSubLabel: merchant.category,
+          amountMinor: merchant.amountMinor,
+        });
+      } else {
+        navigation.replace("AmountEntry", {
+          flow: "transfer",
+          contextId: merchant.id,
+          contextLabel: `To ${merchant.name}`,
+          contextSubLabel: merchant.category,
+        });
+      }
     }, SCAN_DELAY_MS);
     return () => clearTimeout(t);
   }, [navigation]);

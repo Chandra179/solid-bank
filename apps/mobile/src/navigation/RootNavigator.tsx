@@ -28,6 +28,7 @@ import AddRecipientScreen from "@/screens/AddRecipientScreen";
 import EditPocketScreen from "@/screens/EditPocketScreen";
 import SecurityScreen from "@/screens/SecurityScreen";
 import HelpScreen from "@/screens/HelpScreen";
+import SpendingInsightsScreen from "@/screens/SpendingInsightsScreen";
 
 import WelcomeScreen from "@/screens/onboarding/WelcomeScreen";
 import PhoneEntryScreen from "@/screens/onboarding/PhoneEntryScreen";
@@ -96,6 +97,7 @@ export default function RootNavigator() {
             <Stack.Screen name="EditPocket" component={EditPocketScreen} />
             <Stack.Screen name="Security" component={SecurityScreen} />
             <Stack.Screen name="Help" component={HelpScreen} />
+            <Stack.Screen name="SpendingInsights" component={SpendingInsightsScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>

@@ -35,7 +35,11 @@ export default function HomeScreen({ navigation }: Props) {
 
   const account = getAccountSummary();
   const pockets = listPockets();
-  const transactions = listRecentTransactions();
+  // Home is a preview, not the full feed (that's TransactionsScreen, via
+  // "See all") — capped at 3 now that mockTransactions seeds more than 3
+  // entries for SpendingInsightsScreen's category breakdown to have
+  // something to break down.
+  const transactions = listRecentTransactions().slice(0, 3);
   const user = getUserProfile();
   const unreadCount = getUnreadNotificationCount();
 

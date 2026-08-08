@@ -6,11 +6,11 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconArrowDownLeft, IconArrowUpRight, IconChevronLeft, IconEdit, IconInbox, IconPocket } from "../components/icons";
+import { IconArrowDownLeft, IconArrowUpRight, IconBolt, IconChevronLeft, IconEdit, IconInbox, IconPocket } from "../components/icons";
 import Button from "../components/Button";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
-import { getPocket, listPockets, listPocketTransactions } from "@/data";
+import { adjustPocketBalance, getPocket, listPockets, listPocketTransactions, recordPocketTransaction } from "@/data";
 import { formatIDR } from "@/utils/currency";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
@@ -32,6 +32,20 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
   const pocket = getPocket(route.params.pocketId) ?? listPockets()[0];
   const history = listPocketTransactions(pocket.id);
   const pct = pocket.targetMinor > 0 ? Math.min(1, pocket.savedMinor / pocket.targetMinor) : 0;
+
+  // The growth mechanic on top of pockets: there's no real background
+  // scheduler in this mock layer, so "one week's auto-save ran" is
+  // simulated on demand instead of on a timer — an honest stand-in rather
+  // than faking a cron job client-side. Unlike Add Money/Withdraw (which
+  // already get their own Success/Receipt confirmation), this records a
+  // history entry directly since a boost has no separate confirmation
+  // screen of its own.
+  function handleBoost() {
+    if (!pocket.autoSaveMinor) return;
+    adjustPocketBalance(pocket.id, pocket.autoSaveMinor);
+    recordPocketTransaction(pocket.id, "Auto-save boost", pocket.autoSaveMinor);
+    forceRefresh((n) => n + 1);
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -103,6 +117,36 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
             />
           </View>
         </View>
+
+        {/* Auto-save */}
+        {pocket.autoSaveMinor ? (
+          <View className="mx-6 mb-2 flex-row items-center justify-between rounded-2xl border border-slate-200 px-4 py-4">
+            <View className="flex-1 flex-row items-center pr-4" style={{ gap: 10 }}>
+              <View className="h-9 w-9 items-center justify-center rounded-full bg-brand-50">
+                <IconBolt size={16} color={colors.brand700} />
+              </View>
+              <View className="flex-1" style={{ gap: 2 }}>
+                <Text className="text-label font-semibold text-slate-900">Auto-save is on</Text>
+                <Text className="text-caption text-slate-500">{formatIDR(pocket.autoSaveMinor)} / week</Text>
+              </View>
+            </View>
+            <Button label="Boost now" variant="secondary" onPress={handleBoost} />
+          </View>
+        ) : (
+          <Pressable
+            onPress={() => navigation.navigate("EditPocket", { pocketId: pocket.id })}
+            className="mx-6 mb-2 flex-row items-center rounded-2xl border border-dashed border-slate-200 px-4 py-4"
+            style={{ gap: 10 }}
+          >
+            <View className="h-9 w-9 items-center justify-center rounded-full bg-slate-100">
+              <IconBolt size={16} color={colors.neutral500} />
+            </View>
+            <View className="flex-1" style={{ gap: 2 }}>
+              <Text className="text-label font-semibold text-slate-900">Set up auto-save</Text>
+              <Text className="text-caption text-slate-500">Grow this pocket automatically every week.</Text>
+            </View>
+          </Pressable>
+        )}
 
         {/* History */}
         <View className="pb-8 pt-4" style={{ gap: 4 }}>

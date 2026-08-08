@@ -11,7 +11,9 @@ import type { Pocket } from "./types";
 // wrap.
 const POCKETS: Pocket[] = [
   { id: "pocket_1", name: "Emergency Fund", savedMinor: 240_000_000, targetMinor: 500_000_000 },
-  { id: "pocket_2", name: "Bali Trip", savedMinor: 185_000_000, targetMinor: 600_000_000 },
+  // Seeded with auto-save on so PocketDetail's "Boost now" affordance is
+  // reachable without first visiting Edit pocket to turn it on.
+  { id: "pocket_2", name: "Bali Trip", savedMinor: 185_000_000, targetMinor: 600_000_000, autoSaveMinor: 10_000_000 },
   { id: "pocket_3", name: "New Laptop", savedMinor: 420_000_000, targetMinor: 1_200_000_000 },
 ];
 
@@ -48,13 +50,21 @@ export function adjustPocketBalance(id: string, deltaMinor: number): Pocket | un
   return pocket;
 }
 
-// Backs EditPocketScreen. Only name/target are editable — savedMinor only
-// ever changes through adjustPocketBalance, never a direct edit, so a real
-// balance can't be silently overwritten by a rename.
-export function updatePocket(id: string, updates: { name?: string; targetMinor?: number }): Pocket | undefined {
+// Backs EditPocketScreen. Only name/target/autoSaveMinor are editable —
+// savedMinor only ever changes through adjustPocketBalance, never a direct
+// edit, so a real balance can't be silently overwritten by a rename.
+export function updatePocket(
+  id: string,
+  updates: { name?: string; targetMinor?: number; autoSaveMinor?: number }
+): Pocket | undefined {
   const pocket = POCKETS.find((p) => p.id === id);
   if (!pocket) return undefined;
   if (updates.name !== undefined) pocket.name = updates.name;
   if (updates.targetMinor !== undefined) pocket.targetMinor = updates.targetMinor;
+  if (updates.autoSaveMinor !== undefined) {
+    // 0 means "turn auto-save off" — stored as undefined rather than 0 so
+    // every other read site can just check truthiness.
+    pocket.autoSaveMinor = updates.autoSaveMinor > 0 ? updates.autoSaveMinor : undefined;
+  }
   return pocket;
 }
