@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -20,41 +20,13 @@ type Props = NativeStackScreenProps<RootStackParamList, "Confirm">;
 // design in apps/api/internal/audit) treat every money movement as
 // something a human explicitly confirmed, not something that just occurs
 // as a side effect of filling out a form.
+//
+// This screen no longer submits anything itself — "Confirm" hands off to
+// VerifyPinScreen, which is the actual last gate (PIN re-entry) before
+// money moves. Review-and-confirm and step-up authentication are two
+// different jobs; splitting them keeps each screen doing one thing.
 export default function ConfirmScreen({ navigation, route }: Props) {
-  const { flow, contextLabel, contextSubLabel, amountMinor } = route.params;
-  const [submitting, setSubmitting] = useState(false);
-
-  function handleConfirm() {
-    setSubmitting(true);
-    // Real implementation: POST /api/v1/transfers or /api/v1/topups here,
-    // using amountMinor as-is (already integer minor units) and the
-    // context's account/pocket/source id as the idempotency-key source —
-    // see apps/api/internal/ledger's RecordEntry for the pattern this
-    // would feed into. The server is the source of truth even though
-    // AmountEntryScreen already checked the balance client-side — the
-    // shadow ledger can be stale by the time this submits (see
-    // apps/api/internal/reconciliation's whole reason for existing), so a
-    // rejection here is a real, expected case, not just defensive coding.
-    //
-    // DEMO HOOK: since there's no real backend yet, enter exactly
-    // "Rp 13.000" as the amount to preview the failure path — remove this
-    // once handleConfirm calls a real endpoint that can fail on its own.
-    const shouldSimulateFailure = amountMinor === 1_300_000;
-
-    setTimeout(() => {
-      setSubmitting(false);
-      if (shouldSimulateFailure) {
-        navigation.navigate("MoneyMoveError", {
-          reason:
-            flow === "transfer"
-              ? "The recipient's account couldn't be reached. Your balance hasn't changed."
-              : "Your bank declined this top up. Your balance hasn't changed.",
-        });
-        return;
-      }
-      navigation.replace("Success", { flow, contextLabel, amountMinor });
-    }, 400);
-  }
+  const { flow, contextId, contextLabel, contextSubLabel, amountMinor } = route.params;
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
@@ -98,10 +70,9 @@ export default function ConfirmScreen({ navigation, route }: Props) {
 
       <View className="px-6 pb-4" style={{ gap: 12 }}>
         <Button
-          label={submitting ? "Confirming…" : "Confirm"}
+          label="Confirm"
           variant="primary"
-          disabled={submitting}
-          onPress={handleConfirm}
+          onPress={() => navigation.navigate("VerifyPin", { flow, contextId, contextLabel, contextSubLabel, amountMinor })}
         />
         <Pressable onPress={() => navigation.goBack()} className="items-center py-2">
           <Text className="text-[13px] font-semibold text-slate-500">Cancel</Text>

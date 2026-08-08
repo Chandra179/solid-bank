@@ -6,6 +6,7 @@ import type { RootStackParamList } from "../../../App";
 
 import NumericKeypad from "../../components/NumericKeypad";
 import DigitEntry from "../../components/DigitEntry";
+import { useSessionStore } from "../../store/session";
 
 const PIN_LENGTH = 6;
 
@@ -16,6 +17,7 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const advancing = useRef(false);
+  const persistPin = useSessionStore((s) => s.setPin);
 
   function appendDigit(d: string) {
     if (advancing.current) return;
@@ -27,6 +29,10 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
         advancing.current = true;
         setTimeout(() => {
           if (next === originalPin) {
+            // This is the only place the PIN actually gets persisted —
+            // see the caveat in store/session.ts about why this is a demo
+            // simplification, not a real security pattern.
+            persistPin(originalPin);
             navigation.navigate("OnboardingComplete");
           } else {
             setError("PINs don't match. Try again.");

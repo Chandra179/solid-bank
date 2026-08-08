@@ -9,8 +9,6 @@ type ButtonProps = {
   className?: string;
 };
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 // Mirrors the Button/Primary and Withdraw (secondary) components from the
 // Figma file — pill-shaped, brand-700 fill for primary, outlined for
 // secondary. `disabled` drives a real Pressable disabled state (not just a
@@ -31,17 +29,25 @@ export default function Button({ label, onPress, variant = "primary", disabled =
   }, [disabled, opacity]);
 
   return (
-    <AnimatedPressable
-      onPress={onPress}
-      disabled={disabled}
-      style={{ opacity }}
-      className={`items-center justify-center rounded-full px-6 py-3.5 ${
-        isPrimary ? "bg-brand-700" : "bg-white border border-slate-200"
-      } ${className}`}
-    >
-      <Text className={`text-[15px] font-semibold ${isPrimary ? "text-white" : "text-slate-700"}`}>
-        {label}
-      </Text>
-    </AnimatedPressable>
+    // The opacity animation lives on a plain Animated.View wrapper rather
+    // than on the Pressable itself: Animated.createAnimatedComponent(Pressable)
+    // produces a component NativeWind doesn't know to intercept for
+    // className (it only auto-patches core RN primitives, not ad-hoc
+    // wrappers around them) — className would be silently ignored on the
+    // web build, leaving the button with no background, padding, or
+    // rounding, just bare text positioned by document flow.
+    <Animated.View style={{ opacity }}>
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        className={`items-center justify-center rounded-full px-6 py-3.5 ${
+          isPrimary ? "bg-brand-700" : "bg-white border border-slate-200"
+        } ${className}`}
+      >
+        <Text className={`text-[15px] font-semibold ${isPrimary ? "text-white" : "text-slate-700"}`}>
+          {label}
+        </Text>
+      </Pressable>
+    </Animated.View>
   );
 }

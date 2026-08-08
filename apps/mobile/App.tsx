@@ -12,6 +12,7 @@ import TransferScreen from "./src/screens/TransferScreen";
 import TopUpScreen from "./src/screens/TopUpScreen";
 import AmountEntryScreen from "./src/screens/AmountEntryScreen";
 import ConfirmScreen from "./src/screens/ConfirmScreen";
+import VerifyPinScreen from "./src/screens/VerifyPinScreen";
 import SuccessScreen from "./src/screens/SuccessScreen";
 import ErrorScreen from "./src/screens/ErrorScreen";
 
@@ -47,6 +48,7 @@ export type RootStackParamList = {
   TopUp: undefined;
   AmountEntry: MoneyMoveContext;
   Confirm: MoneyMoveContext & { amountMinor: number };
+  VerifyPin: MoneyMoveContext & { amountMinor: number };
   Success: { flow: MoneyFlow; contextLabel: string; amountMinor: number };
   MoneyMoveError: { reason: string };
 
@@ -96,6 +98,7 @@ export default function App() {
               <Stack.Screen name="TopUp" component={TopUpScreen} />
               <Stack.Screen name="AmountEntry" component={AmountEntryScreen} />
               <Stack.Screen name="Confirm" component={ConfirmScreen} />
+              <Stack.Screen name="VerifyPin" component={VerifyPinScreen} />
               <Stack.Screen name="Success" component={SuccessScreen} options={{ gestureEnabled: false }} />
               <Stack.Screen name="MoneyMoveError" component={ErrorScreen} />
             </Stack.Group>
