@@ -23,7 +23,7 @@ const ITEMS: { key: NavKey; label: string; Icon: typeof IconHome }[] = [
 // screen worth switching between.
 export default function BottomNav({ active, onChange }: BottomNavProps) {
   return (
-    <View className="flex-row justify-between border-t border-slate-200 bg-white px-8 pb-6 pt-3">
+    <View className="flex-row justify-between border-t border-slate-200 bg-white px-8 pb-3 pt-3">
       {ITEMS.map(({ key, label, Icon }) => {
         const isActive = key === active;
         const color = isActive ? colors.brand700 : colors.neutral400;

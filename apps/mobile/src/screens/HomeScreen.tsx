@@ -26,6 +26,9 @@ const MOCK_POCKETS: Pocket[] = [
   { id: "pocket_3", name: "New Laptop", savedMinor: 420_000_000, targetMinor: 1_200_000_000 },
 ];
 
+// Non-null: MOCK_POCKETS is a static non-empty literal above.
+const FIRST_POCKET_ID = MOCK_POCKETS[0]!.id;
+
 const MOCK_TRANSACTIONS: Omit<Transaction, "icon">[] = [
   { id: "tx_1", name: "Kopi Kenangan", dateLabel: "Today, 09:41", amountMinor: -3_200_000 },
   { id: "tx_2", name: "Salary — Acme Co.", dateLabel: "Yesterday, 08:00", amountMinor: 650_000_000 },
@@ -67,7 +70,7 @@ export default function HomeScreen({ navigation }: Props) {
               <QuickAction
                 label="Pockets"
                 icon={<IconPocket size={22} color={colors.brand700} />}
-                onPress={() => navigation.navigate("PocketDetail", { pocketId: MOCK_POCKETS[0].id })}
+                onPress={() => navigation.navigate("PocketDetail", { pocketId: FIRST_POCKET_ID })}
               />
               <QuickAction label="More" icon={<IconMore size={22} color={colors.brand700} />} />
             </View>
@@ -118,7 +121,7 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </View>
       </ScrollView>
-      <BottomNav active="home" onChange={(key) => key === "pockets" && navigation.navigate("PocketDetail", { pocketId: MOCK_POCKETS[0].id })} />
+      <BottomNav active="home" onChange={(key) => key === "pockets" && navigation.navigate("PocketDetail", { pocketId: FIRST_POCKET_ID })} />
     </SafeAreaView>
   );
 }
