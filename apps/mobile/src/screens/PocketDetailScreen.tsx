@@ -2,31 +2,14 @@ import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../App";
+import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
 import { IconArrowDownLeft, IconArrowUpRight, IconChevronLeft, IconEdit, IconInbox, IconPocket } from "../components/icons";
 import Button from "../components/Button";
-import TransactionRow, { type Transaction } from "../components/TransactionRow";
-import type { Pocket } from "../components/PocketCard";
+import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
-
-// Same caveat as HomeScreen: mock data standing in for a real
-// GET /api/v1/pockets/:id call once the `pockets` package (currently a
-// stub) has something to return. `route.params.pocketId` is already wired
-// through navigation so swapping this lookup for a real fetch is the only
-// change needed later.
-const MOCK_POCKETS_BY_ID: Record<string, Pocket> = {
-  pocket_1: { id: "pocket_1", name: "Emergency Fund", savedMinor: 240_000_000, targetMinor: 500_000_000 },
-  pocket_2: { id: "pocket_2", name: "Bali Trip", savedMinor: 185_000_000, targetMinor: 600_000_000 },
-  pocket_3: { id: "pocket_3", name: "New Laptop", savedMinor: 420_000_000, targetMinor: 1_200_000_000 },
-};
-
-const MOCK_HISTORY: Omit<Transaction, "icon">[] = [
-  { id: "h1", name: "Transfer from Main", dateLabel: "3 days ago", amountMinor: 50_000_000 },
-  { id: "h2", name: "Auto-save (weekly)", dateLabel: "1 week ago", amountMinor: 20_000_000 },
-  { id: "h3", name: "Withdraw to Main", dateLabel: "2 weeks ago", amountMinor: -15_000_000 },
-];
+import { getPocket, listPockets, listPocketTransactions } from "@/data";
 
 function formatIDR(minor: number) {
   return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
@@ -35,7 +18,11 @@ function formatIDR(minor: number) {
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
 export default function PocketDetailScreen({ navigation, route }: Props) {
-  const pocket = MOCK_POCKETS_BY_ID[route.params.pocketId] ?? MOCK_POCKETS_BY_ID.pocket_1;
+  // Falls back to the first pocket only as a defensive guard against a bad
+  // id ever reaching this screen — every real navigation call passes a
+  // known pocket id, so this shouldn't be reachable in practice.
+  const pocket = getPocket(route.params.pocketId) ?? listPockets()[0];
+  const history = listPocketTransactions(pocket.id);
   const pct = pocket.targetMinor > 0 ? Math.min(1, pocket.savedMinor / pocket.targetMinor) : 0;
 
   return (
@@ -82,7 +69,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
         {/* History */}
         <View className="pb-8 pt-4" style={{ gap: 4 }}>
           <Text className="px-6 pb-2 text-lg font-semibold text-slate-900">History</Text>
-          {MOCK_HISTORY.length === 0 ? (
+          {history.length === 0 ? (
             <EmptyState
               icon={<IconInbox size={22} color={colors.neutral500} />}
               title="No activity yet"
@@ -90,7 +77,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
             />
           ) : (
             <View className="px-6">
-              {MOCK_HISTORY.map((tx) => (
+              {history.map((tx) => (
                 <TransactionRow
                   key={tx.id}
                   {...tx}

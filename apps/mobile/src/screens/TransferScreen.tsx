@@ -2,26 +2,13 @@ import React, { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../App";
+import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
 import { IconChevronLeft, IconPlus, IconPocket, IconSearch, IconUser } from "../components/icons";
 import SelectRow from "../components/SelectRow";
 import EmptyState from "../components/EmptyState";
-
-// Same mock-data caveat as Home/PocketDetail: standing in for real
-// GET /api/v1/pockets and GET /api/v1/beneficiaries calls.
-const MOCK_POCKETS = [
-  { id: "pocket_1", name: "Emergency Fund" },
-  { id: "pocket_2", name: "Bali Trip" },
-  { id: "pocket_3", name: "New Laptop" },
-];
-
-const MOCK_BENEFICIARIES = [
-  { id: "ben_1", name: "Sarah Putri", subtitle: "•••• 1092 · BCA" },
-  { id: "ben_2", name: "Andi Wijaya", subtitle: "•••• 4471 · Mandiri" },
-  { id: "ben_3", name: "Kos Melati (Rent)", subtitle: "•••• 2201 · BNI" },
-];
+import { listBeneficiaries, listPockets } from "@/data";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 
@@ -32,8 +19,10 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 // same shared AmountEntry screen.
 export default function TransferScreen({ navigation }: Props) {
   const [query, setQuery] = useState("");
+  const pockets = listPockets();
+  const beneficiaries = listBeneficiaries();
 
-  const filteredBeneficiaries = MOCK_BENEFICIARIES.filter((b) =>
+  const filteredBeneficiaries = beneficiaries.filter((b) =>
     b.name.toLowerCase().includes(query.toLowerCase())
   );
 
@@ -75,7 +64,7 @@ export default function TransferScreen({ navigation }: Props) {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 24, gap: 20 }}
           >
-            {MOCK_POCKETS.map((p) => (
+            {pockets.map((p) => (
               <Pressable
                 key={p.id}
                 onPress={() => goToAmount(p.id, `To ${p.name}`)}

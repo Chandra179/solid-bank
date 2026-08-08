@@ -77,6 +77,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: [
+      // Mirrors the "@/*" -> "src/*" alias in tsconfig.json (type-checking)
+      // and babel.config.js's module-resolver plugin (Metro/native builds)
+      // so "@/..." imports resolve the same way under the web build too.
+      { find: /^@\//, replacement: fileURLToPath(new URL("./src/", import.meta.url)) },
       {
         find: /^react-native$/,
         replacement: fileURLToPath(new URL("./src/native-stubs/react-native.web.ts", import.meta.url)),

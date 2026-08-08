@@ -2,18 +2,12 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../App";
+import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
 import { IconCard, IconChevronLeft } from "../components/icons";
 import SelectRow from "../components/SelectRow";
-
-// Standing in for a real GET /api/v1/funding-sources call once the BaaS
-// integration (apps/api/internal/baas) has a real provider behind it.
-const MOCK_SOURCES = [
-  { id: "src_bank", name: "Linked Bank Account", subtitle: "BCA •••• 4821" },
-  { id: "src_card", name: "Debit Card", subtitle: "Visa •••• 8842" },
-];
+import { listFundingSources } from "@/data";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 
@@ -21,6 +15,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 // short flat list (no search) since a user only has a handful of funding
 // sources, unlike the potentially long beneficiary list on Transfer.
 export default function TopUpScreen({ navigation }: Props) {
+  const sources = listFundingSources();
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
@@ -36,7 +32,7 @@ export default function TopUpScreen({ navigation }: Props) {
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="pb-1 text-[13px] font-semibold text-slate-500">Choose a source</Text>
-        {MOCK_SOURCES.map((s) => (
+        {sources.map((s) => (
           <SelectRow
             key={s.id}
             title={s.name}

@@ -1,14 +1,14 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { colors } from "../theme/colors";
+import type { Transaction as TransactionData } from "@/data";
 
-export type Transaction = {
-  id: string;
-  name: string;
-  dateLabel: string;
-  amountMinor: number; // positive = incoming/credit, negative = outgoing/debit
-  icon: React.ReactNode;
-};
+// Data shape (id/name/dateLabel/amountMinor) comes from @/data — `icon` is
+// added here because which icon a row renders is a presentation decision
+// made at the call site (Home picks incoming/outgoing icons one way,
+// PocketDetail picks a slightly different pair), not something the data
+// layer should know about.
+export type Transaction = TransactionData & { icon: React.ReactNode };
 
 function formatSignedIDR(minor: number) {
   const sign = minor < 0 ? "-" : "+";

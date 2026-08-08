@@ -18,12 +18,13 @@ const ITEMS: { key: NavKey; label: string; Icon: typeof IconHome }[] = [
 ];
 
 // Presentational bottom bar matching the Figma BottomNavItem row. Not wired
-// to @react-navigation/bottom-tabs (not in package.json yet) — swap this out
+// to @react-navigation/bottom-tabs (not in package.json) — swap this out
 // for a real bottom tab navigator once there's more than one tab-level
-// screen worth switching between.
+// screen worth switching between (Home and Profile currently; Cards is
+// still a placeholder tab with no destination).
 export default function BottomNav({ active, onChange }: BottomNavProps) {
   return (
-    <View className="flex-row justify-between border-t border-slate-200 bg-white px-8 pb-3 pt-3">
+    <View className="flex-row justify-between border-t border-slate-200 bg-white px-8 pb-6 pt-3">
       {ITEMS.map(({ key, label, Icon }) => {
         const isActive = key === active;
         const color = isActive ? colors.brand700 : colors.neutral400;

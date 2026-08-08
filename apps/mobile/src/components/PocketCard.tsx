@@ -2,13 +2,9 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { colors } from "../theme/colors";
 import { IconPocket } from "./icons";
+import type { Pocket } from "@/data";
 
-export type Pocket = {
-  id: string;
-  name: string;
-  savedMinor: number;
-  targetMinor: number;
-};
+export type { Pocket };
 
 type PocketCardProps = {
   pocket: Pocket;

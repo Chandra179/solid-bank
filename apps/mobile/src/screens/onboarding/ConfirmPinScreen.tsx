@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../../../App";
+import type { RootStackParamList } from "@/navigation/types";
 
 import NumericKeypad from "../../components/NumericKeypad";
 import DigitEntry from "../../components/DigitEntry";

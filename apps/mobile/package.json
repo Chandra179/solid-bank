@@ -39,6 +39,7 @@
     "@types/react": "^19.1.1",
     "@vitejs/plugin-react": "^5.2.0",
     "autoprefixer": "^10.5.4",
+    "babel-plugin-module-resolver": "^5.0.2",
     "openapi-typescript": "^7.0.0",
     "react-dom": "^19.2.3",
     "react-native-dotenv": "^3.4.12",
