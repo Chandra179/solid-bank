@@ -186,3 +186,38 @@ export function IconProfile({ size = 24, color = "#000" }: IconProps) {
     </Svg>
   );
 }
+
+// Alias — SelectRow's default avatar uses the same glyph as IconProfile but
+// under a name that reads correctly at call sites picking a person icon.
+export const IconUser = IconProfile;
+
+export function IconSearch({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Circle cx={11} cy={11} r={7} stroke={color} strokeWidth={2} />
+      <Path d="m20 20-3.5-3.5" stroke={color} strokeWidth={2} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+export function IconCheck({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path d="M20 6 9 17l-5-5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function IconBackspace({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M9 6h11a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-6-6 6-6Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <Path d="m13 10 4 4M17 10l-4 4" stroke={color} strokeWidth={2} strokeLinecap="round" />
+    </Svg>
+  );
+}

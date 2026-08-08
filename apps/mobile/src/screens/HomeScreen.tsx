@@ -1,16 +1,15 @@
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { CompositeScreenProps } from "@react-navigation/native";
-import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { RootStackParamList, TabParamList } from "../../App";
+import type { RootStackParamList } from "../../App";
 
 import { colors } from "../theme/colors";
 import { IconBell, IconMore, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft } from "../components/icons";
 import QuickAction from "../components/QuickAction";
 import PocketCard, { type Pocket } from "../components/PocketCard";
 import TransactionRow, { type Transaction } from "../components/TransactionRow";
+import BottomNav from "../components/BottomNav";
 
 // Mock data standing in for real API calls (GET /api/v1/accounts/:id,
 // GET /api/v1/pockets, GET /api/v1/transactions) — the accounts/pockets/
@@ -40,10 +39,7 @@ function formatIDR(minor: number) {
   return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
 }
 
-type Props = CompositeScreenProps<
-  BottomTabScreenProps<TabParamList, "Home">,
-  NativeStackScreenProps<RootStackParamList>
->;
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
   return (
@@ -69,8 +65,16 @@ export default function HomeScreen({ navigation }: Props) {
               <Text className="text-[11px] text-brand-50">{MOCK_ACCOUNT_MASK} · IDR</Text>
             </View>
             <View className="flex-row justify-between">
-              <QuickAction label="Top Up" icon={<IconPlus size={22} color={colors.brand700} />} />
-              <QuickAction label="Transfer" icon={<IconTransfer size={22} color={colors.brand700} />} />
+              <QuickAction
+                label="Top Up"
+                icon={<IconPlus size={22} color={colors.brand700} />}
+                onPress={() => navigation.navigate("TopUp")}
+              />
+              <QuickAction
+                label="Transfer"
+                icon={<IconTransfer size={22} color={colors.brand700} />}
+                onPress={() => navigation.navigate("Transfer")}
+              />
               <QuickAction
                 label="Pockets"
                 icon={<IconPocket size={22} color={colors.brand700} />}
@@ -125,6 +129,14 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </View>
       </ScrollView>
+      <BottomNav
+        active="home"
+        onChange={(key) => {
+          if (key === "pockets") navigation.navigate("Pockets");
+          if (key === "cards") navigation.navigate("Cards");
+          if (key === "profile") navigation.navigate("Profile");
+        }}
+      />
     </SafeAreaView>
   );
 }
