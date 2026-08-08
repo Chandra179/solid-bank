@@ -5,9 +5,10 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconCheck, IconShield } from "../components/icons";
+import { IconCheck, IconShield, IconBell, IconHelp } from "../components/icons";
 import Button from "../components/Button";
 import BottomNav from "../components/BottomNav";
+import SelectRow from "../components/SelectRow";
 import { getAccountSummary, getUserProfile } from "@/data";
 import { useSessionStore } from "../store/session";
 
@@ -69,14 +70,54 @@ export default function ProfileScreen({ navigation }: Props) {
           </View>
         </View>
 
-        {/* Deliberately just Log out for now rather than a full settings
-            menu (Security, Notifications, Help, etc.) — this screen's job
-            was closing the identity/KYC/sign-out gaps, not designing a
-            settings IA from scratch. A fuller menu is a reasonable next
-            addition once there's real functionality behind each row;
-            adding rows with onPress={() => {}} here would just be more of
-            the dead-tap debt already flagged elsewhere in the app. */}
-        <View className="px-6 pt-8 pb-4">
+        {/* Real settings rows, each routed to the same ComingSoon
+            placeholder every other not-built-yet destination in the app
+            uses — closes the gap flagged in the last review (this screen
+            previously had nowhere for Security/Notifications/Help to live
+            at all) without pretending there's a real settings flow behind
+            any of them yet. */}
+        <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
+          <SelectRow
+            title="Security"
+            subtitle="PIN, biometrics, device management"
+            icon={<IconShield size={18} color={colors.neutral500} />}
+            onPress={() =>
+              navigation.navigate("ComingSoon", {
+                title: "Security",
+                message: "PIN changes, biometrics, and device management aren't wired up yet.",
+                icon: "security",
+              })
+            }
+          />
+          <View className="h-px bg-slate-100" />
+          <SelectRow
+            title="Notifications"
+            subtitle="Alerts, limits, marketing preferences"
+            icon={<IconBell size={18} color={colors.neutral500} />}
+            onPress={() =>
+              navigation.navigate("ComingSoon", {
+                title: "Notifications",
+                message: "Notification preferences aren't wired up yet.",
+                icon: "notifications",
+              })
+            }
+          />
+          <View className="h-px bg-slate-100" />
+          <SelectRow
+            title="Help"
+            subtitle="Support, FAQs, contact us"
+            icon={<IconHelp size={18} color={colors.neutral500} />}
+            onPress={() =>
+              navigation.navigate("ComingSoon", {
+                title: "Help",
+                message: "In-app support isn't wired up yet — nothing to see here.",
+                icon: "help",
+              })
+            }
+          />
+        </View>
+
+        <View className="px-6 pt-6 pb-4">
           <Button label="Log out" variant="danger" onPress={logOut} />
         </View>
       </ScrollView>

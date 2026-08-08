@@ -286,6 +286,22 @@ export function IconLogout({ size = 24, color = "#000" }: IconProps) {
   );
 }
 
+export function IconHelp({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={2} />
+      <Path
+        d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5v.2"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Circle cx={12} cy={17} r={0.9} fill={color} />
+    </Svg>
+  );
+}
+
 export function IconBackspace({ size = 24, color = "#000" }: IconProps) {
   return (
     <Svg {...base(size)} fill="none">

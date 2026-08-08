@@ -3,7 +3,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconArrowUpRight, IconUser, IconBell, IconMore, IconEdit } from "../components/icons";
+import { IconArrowUpRight, IconUser, IconBell, IconMore, IconEdit, IconShield, IconHelp } from "../components/icons";
 import ComingSoon from "../components/ComingSoon";
 
 const ICONS = {
@@ -12,6 +12,8 @@ const ICONS = {
   notifications: <IconBell size={28} color={colors.brand700} />,
   more: <IconMore size={28} color={colors.brand700} />,
   edit: <IconEdit size={28} color={colors.brand700} />,
+  security: <IconShield size={28} color={colors.brand700} />,
+  help: <IconHelp size={28} color={colors.brand700} />,
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "ComingSoon">;

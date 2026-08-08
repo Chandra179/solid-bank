@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -20,6 +21,17 @@ type Props = NativeStackScreenProps<RootStackParamList, "Pockets">;
 // built for Home's horizontal row; this just gives that same data a
 // full, dedicated list view.
 export default function PocketsScreen({ navigation }: Props) {
+  // See HomeScreen for why: this screen stays mounted across navigations,
+  // so without a focus-triggered re-render, a pocket created via
+  // CreatePocketScreen doesn't show up here until the screen is torn down
+  // and remounted.
+  const [, forceRefresh] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      forceRefresh((n) => n + 1);
+    }, [])
+  );
+
   const pockets = listPockets();
 
   return (

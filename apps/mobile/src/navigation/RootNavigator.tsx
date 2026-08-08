@@ -14,6 +14,7 @@ import ConfirmScreen from "@/screens/ConfirmScreen";
 import VerifyPinScreen from "@/screens/VerifyPinScreen";
 import SuccessScreen from "@/screens/SuccessScreen";
 import ReceiptScreen from "@/screens/ReceiptScreen";
+import TransactionsScreen from "@/screens/TransactionsScreen";
 import ErrorScreen from "@/screens/ErrorScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
 import PocketsScreen from "@/screens/PocketsScreen";
@@ -69,6 +70,7 @@ export default function RootNavigator() {
             <Stack.Screen name="VerifyPin" component={VerifyPinScreen} />
             <Stack.Screen name="Success" component={SuccessScreen} options={{ gestureEnabled: false }} />
             <Stack.Screen name="Receipt" component={ReceiptScreen} />
+            <Stack.Screen name="Transactions" component={TransactionsScreen} />
             <Stack.Screen name="MoneyMoveError" component={ErrorScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             {/* Real screens for BottomNav's other two tabs, closing the

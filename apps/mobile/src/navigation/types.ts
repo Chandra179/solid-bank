@@ -37,7 +37,15 @@ export type RootStackParamList = {
   // have no real flow behind them yet (Withdraw, adding a recipient
   // manually). `icon` is a key rather than a React element so this stays a
   // plain serializable params object like every other route here.
-  ComingSoon: { title: string; message: string; icon: "withdraw" | "recipient" | "notifications" | "more" | "edit" };
+  ComingSoon: {
+    title: string;
+    message: string;
+    icon: "withdraw" | "recipient" | "notifications" | "more" | "edit" | "security" | "help";
+  };
+  // Real destination for Home's "Recent Transactions -> See all" link —
+  // reuses the same listRecentTransactions() data Home's own preview list
+  // already shows, just without the 3-item cap.
+  Transactions: undefined;
 
   // Onboarding (isAuthenticated === false)
   Welcome: undefined;

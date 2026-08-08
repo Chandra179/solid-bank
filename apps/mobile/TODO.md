@@ -6,20 +6,21 @@ they're found rather than re-discovering them from scratch next session.
 
 ## UX / product gaps
 
-- [ ] Home's greeting ("Good morning, Jack") is hardcoded, not time-of-day
-      aware. `src/screens/HomeScreen.tsx`
-- [ ] Home's "Recent Transactions → See all" link is a dead tap (no
-      onPress). No dedicated all-transactions screen exists yet — needs
-      one, or route to ComingSoon in the meantime. `src/screens/HomeScreen.tsx`
-- [ ] Screens don't refresh mock data on focus. E.g. create a pocket, go
-      back to the Pockets list — it still shows the old count until the
-      screen is torn down and remounted. Same gap likely affects Home's
-      balance after Add Money. No navigation focus listeners exist
-      anywhere in the app yet.
-- [ ] No real settings surface (Security / Notifications / Help) —
-      intentionally left off Profile rather than added as dead rows; still
-      a gap, just a bigger one (new screens, not a quick wire-up).
-      `src/screens/ProfileScreen.tsx`
+- [x] Home's greeting is now time-of-day aware (`getGreeting()` in
+      `src/utils/greeting.ts`) and uses the real user name instead of a
+      hardcoded "Jack".
+- [x] Home's "Recent Transactions → See all" now opens a real
+      `TransactionsScreen` (`src/screens/TransactionsScreen.tsx`) instead
+      of doing nothing.
+- [x] Home, Pockets, and PocketDetail now refresh their mock-data reads on
+      focus (`useFocusEffect` + a re-render counter), so e.g. a pocket
+      created via CreatePocketScreen shows up immediately on goBack instead
+      of needing a full remount. Not yet applied to every screen that reads
+      mock data (e.g. TransferScreen's pocket row, Confirm) — extend the
+      same pattern there if staleness shows up.
+- [x] Profile now has real Security / Notifications / Help rows, each
+      routed to the same ComingSoon placeholder every other not-built-yet
+      destination uses. `src/screens/ProfileScreen.tsx`
 
 ## Code quality / tech debt
 

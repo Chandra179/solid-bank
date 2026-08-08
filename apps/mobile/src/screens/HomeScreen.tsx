@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -11,7 +12,8 @@ import PocketCard from "../components/PocketCard";
 import TransactionRow from "../components/TransactionRow";
 import BottomNav from "../components/BottomNav";
 import EmptyState from "../components/EmptyState";
-import { getAccountSummary, listPockets, listRecentTransactions } from "@/data";
+import { getAccountSummary, getUserProfile, listPockets, listRecentTransactions } from "@/data";
+import { getGreeting } from "@/utils/greeting";
 
 function formatIDR(minor: number) {
   return `Rp ${Math.round(minor / 100).toLocaleString("id-ID")}`;
@@ -20,9 +22,24 @@ function formatIDR(minor: number) {
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
+  // Every screen that reads from the mock data layer only recomputes on
+  // render, and React Navigation keeps this screen mounted across
+  // navigations — so without this, Home's balance/pockets/transactions go
+  // stale after e.g. Add Money or Create Pocket until the app is fully
+  // remounted. Bumping a dummy counter on focus is enough to force a
+  // re-render (and therefore a fresh read) without needing this screen to
+  // know *what* changed elsewhere.
+  const [, forceRefresh] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      forceRefresh((n) => n + 1);
+    }, [])
+  );
+
   const account = getAccountSummary();
   const pockets = listPockets();
   const transactions = listRecentTransactions();
+  const user = getUserProfile();
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -30,7 +47,7 @@ export default function HomeScreen({ navigation }: Props) {
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
           <View style={{ gap: 2 }}>
-            <Text className="text-2xl font-semibold text-slate-900">Good morning, Jack</Text>
+            <Text className="text-2xl font-semibold text-slate-900">{getGreeting()}, {user.name}</Text>
             <Text className="text-[13px] text-slate-500">Here's your account today</Text>
           </View>
           <Pressable
@@ -126,7 +143,12 @@ export default function HomeScreen({ navigation }: Props) {
         <View className="pb-6 pt-6" style={{ gap: 4 }}>
           <View className="flex-row items-center justify-between px-6 pb-2">
             <Text className="text-lg font-semibold text-slate-900">Recent Transactions</Text>
-            <Text className="text-[13px] font-semibold text-brand-700">See all</Text>
+            <Text
+              onPress={() => navigation.navigate("Transactions")}
+              className="text-[13px] font-semibold text-brand-700"
+            >
+              See all
+            </Text>
           </View>
           {transactions.length === 0 ? (
             <EmptyState

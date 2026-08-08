@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -18,6 +19,16 @@ function formatIDR(minor: number) {
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
 export default function PocketDetailScreen({ navigation, route }: Props) {
+  // See HomeScreen for why: without this, adding money to this pocket and
+  // landing back here (Success -> Done -> ... -> back to this screen)
+  // would still show the pre-transfer balance until remounted.
+  const [, forceRefresh] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      forceRefresh((n) => n + 1);
+    }, [])
+  );
+
   // Falls back to the first pocket only as a defensive guard against a bad
   // id ever reaching this screen — every real navigation call passes a
   // known pocket id, so this shouldn't be reachable in practice.
