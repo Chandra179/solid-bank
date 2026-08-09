@@ -24,7 +24,7 @@ export default function OnboardingCompleteScreen() {
           <IconCheck size={28} color={colors.success500} />
         </View>
         <Text className="text-xl font-semibold text-slate-900">You're all set</Text>
-        <Text className="max-w-[280px] text-center text-[13px] text-slate-500">
+        <Text className="max-w-[280px] text-center text-body text-slate-500">
           Your account is ready. Full limits unlock once identity verification finishes — we'll notify you.
         </Text>
       </View>

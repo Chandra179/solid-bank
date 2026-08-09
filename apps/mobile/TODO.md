@@ -12,11 +12,14 @@ they're found rather than re-discovering them from scratch next session.
 - [x] Home's "Recent Transactions → See all" now opens a real
       `TransactionsScreen` (`src/screens/TransactionsScreen.tsx`) instead
       of doing nothing.
-- [x] Home, Pockets, PocketDetail, and now Transfer refresh their mock-data
-      reads on focus (`useFocusEffect` + a re-render counter), so e.g. a
-      pocket created via CreatePocketScreen or a beneficiary added via
-      AddRecipientScreen shows up immediately on goBack instead of needing
-      a full remount.
+- [x] Home, Pockets, PocketDetail, Transfer, and Transactions refresh their
+      mock-data reads on focus, so e.g. a pocket created via
+      CreatePocketScreen or a beneficiary added via AddRecipientScreen
+      shows up immediately on goBack instead of needing a full remount.
+      The `useState` + `useFocusEffect` block was previously copy-pasted
+      into all five screens individually; it's now one shared
+      `useRefreshOnFocus()` hook (`src/hooks/useRefreshOnFocus.ts`), so
+      there's one implementation to keep in sync instead of five.
 - [x] Profile now has real Security / Notifications / Help rows, each
       routed to the same ComingSoon placeholder every other not-built-yet
       destination uses. `src/screens/ProfileScreen.tsx`
@@ -35,12 +38,16 @@ they're found rather than re-discovering them from scratch next session.
       other fixes in this pass (Home, Confirm, PocketDetail, Success,
       Receipt). Spacing tokens live in `src/theme/spacing.ts` for the
       inline `style={{ gap }}` values, same treatment.
-      **Not yet swept app-wide** — TransferScreen, AmountEntryScreen,
-      TopUpScreen, ProfileScreen, PocketsScreen, CreatePocketScreen,
-      TransactionsScreen, ComingSoon, and the onboarding screens still
-      have raw `text-[13px]`-style arbitrary values. The old values still
-      work (this was additive, not a breaking rename), so this is safe to
-      pick up incrementally rather than as one big sweep.
+      **Now swept app-wide** — the remaining 19 screens/components a
+      design audit flagged (TransferScreen, AmountEntryScreen, TopUpScreen,
+      ProfileScreen, CreatePocketScreen, EditPocketScreen,
+      AddRecipientScreen, VerifyPinScreen, ErrorScreen, ComingSoon, and
+      every onboarding screen) had their raw `text-[11px]`/`text-[13px]`/
+      `text-[15px]` values swapped 1:1 for `text-caption`/`text-body`/
+      `text-label`. Pure token substitution — the underlying px values are
+      unchanged, so nothing shifted visually. `Rp` currency-prefix glyphs
+      and the OTP-resend countdown kept their raw sizing since they're
+      decorative/disabled-state text, not body copy.
 - [x] `QuickAction` takes a real `labelColor` prop (defaults to white,
       matching every current call site) instead of a hardcoded className.
       `src/components/QuickAction.tsx`
@@ -170,6 +177,49 @@ screen.
       `HomeScreen`'s preview is now explicitly capped at 3 (`.slice(0, 3)`)
       so its "recent" list stays a short preview rather than growing with
       the richer dataset underneath it.
+
+## Design audit fixes
+
+A senior UI/UX pass (documented separately, not checked in) flagged six
+issues; all are now addressed:
+
+- [x] **Every `Button` rendered with no visible fill/border.**
+      `Button.tsx` wrapped its pill styling directly on
+      `Animated.createAnimatedComponent(Pressable)`; in at least one render
+      path that wrapper wasn't processing its NativeWind `className`, so
+      every primary/secondary/danger button (including the Welcome
+      screen's "Get Started" and ErrorScreen's "Try Again") rendered as
+      invisible text with no chrome. Fixed by moving all visual styling
+      onto a plain, non-animated inner `View`; `AnimatedPressable` now only
+      owns the touch target and the opacity fade. Still worth a real
+      on-device check — this can only be confirmed as fixed in the same
+      web-preview harness the bug was found in.
+- [x] **Welcome screen's "Get Started" sat flush against the left edge,
+      uncentered.** Same root cause as above — fixed as a side effect of
+      the `Button` change, since it was the button's own missing
+      `items-center`/padding, not a WelcomeScreen layout bug.
+- [x] **AmountEntry screens had ~300-400px of dead space** between the
+      quick-amount chips and the keypad (Withdraw/Transfer/TopUp/QR Pay all
+      share this screen). Changed the amount block from
+      `justify-center` to `justify-end`, pulling it down next to the
+      keypad instead of floating in the vertical middle.
+- [x] **Contrast: some real (non-placeholder) captions used
+      `text-slate-400`**, under WCAG AA's 4.5:1 minimum on white — the
+      AmountEntry context sub-label, Spending Insights' "spent across N
+      categories," ErrorScreen's "No money has left your account," and
+      notification timestamps. Bumped those four to `text-slate-500`.
+      Left `Rp` currency-prefix glyphs and the OTP-resend countdown at
+      `slate-400` — those are decorative/disabled-state text, not content.
+- [x] **Dead white space below short lists** (Top Up's 2 sources,
+      Notifications' handful of items). Added a real, honest closing note
+      pinned to the bottom of each screen ("More funding sources coming
+      soon." / "That's everything for now.") instead of leaving the space
+      inert. Cards (ComingSoon) and Help were left as-is — Cards is a
+      deliberately calm empty state, and Help already has real content
+      density between its FAQ list and the "Contact support" row.
+      `PocketDetailScreen`'s Withdraw button affordance (no visible chrome
+      beyond the styling bug) is resolved by the `Button` fix above — worth
+      a second look once that's verified on-device.
 
 ## Testing / infra
 

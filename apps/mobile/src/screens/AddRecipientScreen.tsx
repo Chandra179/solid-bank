@@ -65,7 +65,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
             placeholder="e.g. Budi Santoso"
             placeholderTextColor={colors.neutral400}
             maxLength={40}
-            className="rounded-xl border border-slate-200 px-4 py-3.5 text-[15px] text-slate-900"
+            className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
@@ -82,7 +82,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
                 }}
               >
                 <Text
-                  className="text-[13px] font-medium"
+                  className="text-body font-medium"
                   style={{ color: bank === b ? colors.brand700 : colors.neutral700 }}
                 >
                   {b}
@@ -99,7 +99,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
             placeholder="1234567890"
             placeholderTextColor={colors.neutral400}
             keyboardType="number-pad"
-            className="rounded-xl border border-slate-200 px-4 py-3.5 text-[15px] text-slate-900"
+            className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
       </View>

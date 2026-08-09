@@ -17,3 +17,6 @@ export { getAccountSummary } from "./mockAccount";
 export { getUserProfile } from "./mockUser";
 export { resolveMockQrCode } from "./mockMerchants";
 export { listNotifications, getUnreadNotificationCount, markNotificationRead } from "./mockNotifications";
+export { listCards, getCard, setCardFrozen } from "./mockCards";
+export type { Card } from "./mockCards";
+export { submitSupportMessage } from "./mockSupportMessages";

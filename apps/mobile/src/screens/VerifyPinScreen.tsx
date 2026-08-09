@@ -140,7 +140,7 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">Enter your PIN</Text>
-        <Text className="text-[13px] text-slate-500">
+        <Text className="text-body text-slate-500">
           Confirm it's you before this {flow === "transfer" ? "transfer" : flow === "withdraw" ? "withdrawal" : "top up"} goes through.
         </Text>
       </View>
@@ -150,8 +150,8 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
           flex-1 space. */}
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
-        {error ? <Text className="text-[13px] font-medium text-red-600">{error}</Text> : null}
-        {submitting ? <Text className="text-[13px] font-medium text-slate-500">Confirming…</Text> : null}
+        {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}
+        {submitting ? <Text className="text-body font-medium text-slate-500">Confirming…</Text> : null}
       </View>
 
       <View className="flex-1" />

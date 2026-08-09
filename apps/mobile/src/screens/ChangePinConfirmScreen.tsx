@@ -1,19 +1,27 @@
 import React, { useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
-import NumericKeypad from "../../components/NumericKeypad";
-import DigitEntry from "../../components/DigitEntry";
-import { useSessionStore } from "../../store/session";
+import { colors } from "../theme/colors";
+import { IconChevronLeft } from "../components/icons";
+import NumericKeypad from "../components/NumericKeypad";
+import DigitEntry from "../components/DigitEntry";
+import { useSessionStore } from "../store/session";
 
 const PIN_LENGTH = 6;
 
-type Props = NativeStackScreenProps<RootStackParamList, "ConfirmPin">;
+type Props = NativeStackScreenProps<RootStackParamList, "ChangePinConfirm">;
 
-export default function ConfirmPinScreen({ navigation, route }: Props) {
-  const { pin: originalPin } = route.params;
+// Step 3 of 3: re-enter the new PIN to catch typos, then actually persist
+// it. Unlike onboarding's ConfirmPinScreen (which finishes into
+// OnboardingComplete), this navigates back to Security — it's already in
+// the stack from Security -> ChangePin -> ChangePinNew -> here, so
+// `navigate` pops back to that existing instance and merges the
+// `pinJustChanged` param in, rather than pushing a fourth screen.
+export default function ChangePinConfirmScreen({ navigation, route }: Props) {
+  const { newPin } = route.params;
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const advancing = useRef(false);
@@ -28,12 +36,9 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
       if (next.length === PIN_LENGTH) {
         advancing.current = true;
         setTimeout(() => {
-          if (next === originalPin) {
-            // This is the only place the PIN actually gets persisted —
-            // see the caveat in store/session.ts about why this is a demo
-            // simplification, not a real security pattern.
-            persistPin(originalPin);
-            navigation.navigate("OnboardingComplete");
+          if (next === newPin) {
+            persistPin(newPin);
+            navigation.navigate("Security", { pinJustChanged: true });
           } else {
             setError("PINs don't match. Try again.");
             setPin("");
@@ -51,13 +56,22 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
+      <View className="px-6 pb-2 pt-5">
+        <Pressable
+          onPress={() => navigation.goBack()}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+        >
+          <IconChevronLeft size={20} color={colors.neutral700} />
+        </Pressable>
+      </View>
+
       <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="text-2xl font-semibold text-slate-900">Confirm your PIN</Text>
+        <Text className="text-2xl font-semibold text-slate-900">Confirm your new PIN</Text>
         <Text className="text-body text-slate-500">Enter it once more to make sure it's right.</Text>
       </View>
 
-      {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)
-          rather than vertically centered in the leftover flex-1 space. */}
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
         {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}

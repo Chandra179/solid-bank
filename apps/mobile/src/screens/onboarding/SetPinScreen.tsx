@@ -40,7 +40,7 @@ export default function SetPinScreen({ navigation }: Props) {
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">Create a PIN</Text>
-        <Text className="text-[13px] text-slate-500">You'll use this to confirm transfers and top ups.</Text>
+        <Text className="text-body text-slate-500">You'll use this to confirm transfers and top ups.</Text>
       </View>
 
       {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)

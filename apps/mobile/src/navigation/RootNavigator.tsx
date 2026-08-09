@@ -29,6 +29,10 @@ import EditPocketScreen from "@/screens/EditPocketScreen";
 import SecurityScreen from "@/screens/SecurityScreen";
 import HelpScreen from "@/screens/HelpScreen";
 import SpendingInsightsScreen from "@/screens/SpendingInsightsScreen";
+import ChangePinScreen from "@/screens/ChangePinScreen";
+import ChangePinNewScreen from "@/screens/ChangePinNewScreen";
+import ChangePinConfirmScreen from "@/screens/ChangePinConfirmScreen";
+import ContactSupportScreen from "@/screens/ContactSupportScreen";
 
 import WelcomeScreen from "@/screens/onboarding/WelcomeScreen";
 import PhoneEntryScreen from "@/screens/onboarding/PhoneEntryScreen";
@@ -82,11 +86,9 @@ export default function RootNavigator() {
             <Stack.Screen name="Transactions" component={TransactionsScreen} />
             <Stack.Screen name="MoneyMoveError" component={ErrorScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
-            {/* Real screens for BottomNav's other two tabs, closing the
-                "tab does nothing" gap — Pockets/Cards were already built as
-                ComingSoon placeholders (src/screens/PocketsScreen.tsx,
-                CardsScreen.tsx) but never wired into the navigator, so
-                tapping either tab silently did nothing. */}
+            {/* Real screens for BottomNav's other two tabs — Pockets and
+                Cards both used to be placeholders (Cards was a full-tab
+                ComingSoon with nothing behind it at all); both are real now. */}
             <Stack.Screen name="Pockets" component={PocketsScreen} />
             <Stack.Screen name="CreatePocket" component={CreatePocketScreen} />
             <Stack.Screen name="Cards" component={CardsScreen} />
@@ -98,6 +100,10 @@ export default function RootNavigator() {
             <Stack.Screen name="Security" component={SecurityScreen} />
             <Stack.Screen name="Help" component={HelpScreen} />
             <Stack.Screen name="SpendingInsights" component={SpendingInsightsScreen} />
+            <Stack.Screen name="ChangePin" component={ChangePinScreen} />
+            <Stack.Screen name="ChangePinNew" component={ChangePinNewScreen} />
+            <Stack.Screen name="ChangePinConfirm" component={ChangePinConfirmScreen} />
+            <Stack.Screen name="ContactSupport" component={ContactSupportScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>

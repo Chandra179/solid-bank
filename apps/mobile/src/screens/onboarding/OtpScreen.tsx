@@ -71,16 +71,16 @@ export default function OtpScreen({ navigation, route }: Props) {
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">Enter the code</Text>
-        <Text className="text-[13px] text-slate-500">We sent a 6-digit code to {phone}</Text>
+        <Text className="text-body text-slate-500">We sent a 6-digit code to {phone}</Text>
       </View>
 
       {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)
           rather than vertically centered in the leftover flex-1 space. */}
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={CODE_LENGTH} value={code} />
-        {error ? <Text className="text-[13px] font-medium text-red-600">{error}</Text> : null}
+        {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}
         <Pressable disabled={secondsLeft > 0} onPress={() => setSecondsLeft(RESEND_SECONDS)}>
-          <Text className={`text-[13px] font-semibold ${secondsLeft > 0 ? "text-slate-400" : "text-brand-700"}`}>
+          <Text className={`text-body font-semibold ${secondsLeft > 0 ? "text-slate-400" : "text-brand-700"}`}>
             {secondsLeft > 0 ? `Resend code in 00:${String(secondsLeft).padStart(2, "0")}` : "Resend code"}
           </Text>
         </Pressable>

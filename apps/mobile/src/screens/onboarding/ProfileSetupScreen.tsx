@@ -36,22 +36,22 @@ export default function ProfileSetupScreen({ navigation }: Props) {
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">A few details</Text>
-        <Text className="text-[13px] text-slate-500">This should match your KTP — we'll check it in a moment.</Text>
+        <Text className="text-body text-slate-500">This should match your KTP — we'll check it in a moment.</Text>
       </View>
 
       <View className="px-6 pt-8" style={{ gap: 16 }}>
         <View style={{ gap: 6 }}>
-          <Text className="text-[13px] font-semibold text-slate-700">Full name</Text>
+          <Text className="text-body font-semibold text-slate-700">Full name</Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="As shown on your KTP"
             placeholderTextColor={colors.neutral400}
-            className="rounded-xl border border-slate-200 px-4 py-3.5 text-[15px] text-slate-900"
+            className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-[13px] font-semibold text-slate-700">Email</Text>
+          <Text className="text-body font-semibold text-slate-700">Email</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
@@ -59,7 +59,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
             placeholderTextColor={colors.neutral400}
             autoCapitalize="none"
             keyboardType="email-address"
-            className="rounded-xl border border-slate-200 px-4 py-3.5 text-[15px] text-slate-900"
+            className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
       </View>

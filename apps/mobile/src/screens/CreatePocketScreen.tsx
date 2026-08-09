@@ -67,34 +67,34 @@ export default function CreatePocketScreen({ navigation }: Props) {
           <IconPocket size={24} color={colors.brand700} />
         </View>
         <Text className="text-2xl font-semibold text-slate-900">New pocket</Text>
-        <Text className="text-center text-[13px] text-slate-500">
+        <Text className="text-center text-body text-slate-500">
           Give it a name and a goal — you can add money to it right away.
         </Text>
       </View>
 
       <View className="px-6 pt-8" style={{ gap: 16 }}>
         <View style={{ gap: 6 }}>
-          <Text className="text-[13px] font-semibold text-slate-700">Pocket name</Text>
+          <Text className="text-body font-semibold text-slate-700">Pocket name</Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="e.g. New Phone"
             placeholderTextColor={colors.neutral400}
             maxLength={40}
-            className="rounded-xl border border-slate-200 px-4 py-3.5 text-[15px] text-slate-900"
+            className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-[13px] font-semibold text-slate-700">Goal amount</Text>
+          <Text className="text-body font-semibold text-slate-700">Goal amount</Text>
           <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
-            <Text className="text-[15px] font-medium text-slate-400">Rp</Text>
+            <Text className="text-label font-medium text-slate-400">Rp</Text>
             <TextInput
               value={formatRupiahInput(goalDigits)}
               onChangeText={handleGoalChange}
               placeholder="0"
               placeholderTextColor={colors.neutral400}
               keyboardType="number-pad"
-              className="ml-2 flex-1 text-[15px] text-slate-900"
+              className="ml-2 flex-1 text-label text-slate-900"
             />
           </View>
         </View>

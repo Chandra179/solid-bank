@@ -7,7 +7,8 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconCard, IconChevronLeft } from "../components/icons";
 import SelectRow from "../components/SelectRow";
-import { listFundingSources } from "@/data";
+import { listFundingSources, listCards } from "@/data";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 
@@ -15,7 +16,20 @@ type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 // short flat list (no search) since a user only has a handful of funding
 // sources, unlike the potentially long beneficiary list on Transfer.
 export default function TopUpScreen({ navigation }: Props) {
+  // See useRefreshOnFocus for why: freezing the card on CardsScreen and
+  // coming straight back here should immediately show it as unavailable,
+  // not the stale pre-freeze state.
+  useRefreshOnFocus();
+
   const sources = listFundingSources();
+  // The "Debit Card" funding source and CardsScreen's card are the same
+  // physical card (linked via Card.fundingSourceId) — freezing it there
+  // should actually block it as a top-up source here, not just say so.
+  const frozenSourceIds = new Set(
+    listCards()
+      .filter((c) => c.frozen && c.fundingSourceId)
+      .map((c) => c.fundingSourceId)
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
@@ -32,24 +46,36 @@ export default function TopUpScreen({ navigation }: Props) {
         <View className="h-10 w-10" />
       </View>
 
-      <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="pb-1 text-[13px] font-semibold text-slate-500">Choose a source</Text>
-        {sources.map((s) => (
-          <SelectRow
-            key={s.id}
-            title={s.name}
-            subtitle={s.subtitle}
-            icon={<IconCard size={18} color={colors.neutral500} />}
-            onPress={() =>
-              navigation.navigate("AmountEntry", {
-                flow: "topup",
-                contextId: s.id,
-                contextLabel: `From ${s.name}`,
-                contextSubLabel: s.subtitle,
-              })
-            }
-          />
-        ))}
+      <View className="flex-1 px-6 pt-4" style={{ gap: 4 }}>
+        <Text className="pb-1 text-body font-semibold text-slate-500">Choose a source</Text>
+        {sources.map((s) => {
+          const frozen = frozenSourceIds.has(s.id);
+          return (
+            <SelectRow
+              key={s.id}
+              title={s.name}
+              subtitle={frozen ? "Frozen — unfreeze it in Cards to use this source" : s.subtitle}
+              icon={<IconCard size={18} color={colors.neutral500} />}
+              disabled={frozen}
+              disabledLabel="Frozen"
+              onPress={() =>
+                navigation.navigate("AmountEntry", {
+                  flow: "topup",
+                  contextId: s.id,
+                  contextLabel: `From ${s.name}`,
+                  contextSubLabel: s.subtitle,
+                })
+              }
+            />
+          );
+        })}
+        {/* A short, flat list like this one otherwise leaves most of the
+            screen blank below the last row — a real, honest note (not
+            filler) closes that gap instead of leaving it inert. */}
+        <View className="flex-1" />
+        <Text className="pb-6 text-center text-caption text-slate-500">
+          More funding sources coming soon.
+        </Text>
       </View>
     </SafeAreaView>
   );

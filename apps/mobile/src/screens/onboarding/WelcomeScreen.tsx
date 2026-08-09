@@ -25,7 +25,7 @@ export default function WelcomeScreen({ navigation }: Props) {
           <IconPocket size={36} color={colors.neutral0} />
         </View>
         <Text className="text-3xl font-bold text-white">Solid Bank</Text>
-        <Text className="max-w-[260px] text-center text-[15px] text-brand-50">
+        <Text className="max-w-[260px] text-center text-label text-brand-50">
           Save toward your goals, move money, and keep everything in one place.
         </Text>
       </View>
@@ -34,7 +34,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         <Button label="Get Started" variant="secondary" onPress={() => navigation.navigate("PhoneEntry")} />
         <Text
           onPress={() => navigation.navigate("PhoneEntry")}
-          className="text-center text-[13px] font-semibold text-white"
+          className="text-center text-body font-semibold text-white"
         >
           I already have an account
         </Text>

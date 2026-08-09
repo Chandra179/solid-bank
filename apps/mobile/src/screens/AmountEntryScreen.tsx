@@ -68,19 +68,19 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
         <View className="items-center">
-          <Text className="text-[13px] font-semibold text-slate-500">{contextLabel}</Text>
-          {contextSubLabel ? <Text className="text-[11px] text-slate-400">{contextSubLabel}</Text> : null}
+          <Text className="text-body font-semibold text-slate-500">{contextLabel}</Text>
+          {contextSubLabel ? <Text className="text-caption text-slate-500">{contextSubLabel}</Text> : null}
         </View>
         <View className="h-10 w-10" />
       </View>
 
-      <View className="flex-1 items-center justify-center px-6" style={{ gap: 16 }}>
+      <View className="flex-1 items-center justify-end px-6 pb-10" style={{ gap: 16 }}>
         <View className="flex-row items-baseline" style={{ gap: 4 }}>
           <Text className="text-2xl font-semibold text-slate-400">Rp</Text>
           <Text className="text-5xl font-bold text-slate-900">{formatRupiah(amountRupiah)}</Text>
         </View>
         {exceedsBalance ? (
-          <Text className="text-[13px] font-medium text-red-600">
+          <Text className="text-body font-medium text-red-600">
             {flow === "withdraw" ? "Exceeds pocket balance" : "Exceeds available balance"}
           </Text>
         ) : null}
@@ -92,12 +92,12 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
               onPress={() => setQuickAmount(amt)}
               className="rounded-full border border-slate-200 px-4 py-2"
             >
-              <Text className="text-[13px] font-medium text-slate-700">{amt / 1000}rb</Text>
+              <Text className="text-body font-medium text-slate-700">{amt / 1000}rb</Text>
             </Pressable>
           ))}
           {cap !== undefined ? (
             <Pressable onPress={setMax} className="rounded-full border border-slate-200 px-4 py-2">
-              <Text className="text-[13px] font-medium text-slate-700">Max</Text>
+              <Text className="text-body font-medium text-slate-700">Max</Text>
             </Pressable>
           ) : null}
         </View>

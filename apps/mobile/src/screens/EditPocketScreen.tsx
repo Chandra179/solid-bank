@@ -88,34 +88,34 @@ export default function EditPocketScreen({ navigation, route }: Props) {
             placeholder="e.g. New Phone"
             placeholderTextColor={colors.neutral400}
             maxLength={40}
-            className="rounded-xl border border-slate-200 px-4 py-3.5 text-[15px] text-slate-900"
+            className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
           <Text className="text-label font-semibold text-slate-700">Goal amount</Text>
           <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
-            <Text className="text-[15px] font-medium text-slate-400">Rp</Text>
+            <Text className="text-label font-medium text-slate-400">Rp</Text>
             <TextInput
               value={formatRupiahInput(goalDigits)}
               onChangeText={handleGoalChange}
               placeholder="0"
               placeholderTextColor={colors.neutral400}
               keyboardType="number-pad"
-              className="ml-2 flex-1 text-[15px] text-slate-900"
+              className="ml-2 flex-1 text-label text-slate-900"
             />
           </View>
         </View>
         <View style={{ gap: 6 }}>
           <Text className="text-label font-semibold text-slate-700">Weekly auto-save (optional)</Text>
           <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
-            <Text className="text-[15px] font-medium text-slate-400">Rp</Text>
+            <Text className="text-label font-medium text-slate-400">Rp</Text>
             <TextInput
               value={formatRupiahInput(autoSaveDigits)}
               onChangeText={handleAutoSaveChange}
               placeholder="Off"
               placeholderTextColor={colors.neutral400}
               keyboardType="number-pad"
-              className="ml-2 flex-1 text-[15px] text-slate-900"
+              className="ml-2 flex-1 text-label text-slate-900"
             />
           </View>
           <Text className="text-caption text-slate-500">

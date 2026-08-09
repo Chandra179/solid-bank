@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -10,6 +9,7 @@ import { IconChevronLeft, IconPlus, IconPocket, IconSearch, IconUser } from "../
 import SelectRow from "../components/SelectRow";
 import EmptyState from "../components/EmptyState";
 import { listBeneficiaries, listPockets } from "@/data";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 
@@ -19,14 +19,9 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 // external beneficiaries are a searchable list below. Both lead into the
 // same shared AmountEntry screen.
 export default function TransferScreen({ navigation }: Props) {
-  // See HomeScreen for why: without this, a beneficiary added via
+  // See useRefreshOnFocus for why: without this, a beneficiary added via
   // AddRecipientScreen wouldn't show up here until a full remount.
-  const [, forceRefresh] = useState(0);
-  useFocusEffect(
-    useCallback(() => {
-      forceRefresh((n) => n + 1);
-    }, [])
-  );
+  useRefreshOnFocus();
 
   const [query, setQuery] = useState("");
   const pockets = listPockets();
@@ -67,14 +62,14 @@ export default function TransferScreen({ navigation }: Props) {
             onChangeText={setQuery}
             placeholder="Search name or account number"
             placeholderTextColor={colors.neutral400}
-            className="flex-1 text-[13px] text-slate-900"
+            className="flex-1 text-body text-slate-900"
           />
         </View>
       </View>
 
       <ScrollView className="flex-1">
         <View className="pt-4" style={{ gap: 12 }}>
-          <Text className="px-6 text-[13px] font-semibold text-slate-500">Your Pockets</Text>
+          <Text className="px-6 text-body font-semibold text-slate-500">Your Pockets</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -90,7 +85,7 @@ export default function TransferScreen({ navigation }: Props) {
                 <View className="h-14 w-14 items-center justify-center rounded-full bg-brand-50">
                   <IconPocket size={22} color={colors.brand700} />
                 </View>
-                <Text className="text-center text-[11px] font-medium text-slate-700" numberOfLines={2}>
+                <Text className="text-center text-caption font-medium text-slate-700" numberOfLines={2}>
                   {p.name}
                 </Text>
               </Pressable>
@@ -99,7 +94,7 @@ export default function TransferScreen({ navigation }: Props) {
         </View>
 
         <View className="px-6 pt-6" style={{ gap: 4 }}>
-          <Text className="pb-1 text-[13px] font-semibold text-slate-500">Beneficiaries</Text>
+          <Text className="pb-1 text-body font-semibold text-slate-500">Beneficiaries</Text>
           {query.length > 0 && filteredBeneficiaries.length === 0 ? (
             <EmptyState
               icon={<IconSearch size={20} color={colors.neutral500} />}

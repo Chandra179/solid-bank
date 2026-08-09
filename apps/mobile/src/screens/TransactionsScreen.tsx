@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -10,6 +9,7 @@ import { IconArrowDownLeft, IconBag, IconChevronLeft, IconInbox, IconPieChart } 
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import { listRecentTransactions } from "@/data";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transactions">;
 
@@ -19,12 +19,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transactions">;
 // a second, fuller view onto the same list rather than a separate feed to
 // maintain (same relationship PocketsScreen has to Home's pocket row).
 export default function TransactionsScreen({ navigation }: Props) {
-  const [, forceRefresh] = useState(0);
-  useFocusEffect(
-    useCallback(() => {
-      forceRefresh((n) => n + 1);
-    }, [])
-  );
+  useRefreshOnFocus();
 
   const transactions = listRecentTransactions();
 

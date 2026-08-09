@@ -39,13 +39,15 @@ export type RootStackParamList = {
   CreatePocket: undefined;
   Cards: undefined;
   // Generic placeholder destination for actions that are UI-complete but
-  // have no real flow behind them yet. Only the sub-actions that are
-  // genuinely separate, larger features (PIN reset re-auth, live support
-  // chat) still route here — everything else has a real screen now.
+  // have no real flow behind them yet. PIN reset and "contact support" both
+  // got real screens (ChangePin*/ContactSupport below) — the remaining
+  // uses are Cards' "Report lost or stolen" (needs a real fraud-ops
+  // workflow) and "Order a new card" (needs real issuance/logistics),
+  // genuinely separate features rather than something to fake.
   ComingSoon: {
     title: string;
     message: string;
-    icon: "security" | "help";
+    icon: "security" | "help" | "card";
   };
   // Real destination for Home's "Recent Transactions -> See all" link —
   // reuses the same listRecentTransactions() data Home's own preview list
@@ -66,9 +68,26 @@ export type RootStackParamList = {
   // Rename/re-target an existing pocket, reached from PocketDetail's pencil.
   EditPocket: { pocketId: string };
   // Device/biometric security settings, reached from Profile's Security row.
-  Security: undefined;
+  // `pinJustChanged` is set only when ChangePinConfirmScreen navigates back
+  // here after a successful reset, to show a one-time confirmation banner.
+  Security: { pinJustChanged?: boolean } | undefined;
   // Static FAQ accordion, reached from Profile's Help row.
   Help: undefined;
+  // Real PIN-reset re-auth chain, reached from Security's "Change PIN" row.
+  // Three steps rather than reusing onboarding's SetPin/ConfirmPin pair
+  // directly: those two screens live in the unauthenticated Stack.Group,
+  // and RootNavigator's whole design deliberately keeps exactly one group
+  // mounted at a time (see its own comment) so an onboarding screen can
+  // never be reachable once logged in, or vice versa. Dedicated screens
+  // that reuse the same DigitEntry/NumericKeypad components get the same
+  // UX without crossing that boundary.
+  ChangePin: undefined;
+  ChangePinNew: undefined;
+  ChangePinConfirm: { newPin: string };
+  // "Send us a message" form, reached from Help's "Contact support" row —
+  // a real (if backend-less) alternative to the live-chat widget that's
+  // still a genuine ComingSoon gap.
+  ContactSupport: undefined;
 
   // Onboarding (isAuthenticated === false)
   Welcome: undefined;

@@ -31,7 +31,7 @@ export default function SelfieLivenessScreen({ navigation }: Props) {
       </View>
 
       <View className="px-6 pb-2 pt-2">
-        <Text className="text-center text-[13px] text-slate-500">
+        <Text className="text-center text-body text-slate-500">
           {stage === "framing" ? "Center your face and hold still." : "Checking, hold still…"}
         </Text>
       </View>
@@ -56,7 +56,7 @@ export default function SelfieLivenessScreen({ navigation }: Props) {
             <IconCamera size={26} color={colors.neutral0} />
           </Pressable>
         ) : (
-          <Text className="text-[13px] font-medium text-slate-500">Verifying liveness…</Text>
+          <Text className="text-body font-medium text-slate-500">Verifying liveness…</Text>
         )}
       </View>
     </SafeAreaView>

@@ -26,14 +26,14 @@ export default function ErrorScreen({ navigation, route }: Props) {
           <IconAlert size={28} color={colors.danger500} />
         </View>
         <Text className="text-xl font-semibold text-slate-900">Something went wrong</Text>
-        <Text className="max-w-[280px] text-center text-[13px] text-slate-500">{reason}</Text>
-        <Text className="text-[11px] text-slate-400">No money has left your account.</Text>
+        <Text className="max-w-[280px] text-center text-body text-slate-500">{reason}</Text>
+        <Text className="text-caption text-slate-500">No money has left your account.</Text>
       </View>
 
       <View className="w-full pb-4" style={{ gap: 12 }}>
         <Button label="Try Again" variant="primary" onPress={() => navigation.goBack()} />
         <Pressable onPress={() => navigation.popToTop()} className="items-center py-2">
-          <Text className="text-[13px] font-semibold text-slate-500">Cancel</Text>
+          <Text className="text-body font-semibold text-slate-500">Cancel</Text>
         </Pressable>
       </View>
     </SafeAreaView>

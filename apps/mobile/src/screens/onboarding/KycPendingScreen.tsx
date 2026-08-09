@@ -25,7 +25,7 @@ export default function KycPendingScreen({ navigation }: Props) {
           <IconShield size={28} color={colors.brand700} />
         </View>
         <Text className="text-xl font-semibold text-slate-900">Verifying your identity</Text>
-        <Text className="max-w-[280px] text-center text-[13px] text-slate-500">
+        <Text className="max-w-[280px] text-center text-body text-slate-500">
           This usually takes a few minutes. We'll let you know once it's done — you can finish setting up your
           account in the meantime.
         </Text>

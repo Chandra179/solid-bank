@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
@@ -15,23 +14,15 @@ import EmptyState from "../components/EmptyState";
 import { getAccountSummary, getUserProfile, listPockets, listRecentTransactions, getUnreadNotificationCount } from "@/data";
 import { getGreeting } from "@/utils/greeting";
 import { formatIDR } from "@/utils/currency";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
-  // Every screen that reads from the mock data layer only recomputes on
-  // render, and React Navigation keeps this screen mounted across
-  // navigations — so without this, Home's balance/pockets/transactions go
-  // stale after e.g. Add Money or Create Pocket until the app is fully
-  // remounted. Bumping a dummy counter on focus is enough to force a
-  // re-render (and therefore a fresh read) without needing this screen to
-  // know *what* changed elsewhere.
-  const [, forceRefresh] = useState(0);
-  useFocusEffect(
-    useCallback(() => {
-      forceRefresh((n) => n + 1);
-    }, [])
-  );
+  // See useRefreshOnFocus for why: without this, Home's balance/pockets/
+  // transactions go stale after e.g. Add Money or Create Pocket until the
+  // app is fully remounted.
+  useRefreshOnFocus();
 
   const account = getAccountSummary();
   const pockets = listPockets();

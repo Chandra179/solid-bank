@@ -47,7 +47,7 @@ export default function PhoneEntryScreen({ navigation }: Props) {
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">What's your number?</Text>
-        <Text className="text-[13px] text-slate-500">We'll send a one-time code to verify it's you.</Text>
+        <Text className="text-body text-slate-500">We'll send a one-time code to verify it's you.</Text>
       </View>
 
       {/* Anchored a fixed distance below the title instead of centered in

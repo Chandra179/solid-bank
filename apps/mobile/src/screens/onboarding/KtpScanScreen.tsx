@@ -35,7 +35,7 @@ export default function KtpScanScreen({ navigation }: Props) {
       </View>
 
       <View className="px-6 pb-2 pt-2">
-        <Text className="text-center text-[13px] text-slate-500">
+        <Text className="text-center text-body text-slate-500">
           {captured ? "Make sure all four corners are visible and text is readable." : "Align your KTP within the frame."}
         </Text>
       </View>
@@ -61,7 +61,7 @@ export default function KtpScanScreen({ navigation }: Props) {
           <>
             <Button label="Use this photo" variant="primary" onPress={() => navigation.navigate("Selfie")} />
             <Pressable onPress={() => setCaptured(false)} className="items-center py-2">
-              <Text className="text-[13px] font-semibold text-slate-500">Retake</Text>
+              <Text className="text-body font-semibold text-slate-500">Retake</Text>
             </Pressable>
           </>
         ) : (

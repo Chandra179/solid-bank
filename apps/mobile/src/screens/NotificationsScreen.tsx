@@ -56,30 +56,37 @@ export default function NotificationsScreen({ navigation }: Props) {
           subtitle="Account activity and alerts will show up here."
         />
       ) : (
-        <ScrollView className="flex-1 px-6">
-          {notifications.map((n) => (
-            <Pressable
-              key={n.id}
-              onPress={() => handlePress(n.id)}
-              className="flex-row items-start py-3"
-              style={{ gap: 12 }}
-            >
-              <View className="h-10 w-10 items-center justify-center rounded-full bg-slate-100">
-                {CATEGORY_ICON[n.category](colors.neutral700)}
-              </View>
-              <View className="flex-1" style={{ gap: 2 }}>
-                <View className="flex-row items-center" style={{ gap: 6 }}>
-                  <Text className="text-label font-semibold text-slate-900" numberOfLines={1}>
-                    {n.title}
-                  </Text>
-                  {!n.read ? <View className="h-2 w-2 rounded-full" style={{ backgroundColor: colors.danger500 }} /> : null}
+        // Wrapped (rather than letting ScrollView sit directly under the
+        // header) so a short list — a handful of notifications is common —
+        // still pins a real closing note to the true bottom of the screen
+        // instead of leaving the space below the last row blank.
+        <View className="flex-1">
+          <ScrollView className="flex-1 px-6">
+            {notifications.map((n) => (
+              <Pressable
+                key={n.id}
+                onPress={() => handlePress(n.id)}
+                className="flex-row items-start py-3"
+                style={{ gap: 12 }}
+              >
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-slate-100">
+                  {CATEGORY_ICON[n.category](colors.neutral700)}
                 </View>
-                <Text className="text-body text-slate-500">{n.message}</Text>
-                <Text className="text-caption text-slate-400">{n.dateLabel}</Text>
-              </View>
-            </Pressable>
-          ))}
-        </ScrollView>
+                <View className="flex-1" style={{ gap: 2 }}>
+                  <View className="flex-row items-center" style={{ gap: 6 }}>
+                    <Text className="text-label font-semibold text-slate-900" numberOfLines={1}>
+                      {n.title}
+                    </Text>
+                    {!n.read ? <View className="h-2 w-2 rounded-full" style={{ backgroundColor: colors.danger500 }} /> : null}
+                  </View>
+                  <Text className="text-body text-slate-500">{n.message}</Text>
+                  <Text className="text-caption text-slate-500">{n.dateLabel}</Text>
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
+          <Text className="pb-4 pt-2 text-center text-caption text-slate-500">That's everything for now.</Text>
+        </View>
       )}
     </SafeAreaView>
   );

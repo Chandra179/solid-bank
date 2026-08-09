@@ -34,8 +34,8 @@ export default function ComingSoon({ title, icon, message }: ComingSoonProps) {
       <View className="flex-1 items-center justify-center px-10">
         <View className="h-16 w-16 items-center justify-center rounded-full bg-brand-50">{icon}</View>
         <Text className="pt-4 text-xl font-semibold text-slate-900">{title}</Text>
-        <Text className="pt-2 text-center text-[13px] text-slate-500">{message}</Text>
-        <Text className="pt-1 text-center text-[13px] text-slate-500" style={{ color: colors.neutral400 }}>
+        <Text className="pt-2 text-center text-body text-slate-500">{message}</Text>
+        <Text className="pt-1 text-center text-body text-slate-500" style={{ color: colors.neutral400 }}>
           Coming soon.
         </Text>
       </View>

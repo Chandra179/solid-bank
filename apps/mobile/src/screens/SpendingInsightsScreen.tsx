@@ -56,7 +56,7 @@ export default function SpendingInsightsScreen({ navigation }: Props) {
           <View className="items-center px-6 pb-2 pt-4" style={{ gap: 2 }}>
             <Text className="text-body text-slate-500">Last {PERIOD_DAYS} days</Text>
             <Text className="text-4xl font-bold text-slate-900">{formatIDR(totalMinor)}</Text>
-            <Text className="text-caption text-slate-400">spent across {breakdown.length} categories</Text>
+            <Text className="text-caption text-slate-500">spent across {breakdown.length} categories</Text>
           </View>
 
           <View className="mx-6 mt-4 rounded-2xl border border-slate-200 px-4">

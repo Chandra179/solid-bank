@@ -39,18 +39,18 @@ export default function ProfileScreen({ navigation }: Props) {
           </View>
           <View className="items-center" style={{ gap: 2 }}>
             <Text className="text-xl font-semibold text-slate-900">{user.name}</Text>
-            <Text className="text-[13px] text-slate-500">{user.phone}</Text>
+            <Text className="text-body text-slate-500">{user.phone}</Text>
           </View>
         </View>
 
         <View className="mx-6 mt-2 rounded-2xl border border-slate-200">
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">Account number</Text>
-            <Text className="text-[13px] font-semibold text-slate-900">{account.accountMask}</Text>
+            <Text className="text-body text-slate-500">Account number</Text>
+            <Text className="text-body font-semibold text-slate-900">{account.accountMask}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-[13px] text-slate-500">Identity verification</Text>
+            <Text className="text-body text-slate-500">Identity verification</Text>
             <View
               className="flex-row items-center rounded-full px-3 py-1"
               style={{ gap: 4, backgroundColor: isVerified ? colors.success100 : "#fef3c7" }}
@@ -61,7 +61,7 @@ export default function ProfileScreen({ navigation }: Props) {
                 <IconShield size={12} color={colors.warning500} />
               )}
               <Text
-                className="text-[11px] font-semibold"
+                className="text-caption font-semibold"
                 style={{ color: isVerified ? colors.success500 : colors.warning500 }}
               >
                 {isVerified ? "Verified" : "Pending"}
