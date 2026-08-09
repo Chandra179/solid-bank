@@ -5,7 +5,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconChevronLeft, IconPocket } from "../components/icons";
+import { IconChevronLeft, IconPocket, IconCheck } from "../components/icons";
 import Button from "../components/Button";
 import { addPocket } from "@/data";
 import { parseDateInput } from "@/utils/dateInput";
@@ -31,6 +31,13 @@ export default function CreatePocketScreen({ navigation }: Props) {
   const [name, setName] = useState("");
   const [goalDigits, setGoalDigits] = useState("");
   const [targetDateText, setTargetDateText] = useState("");
+  // Shared/group pockets — split a goal with other freelancers/collaborators
+  // (see data/types.ts's Pocket.participants for why this is mock/display
+  // data rather than a real multi-user backend). Off by default so the
+  // common case (a solo goal) stays a two-field form.
+  const [shared, setShared] = useState(false);
+  const [participantNames, setParticipantNames] = useState<string[]>([]);
+  const [participantInput, setParticipantInput] = useState("");
 
   const goalRupiah = goalDigits === "" ? 0 : parseInt(goalDigits, 10);
   // Optional field: empty is always fine (a pocket with no deadline just
@@ -52,11 +59,21 @@ export default function CreatePocketScreen({ navigation }: Props) {
 
   function handleCreate() {
     if (!isValid) return;
-    const pocket = addPocket(name.trim(), goalRupiah * 100, targetDateMinor);
+    const pocket = addPocket(name.trim(), goalRupiah * 100, targetDateMinor, shared ? participantNames : undefined);
     // replace, not navigate — stepping back from the new pocket's detail
     // screen should land on the list it was created from, not back on a
     // blank creation form.
     navigation.replace("PocketDetail", { pocketId: pocket.id });
+  }
+
+  function addParticipant() {
+    const trimmed = participantInput.trim();
+    if (!trimmed || participantNames.includes(trimmed)) return;
+    setParticipantNames((prev) => [...prev, trimmed]);
+    setParticipantInput("");
+  }
+  function removeParticipant(nameToRemove: string) {
+    setParticipantNames((prev) => prev.filter((n) => n !== nameToRemove));
   }
 
   return (
@@ -128,6 +145,70 @@ export default function CreatePocketScreen({ navigation }: Props) {
               track.
             </Text>
           )}
+        </View>
+
+        {/* Shared/group pockets — splitting a goal with other freelancers
+            or collaborators (a co-working membership, a joint project
+            buffer) rather than saving solo. */}
+        <View style={{ gap: 6 }}>
+          <Pressable
+            onPress={() => setShared((v) => !v)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: shared }}
+            className="flex-row items-center justify-between rounded-xl border border-slate-200 px-4 py-3.5"
+          >
+            <View style={{ gap: 2 }}>
+              <Text className="text-label font-semibold text-slate-700">Split with others</Text>
+              <Text className="text-caption text-slate-500">Everyone's contributions count toward the goal.</Text>
+            </View>
+            <View
+              className="h-6 w-6 items-center justify-center rounded-md border"
+              style={{
+                backgroundColor: shared ? colors.brand700 : colors.neutral0,
+                borderColor: shared ? colors.brand700 : "#e2e8f0",
+              }}
+            >
+              {shared ? <IconCheck size={14} color={colors.neutral0} /> : null}
+            </View>
+          </Pressable>
+
+          {shared ? (
+            <View style={{ gap: 8 }}>
+              <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-2" style={{ gap: 8 }}>
+                <TextInput
+                  value={participantInput}
+                  onChangeText={setParticipantInput}
+                  placeholder="Add a name"
+                  placeholderTextColor={colors.neutral400}
+                  maxLength={30}
+                  onSubmitEditing={addParticipant}
+                  className="flex-1 py-1.5 text-label text-slate-900"
+                />
+                <Pressable onPress={addParticipant} className="rounded-full bg-slate-100 px-3 py-1.5">
+                  <Text className="text-caption font-semibold text-slate-700">Add</Text>
+                </Pressable>
+              </View>
+              {participantNames.length > 0 ? (
+                <View className="flex-row flex-wrap" style={{ gap: 8 }}>
+                  {participantNames.map((n) => (
+                    <Pressable
+                      key={n}
+                      onPress={() => removeParticipant(n)}
+                      className="flex-row items-center rounded-full bg-brand-50 px-3 py-1.5"
+                      style={{ gap: 6 }}
+                    >
+                      <Text className="text-caption font-semibold text-brand-700">{n}</Text>
+                      <Text className="text-caption font-semibold text-brand-700">×</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              ) : (
+                <Text className="text-caption text-slate-500">
+                  Add each person you're splitting this goal with.
+                </Text>
+              )}
+            </View>
+          ) : null}
         </View>
       </View>
 

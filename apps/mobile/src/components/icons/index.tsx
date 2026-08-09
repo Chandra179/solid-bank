@@ -341,6 +341,63 @@ export function IconBolt({ size = 24, color = "#000" }: IconProps) {
   );
 }
 
+// Backs e-wallet funding sources (GoPay/OVO/DANA) on TopUpScreen — a
+// simple wallet glyph to read as distinct from IconCard's bank-card shape.
+export function IconWallet({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v3M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-4"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M15 13h5a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-5a2 2 0 0 1 0-4Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+// Backs the Bills quick action (Pulsa/PLN/BPJS) — a receipt/paper-slip
+// glyph distinct from IconCard/IconBag, matching this set's plain
+// feather-style outline approach.
+export function IconReceipt({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Path
+        d="M6 2h12v19l-3-2-3 2-3-2-3 2V2Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <Path d="M9 8h6M9 12h6" stroke={color} strokeWidth={2} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+// Backs the Rewards row (Profile) and RewardsScreen's hero — a gift-box
+// glyph reads unambiguously as "perks/rewards" without needing a coin or
+// points-badge motif this set doesn't otherwise use.
+export function IconGift({ size = 24, color = "#000" }: IconProps) {
+  return (
+    <Svg {...base(size)} fill="none">
+      <Rect x={3} y={8} width={18} height={4} rx={1} stroke={color} strokeWidth={2} />
+      <Path d="M12 8v13M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" stroke={color} strokeWidth={2} strokeLinejoin="round" />
+      <Path
+        d="M12 8c0-2-1.5-4-3.5-4S6 5.5 6 7c0 .7.6 1 1.3 1H12ZM12 8c0-2 1.5-4 3.5-4S18 5.5 18 7c0 .7-.6 1-1.3 1H12Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 export function IconBackspace({ size = 24, color = "#000" }: IconProps) {
   return (
     <Svg {...base(size)} fill="none">

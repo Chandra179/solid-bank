@@ -5,7 +5,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconCard, IconChevronLeft } from "../components/icons";
+import { IconCard, IconChevronLeft, IconWallet } from "../components/icons";
 import SelectRow from "../components/SelectRow";
 import { listFundingSources, listCards } from "@/data";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
@@ -55,7 +55,13 @@ export default function TopUpScreen({ navigation }: Props) {
               key={s.id}
               title={s.name}
               subtitle={frozen ? "Frozen — unfreeze it in Cards to use this source" : s.subtitle}
-              icon={<IconCard size={18} color={colors.neutral500} />}
+              icon={
+                s.kind === "ewallet" ? (
+                  <IconWallet size={18} color={colors.neutral500} />
+                ) : (
+                  <IconCard size={18} color={colors.neutral500} />
+                )
+              }
               disabled={frozen}
               disabledLabel="Frozen"
               onPress={() =>

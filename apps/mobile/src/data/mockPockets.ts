@@ -40,6 +40,25 @@ const POCKETS: Pocket[] = [
     targetDate: NOW + 15 * DAY,
   },
   { id: "pocket_3", name: "New Laptop", savedMinor: 420_000_000, targetMinor: 1_200_000_000, createdAt: NOW - 20 * DAY },
+  // Shared pocket, seeded rather than left for the user to discover only by
+  // creating one — same "make every state reachable without extra clicks"
+  // approach the pacing states above already use. A shared co-working
+  // membership is a concrete freelancer/gig-worker use case (the chosen
+  // segment): splitting a recurring desk-rental cost with a couple of other
+  // independent workers rather than each paying for their own.
+  {
+    id: "pocket_4",
+    name: "Co-working Space",
+    savedMinor: 90_000_000,
+    targetMinor: 150_000_000,
+    createdAt: NOW - 10 * DAY,
+    targetDate: NOW + 5 * DAY,
+    participants: [
+      { id: "you", name: "You", contributedMinor: 50_000_000 },
+      { id: "p_rani", name: "Rani", contributedMinor: 25_000_000 },
+      { id: "p_deni", name: "Deni", contributedMinor: 15_000_000 },
+    ],
+  },
 ];
 
 export function listPockets(): Pocket[] {
@@ -57,8 +76,28 @@ let nextPocketSeq = POCKETS.length + 1;
 // /api/v1/pockets) — new pockets always start at savedMinor: 0 since
 // "create a pocket with money already in it" isn't a flow that exists;
 // money only enters a pocket through Add Money afterward.
-export function addPocket(name: string, targetMinor: number, targetDate?: number): Pocket {
-  const pocket: Pocket = { id: `pocket_${nextPocketSeq++}`, name, savedMinor: 0, targetMinor, createdAt: Date.now(), targetDate };
+export function addPocket(
+  name: string,
+  targetMinor: number,
+  targetDate?: number,
+  participantNames?: string[]
+): Pocket {
+  const participants =
+    participantNames && participantNames.length > 0
+      ? [
+          { id: "you", name: "You", contributedMinor: 0 },
+          ...participantNames.map((n, i) => ({ id: `p_new_${i}`, name: n, contributedMinor: 0 })),
+        ]
+      : undefined;
+  const pocket: Pocket = {
+    id: `pocket_${nextPocketSeq++}`,
+    name,
+    savedMinor: 0,
+    targetMinor,
+    createdAt: Date.now(),
+    targetDate,
+    participants,
+  };
   POCKETS.push(pocket);
   return pocket;
 }

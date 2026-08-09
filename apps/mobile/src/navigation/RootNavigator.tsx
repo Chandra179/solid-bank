@@ -33,6 +33,9 @@ import ChangePinScreen from "@/screens/ChangePinScreen";
 import ChangePinNewScreen from "@/screens/ChangePinNewScreen";
 import ChangePinConfirmScreen from "@/screens/ChangePinConfirmScreen";
 import ContactSupportScreen from "@/screens/ContactSupportScreen";
+import BillsScreen from "@/screens/BillsScreen";
+import BillInputScreen from "@/screens/BillInputScreen";
+import RewardsScreen from "@/screens/RewardsScreen";
 
 import WelcomeScreen from "@/screens/onboarding/WelcomeScreen";
 import PhoneEntryScreen from "@/screens/onboarding/PhoneEntryScreen";
@@ -104,6 +107,9 @@ export default function RootNavigator() {
             <Stack.Screen name="ChangePinNew" component={ChangePinNewScreen} />
             <Stack.Screen name="ChangePinConfirm" component={ChangePinConfirmScreen} />
             <Stack.Screen name="ContactSupport" component={ContactSupportScreen} />
+            <Stack.Screen name="Bills" component={BillsScreen} />
+            <Stack.Screen name="BillInput" component={BillInputScreen} />
+            <Stack.Screen name="Rewards" component={RewardsScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>

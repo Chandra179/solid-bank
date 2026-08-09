@@ -5,13 +5,32 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconBell, IconQrCode, IconPocket, IconPlus, IconTransfer, IconBag, IconArrowDownLeft, IconInbox } from "../components/icons";
+import {
+  IconBell,
+  IconQrCode,
+  IconPocket,
+  IconPlus,
+  IconTransfer,
+  IconBag,
+  IconArrowDownLeft,
+  IconInbox,
+  IconPieChart,
+  IconChevronRight,
+  IconReceipt,
+} from "../components/icons";
 import QuickAction from "../components/QuickAction";
 import PocketCard from "../components/PocketCard";
 import TransactionRow from "../components/TransactionRow";
 import BottomNav from "../components/BottomNav";
 import EmptyState from "../components/EmptyState";
-import { getAccountSummary, getUserProfile, listPockets, listRecentTransactions, getUnreadNotificationCount } from "@/data";
+import {
+  getAccountSummary,
+  getUserProfile,
+  listPockets,
+  listRecentTransactions,
+  getUnreadNotificationCount,
+  getCategoryBreakdown,
+} from "@/data";
 import { getGreeting } from "@/utils/greeting";
 import { formatIDR } from "@/utils/currency";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
@@ -33,6 +52,12 @@ export default function HomeScreen({ navigation }: Props) {
   const transactions = listRecentTransactions().slice(0, 3);
   const user = getUserProfile();
   const unreadCount = getUnreadNotificationCount();
+  // Last-30-day spend total, same source SpendingInsightsScreen's own
+  // breakdown reads from — this teaser is the "visible entry point" the
+  // full breakdown screen was missing (it already existed and was reachable
+  // from Transactions' header, but nothing on Home itself pointed to it).
+  const spendBreakdown = getCategoryBreakdown(30);
+  const spendTotalMinor = spendBreakdown.reduce((sum, c) => sum + c.totalMinor, 0);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -94,8 +119,44 @@ export default function HomeScreen({ navigation }: Props) {
                 icon={<IconQrCode size={22} color={colors.brand700} />}
                 onPress={() => navigation.navigate("QrScan")}
               />
+              {/* Bills (Pulsa/PLN/BPJS) — the research docs call bill
+                  payment "a near-universal feature in Indonesian
+                  banking/fintech apps," and TODO.md's own product-idea
+                  writeup put it "alongside Transfer/Top Up/QR Pay," so it
+                  gets a slot in this row rather than being buried a tap
+                  deeper. */}
+              <QuickAction
+                label="Bills"
+                icon={<IconReceipt size={22} color={colors.brand700} />}
+                onPress={() => navigation.navigate("Bills")}
+              />
             </View>
           </View>
+        </View>
+
+        {/* Spending insights teaser — a real breakdown screen already
+            existed (reachable from Transactions' header) but Home itself,
+            the first screen anyone sees, had no pointer to it at all. */}
+        <View className="px-6 pt-4">
+          <Pressable
+            onPress={() => navigation.navigate("SpendingInsights")}
+            accessibilityLabel="Spending insights"
+            accessibilityRole="button"
+            className="flex-row items-center justify-between rounded-2xl border border-slate-200 px-4 py-4"
+          >
+            <View className="flex-1 flex-row items-center pr-4" style={{ gap: 10 }}>
+              <View className="h-9 w-9 items-center justify-center rounded-full bg-brand-50">
+                <IconPieChart size={16} color={colors.brand700} />
+              </View>
+              <View className="flex-1" style={{ gap: 2 }}>
+                <Text className="text-label font-semibold text-slate-900">Spending insights</Text>
+                <Text className="text-caption text-slate-500">
+                  {formatIDR(spendTotalMinor)} spent in the last 30 days
+                </Text>
+              </View>
+            </View>
+            <IconChevronRight size={16} color={colors.neutral400} />
+          </Pressable>
         </View>
 
         {/* Pockets */}

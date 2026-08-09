@@ -21,3 +21,7 @@ export { listNotifications, getUnreadNotificationCount, markNotificationRead } f
 export { listCards, getCard, setCardFrozen } from "./mockCards";
 export type { Card } from "./mockCards";
 export { submitSupportMessage } from "./mockSupportMessages";
+export { listBillers, getBiller, lookupMockBillAmount, PULSA_DENOMINATIONS_RUPIAH } from "./mockBillers";
+export type { Biller, BillType } from "./mockBillers";
+export { getRewardsSummary, getCashbackRate, listPerks } from "./mockRewards";
+export type { RewardsSummary, Perk } from "./mockRewards";

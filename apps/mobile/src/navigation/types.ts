@@ -1,4 +1,6 @@
-export type MoneyFlow = "transfer" | "topup" | "withdraw";
+import type { BillType } from "@/data/mockBillers";
+
+export type MoneyFlow = "transfer" | "topup" | "withdraw" | "billpay";
 
 // Shared params for the AmountEntry -> Confirm -> Success chain. Both the
 // Transfer and Top Up entry points feed into this same three-screen tail,
@@ -68,6 +70,15 @@ export type RootStackParamList = {
   // QR-first payments entry point — resolves a scanned (mocked) QRIS code
   // to a merchant, then hands off into AmountEntry with flow: "transfer".
   QrScan: undefined;
+  // Bill payments entry point — a top-level flow alongside Transfer/Top
+  // Up/QR Pay per TODO.md's product-idea writeup, listing the three
+  // billers (Pulsa/PLN/BPJS) called out as a near-universal gap.
+  Bills: undefined;
+  // Customer-number entry for one biller. Pulsa hands off into AmountEntry
+  // (flow: "billpay") since the user picks how much credit to buy; PLN/BPJS
+  // look up a fixed bill amount and hand off straight into Confirm instead
+  // (same dynamic-vs-static split QrScanScreen already uses for QRIS codes).
+  BillInput: { billType: BillType };
   // Category breakdown of the last 30 days' spending, sourced from the
   // same RECENT_TRANSACTIONS list Home/Transactions already read from.
   SpendingInsights: undefined;
@@ -100,6 +111,9 @@ export type RootStackParamList = {
   // a real (if backend-less) alternative to the live-chat widget that's
   // still a genuine ComingSoon gap.
   ContactSupport: undefined;
+  // Freelancer-segment cashback + partner-perks screen, reached from
+  // Profile's "Rewards" row. See utils/rewards.ts / data/mockRewards.ts.
+  Rewards: undefined;
 
   // Onboarding (isAuthenticated === false)
   Welcome: undefined;

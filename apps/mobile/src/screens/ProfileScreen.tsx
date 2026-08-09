@@ -5,7 +5,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../theme/colors";
-import { IconCheck, IconShield, IconBell, IconHelp } from "../components/icons";
+import { IconCheck, IconShield, IconBell, IconHelp, IconGift } from "../components/icons";
 import Button from "../components/Button";
 import BottomNav from "../components/BottomNav";
 import SelectRow from "../components/SelectRow";
@@ -72,6 +72,13 @@ export default function ProfileScreen({ navigation }: Props) {
         </View>
 
         <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
+          <SelectRow
+            title="Rewards"
+            subtitle="Cashback and perks for freelancers"
+            icon={<IconGift size={18} color={colors.neutral500} />}
+            onPress={() => navigation.navigate("Rewards")}
+          />
+          <View className="h-px bg-slate-100" />
           <SelectRow
             title="Security"
             subtitle="PIN, biometrics, device management"

@@ -43,6 +43,14 @@ export default function PocketCard({ pocket, onPress, variant = "compact" }: Poc
         <Text className="flex-1 text-body font-semibold text-slate-900" numberOfLines={1}>
           {pocket.name}
         </Text>
+        {/* Small badge distinguishing a shared/group pocket from a solo one
+            at a glance, without needing to open it — see data/types.ts's
+            Pocket.participants. */}
+        {pocket.participants && pocket.participants.length > 0 ? (
+          <View className="rounded-full bg-slate-100 px-2 py-0.5">
+            <Text className="text-caption font-semibold text-slate-500">Shared</Text>
+          </View>
+        ) : null}
       </View>
       <View className="h-1.5 rounded-full bg-slate-100">
         <View

@@ -78,18 +78,12 @@ against the SEA/Indonesia research docs, and new product ideas.
 `research/digital-bank-market-research.md` in the project for the source
 reasoning behind these.)
 
-- **No e-wallet or QRIS top-up source.** `TopUpScreen` only offers a linked
-  bank account or debit card. GoPay/OVO/DANA e-wallet top-up and QRIS-based
-  top-up are extremely common funding rails in Indonesia — arguably more
-  expected than card top-up for this market.
-- **No bill payments (pulsa, PLN, BPJS).** A near-universal feature in
-  Indonesian banking/fintech apps, and currently absent from the nav
-  entirely.
-- **No budgeting/spend-insights surfaced from Home.** `SpendingInsightsScreen`
-  already exists in the codebase (category breakdown, reads from the same
-  transaction list Home does) but isn't linked from Home or the bottom nav
-  — it's a real, finished screen that's currently unreachable in normal
-  navigation. Low-effort fix: add an entry point.
+- [x] **No e-wallet or QRIS top-up source.** Resolved — see "New product
+      ideas" below.
+- [x] **No bill payments (pulsa, PLN, BPJS).** Resolved — see "New product
+      ideas" below.
+- [x] **No budgeting/spend-insights surfaced from Home.** Resolved — see
+      "New product ideas" below.
 - **BI-FAST/interbank fee economics** — resolved as a product decision in
   the "Issues to fix" section above (`utils/fees.ts`): free by default,
   QRIS is the one flow with a real fee, currently promo-waived. Worth
@@ -98,23 +92,52 @@ reasoning behind these.)
 
 ## New product ideas
 
-Roughly in priority order:
+**Segment decision:** freelancers/gig workers — chosen so shared pockets and
+rewards below had a real wedge to anchor on, per the research docs' "pick
+one segment" advice (they explicitly warned against building either before
+one was picked). Worth revisiting if the project's audience turns out to
+skew differently once there are real users.
 
-- **Surface Spending Insights from Home.** Already built, just needs a
-  visible entry point — the cheapest win on this list.
-- **E-wallet / QRIS top-up.** Add GoPay/OVO/DANA-style sources to
-  `TopUpScreen`'s "Choose a source" list.
-- **Bill payments.** Pulsa (phone credit), PLN (electricity), BPJS —
-  probably as a new top-level flow alongside Transfer/Top Up/QR Pay.
-- **Pocket target dates + pacing — done, see "Issues to fix" above.** Next
-  step if this gets picked up further: make the existing "Bali Trip is 31%
-  funded" notification generate itself from real pace state (it's still a
-  static mock entry in `mockNotifications.ts`) instead of being a
-  hand-written example.
-- **Shared/group pockets.** Split a savings goal with others — common in
-  SEA super-app-adjacent products. Lower priority; only worth it once a
-  specific target segment (per the research docs' "pick one wedge" advice)
-  is chosen, since it's exactly the kind of breadth-over-depth feature the
-  research warns against building too early.
-- **Segment-specific rewards/cashback.** Same caveat as above — tie it to
-  one chosen segment rather than a generic points system.
+- [x] **Surface Spending Insights from Home.** Added a "Spending insights"
+      teaser row on HomeScreen (between the balance card and Your Pockets)
+      showing the trailing-30-day spend total, tapping through to the
+      existing `SpendingInsightsScreen` (which was already reachable from
+      Transactions' header — this just gave Home itself a pointer to it
+      too).
+- [x] **E-wallet / QRIS top-up.** Added GoPay/OVO/DANA to
+      `mockFundingSources.ts` with a new `FundingSource.kind` field
+      ("bank"/"card"/"ewallet") and a dedicated wallet icon on TopUpScreen.
+- [x] **Bill payments.** New top-level flow: `BillsScreen` (choose Pulsa/
+      PLN/BPJS Kesehatan) → `BillInputScreen` (customer number). Pulsa is
+      user-priced and hands off into the existing AmountEntry step; PLN/BPJS
+      are bill-priced — a mock inquiry (`lookupMockBillAmount` in
+      `data/mockBillers.ts`) resolves a fixed amount and skips straight to
+      Confirm, the same dynamic-vs-static split QrScanScreen already uses
+      for QRIS codes with a baked-in amount. New `"billpay"` `MoneyFlow`
+      wired through Confirm/VerifyPin/Success/Receipt exactly like the other
+      three flows — VerifyPinScreen debits the main balance and tags the
+      transaction "Bills," so it folds into Spending Insights' breakdown.
+- [x] **Pocket target dates + pacing — done, see "Issues to fix" above.**
+      Extended further: the "Bali Trip is 31% funded"-style notification is
+      no longer a hand-written mock entry — `generatePocketNotifications()`
+      in `mockNotifications.ts` now derives one per pocket from its actual
+      `getPocketPaceStatus()`, with message tone (behind/on-track/overdue)
+      matching real state and read-tracking via a small module-level id set
+      (generated notifications can't hold a persistent `read` field the way
+      static ones do).
+- [x] **Shared/group pockets.** `Pocket.participants` (data/types.ts) — a
+      pocket can now list who's contributing to it and how much. Seeded one
+      example ("Co-working Space," split three ways) so the feature is
+      visible without creating one; `CreatePocketScreen` has a "Split with
+      others" toggle + name chips to make a new one; `PocketDetailScreen`
+      shows a "Shared with" section (avatars + contributed amounts) plus a
+      "Request a contribution" action. That action is a genuine `ComingSoon`
+      placeholder, not a real invite/notify flow — participants are
+      display/mock data, not backed by real multi-user accounts.
+- [x] **Segment-specific rewards/cashback.** `data/mockRewards.ts` computes
+      cashback from real spend categories (bonus rates on Subscriptions/
+      Food & Drink/Transport — the categories a freelancer actually spends
+      on — rather than a flat generic rate), and lists three perks anchored
+      to the same segment (co-working discount, business-tool trial, cafe
+      QRIS cashback) rather than a generic points mall. New `RewardsScreen`,
+      reached from a "Rewards" row on Profile.

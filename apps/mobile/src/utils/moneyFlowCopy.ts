@@ -15,6 +15,7 @@ const COPY: Record<MoneyFlow, FlowCopy> = {
   transfer: { reviewVerb: "You're sending", preposition: "To", successTitle: "Transfer successful", typeLabel: "Transfer" },
   topup: { reviewVerb: "You're topping up", preposition: "From", successTitle: "Top up successful", typeLabel: "Top Up" },
   withdraw: { reviewVerb: "You're withdrawing", preposition: "From", successTitle: "Withdrawal successful", typeLabel: "Withdraw" },
+  billpay: { reviewVerb: "You're paying", preposition: "For", successTitle: "Payment successful", typeLabel: "Bill Payment" },
 };
 
 export function getMoneyFlowCopy(flow: MoneyFlow): FlowCopy {

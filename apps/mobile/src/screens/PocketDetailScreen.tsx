@@ -13,6 +13,7 @@ import { adjustPocketBalance, getPocket, listPockets, listPocketTransactions, re
 import { formatIDR } from "@/utils/currency";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { getPocketPaceMessage, getPocketPaceStatus, pocketPaceColor } from "@/utils/pocketPacing";
+import { getInitials } from "@/utils/initials";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
@@ -161,6 +162,46 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
             </View>
           </Pressable>
         )}
+
+        {/* Shared/group pockets — participants are mock/display data (see
+            data/types.ts's Pocket.participants comment for why); "Request a
+            contribution" is a genuine ComingSoon gap rather than a fake
+            action, since a real per-participant invite/notify flow needs
+            infrastructure (multi-user auth, push) this app doesn't have. */}
+        {pocket.participants && pocket.participants.length > 0 ? (
+          <View className="mx-6 mb-2 rounded-2xl border border-slate-200 p-4" style={{ gap: 12 }}>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-label font-semibold text-slate-900">Shared with</Text>
+              <Text className="text-caption text-slate-500">{pocket.participants.length} people</Text>
+            </View>
+            <View style={{ gap: 10 }}>
+              {pocket.participants.map((p) => (
+                <View key={p.id} className="flex-row items-center justify-between">
+                  <View className="flex-row items-center" style={{ gap: 10 }}>
+                    <View className="h-8 w-8 items-center justify-center rounded-full bg-brand-50">
+                      <Text className="text-caption font-bold text-brand-700">{getInitials(p.name)}</Text>
+                    </View>
+                    <Text className="text-label text-slate-900">{p.name}</Text>
+                  </View>
+                  <Text className="text-caption font-semibold text-slate-500">
+                    {formatIDR(p.contributedMinor)} contributed
+                  </Text>
+                </View>
+              ))}
+            </View>
+            <Button
+              label="Request a contribution"
+              variant="secondary"
+              onPress={() =>
+                navigation.navigate("ComingSoon", {
+                  title: "Request a contribution",
+                  message: "Asking a participant to chip in will notify them directly once shared pockets support multiple accounts.",
+                  icon: "help",
+                })
+              }
+            />
+          </View>
+        ) : null}
 
         {/* History */}
         <View className="pb-8 pt-4" style={{ gap: 4 }}>

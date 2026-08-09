@@ -93,6 +93,12 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
         // nothing but the account balance moves.
         adjustAccountBalance(amountMinor);
         recordTransaction(`Top up from ${strippedLabel}`, amountMinor);
+      } else if (flow === "billpay") {
+        // Pulsa/PLN/BPJS — main balance only, tagged "Bills" so it folds
+        // into SpendingInsightsScreen's breakdown the same way the seeded
+        // "PLN — Electricity" mock transaction already does.
+        adjustAccountBalance(-amountMinor);
+        recordTransaction(strippedLabel, -amountMinor, "Bills");
       } else {
         // External beneficiary transfer, or a QRIS merchant pay (QrScanScreen
         // also uses flow: "transfer" — see its own comment on why) — main
@@ -175,7 +181,15 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       <View className="px-6 pt-4" style={{ gap: 4 }}>
         <Text className="text-2xl font-semibold text-slate-900">Enter your PIN</Text>
         <Text className="text-body text-slate-500">
-          Confirm it's you before this {flow === "transfer" ? "transfer" : flow === "withdraw" ? "withdrawal" : "top up"} goes through.
+          Confirm it's you before this{" "}
+          {flow === "transfer"
+            ? "transfer"
+            : flow === "withdraw"
+              ? "withdrawal"
+              : flow === "billpay"
+                ? "payment"
+                : "top up"}{" "}
+          goes through.
         </Text>
       </View>
 

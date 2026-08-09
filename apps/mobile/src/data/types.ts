@@ -28,6 +28,18 @@ export type Pocket = {
   // PocketDetailScreen for how targetDate presence changes the progress
   // bar's color.
   targetDate?: number;
+  // Shared/group pockets — the freelancer/gig-worker wedge this project
+  // anchored on (per the research docs' "pick one wedge" advice) regularly
+  // splits costs with other independent workers: a shared co-working
+  // membership, a joint client-project buffer, a pooled emergency fund
+  // among a small collective. Undefined means "not shared," same
+  // optional-field convention as autoSaveMinor/targetDate. `contributedMinor`
+  // per participant is illustrative/mock — there's no real multi-user auth
+  // or contribution-tracking backend behind this yet (see
+  // PocketDetailScreen's "Request a contribution" being a ComingSoon
+  // placeholder, not a real invite flow), so it's additive display data
+  // rather than something this layer reconciles against savedMinor.
+  participants?: { id: string; name: string; contributedMinor: number }[];
 };
 
 // Deliberately has no `icon` field — which icon a transaction renders with
@@ -55,6 +67,13 @@ export type FundingSource = {
   id: string;
   name: string;
   subtitle: string;
+  // Defaults to "bank" for existing sources (via the fallback in
+  // TopUpScreen's icon lookup) rather than being required everywhere —
+  // only e-wallet sources need to opt into a different icon/treatment.
+  // SEA digital banks (Jago, SeaBank, Blu — see the market-research doc)
+  // all treat e-wallet top-up as a first-class funding rail alongside
+  // linked bank accounts, not an afterthought.
+  kind?: "bank" | "card" | "ewallet";
 };
 
 export type AccountSummary = {
