@@ -4,6 +4,7 @@ import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
 import { IconPocket } from "./icons";
 import { formatIDR } from "@/utils/currency";
+import { getPocketPaceStatus, pocketPaceColor } from "@/utils/pocketPacing";
 import type { Pocket } from "@/data";
 
 export type { Pocket };
@@ -22,6 +23,13 @@ type PocketCardProps = {
 // bar, "saved of target" caption.
 export default function PocketCard({ pocket, onPress, variant = "compact" }: PocketCardProps) {
   const pct = pocket.targetMinor > 0 ? Math.min(1, pocket.savedMinor / pocket.targetMinor) : 0;
+  // Was always success-green regardless of how close a pocket actually was
+  // to its goal or deadline — a pocket badly behind its own target date
+  // looked identical to one comfortably ahead. Pockets with no target date
+  // keep the old steady-green look (getPocketPaceStatus returns "no-target"
+  // for those, which pocketPaceColor maps back to success-green) since
+  // there's nothing to be "behind" without a date to measure against.
+  const paceColor = pocketPaceColor(getPocketPaceStatus(pocket));
   return (
     <Pressable
       onPress={onPress}
@@ -39,7 +47,7 @@ export default function PocketCard({ pocket, onPress, variant = "compact" }: Poc
       <View className="h-1.5 rounded-full bg-slate-100">
         <View
           className="h-1.5 rounded-full"
-          style={{ width: `${pct * 100}%`, backgroundColor: colors.success500 }}
+          style={{ width: `${pct * 100}%`, backgroundColor: paceColor }}
         />
       </View>
       <Text className="text-caption text-slate-500">

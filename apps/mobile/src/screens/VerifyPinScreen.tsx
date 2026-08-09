@@ -9,7 +9,7 @@ import { IconChevronLeft } from "../components/icons";
 import NumericKeypad from "../components/NumericKeypad";
 import DigitEntry from "../components/DigitEntry";
 import { useSessionStore } from "../store/session";
-import { getPocket, adjustPocketBalance } from "@/data";
+import { getPocket, adjustPocketBalance, adjustAccountBalance, recordTransaction } from "@/data";
 
 const PIN_LENGTH = 6;
 
@@ -23,7 +23,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "VerifyPin">;
 // owns the actual submission, since PIN verification is the real last gate
 // before money moves, not the review step before it.
 export default function VerifyPinScreen({ navigation, route }: Props) {
-  const { flow, contextId, contextLabel, amountMinor } = route.params;
+  const { flow, contextId, contextLabel, amountMinor, feeMinor = 0 } = route.params;
   const storedPin = useSessionStore((s) => s.pin);
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -62,22 +62,56 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       // This is the one place a "successful" money move actually touches
       // the mock data layer — previously every flow (including Add Money
       // via PocketDetail) only ever showed a convincing Success/Receipt
-      // screen without changing any real balance. `contextId` doubles as
-      // "does this money move target one of my own pockets" — pocket ids
-      // (pocket_N) don't collide with beneficiary/merchant/funding-source
-      // ids, so a successful getPocket() lookup is enough to disambiguate
-      // "transfer to my own pocket" (real balance change) from "transfer to
-      // an external beneficiary/merchant" (no pocket to credit).
-      // Scope limitation, documented in TODO.md: the main account balance
-      // (mockAccount.ts) and transaction history are NOT updated by any
-      // flow — only Pocket.savedMinor becomes real here.
-      if (contextId && getPocket(contextId)) {
-        if (flow === "transfer" || flow === "topup") {
-          adjustPocketBalance(contextId, amountMinor);
+      // screen without changing any real balance, and the main account
+      // balance/transaction list specifically were never touched by
+      // anything (documented as a scope limitation in TODO.md until now).
+      // `contextId` doubles as "does this money move target one of my own
+      // pockets" — pocket ids (pocket_N) don't collide with
+      // beneficiary/merchant/funding-source ids, so a successful
+      // getPocket() lookup is enough to disambiguate "transfer to/from my
+      // own pocket" (money moves between the pocket and the main balance)
+      // from "transfer to an external beneficiary/merchant" or "top up
+      // from an external source" (only the main balance moves).
+      const targetPocket = contextId ? getPocket(contextId) : undefined;
+      const strippedLabel = contextLabel.replace(/^(To|From) /, "");
+
+      if (targetPocket) {
+        if (flow === "transfer") {
+          // Add Money (PocketDetailScreen / TransferScreen's "Your
+          // Pockets" row): main balance -> pocket.
+          adjustPocketBalance(targetPocket.id, amountMinor);
+          adjustAccountBalance(-amountMinor);
+          recordTransaction(`Transfer to ${targetPocket.name}`, -amountMinor, "Savings");
         } else if (flow === "withdraw") {
-          adjustPocketBalance(contextId, -amountMinor);
+          // Withdraw: pocket -> main balance.
+          adjustPocketBalance(targetPocket.id, -amountMinor);
+          adjustAccountBalance(amountMinor);
+          recordTransaction(`Withdraw from ${targetPocket.name}`, amountMinor, "Savings");
         }
+      } else if (flow === "topup") {
+        // External funding source -> main balance. No pocket involved, so
+        // nothing but the account balance moves.
+        adjustAccountBalance(amountMinor);
+        recordTransaction(`Top up from ${strippedLabel}`, amountMinor);
+      } else {
+        // External beneficiary transfer, or a QRIS merchant pay (QrScanScreen
+        // also uses flow: "transfer" — see its own comment on why) — main
+        // balance only, no pocket to credit.
+        adjustAccountBalance(-amountMinor);
+        recordTransaction(strippedLabel, -amountMinor);
       }
+
+      // QRIS pay is the only flow a fee can currently attach to (see
+      // utils/fees.ts) — recorded as its own transaction line rather than
+      // folded into the purchase amount above, so the transaction list
+      // reads like a real statement (purchase, then a separate fee line)
+      // instead of a total that silently doesn't match the "Amount"
+      // Confirm/Receipt both showed.
+      if (feeMinor > 0) {
+        adjustAccountBalance(-feeMinor);
+        recordTransaction("QRIS fee", -feeMinor, "Fees");
+      }
+
       // Synthetic reference/timestamp standing in for what a real backend
       // response would return (an idempotency/transaction id + server
       // timestamp) — generated here, once, at the moment submission
@@ -85,7 +119,7 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       // both screens show the same fixed values rather than recomputing
       // "now" every time either screen renders.
       const reference = `TRX${Date.now().toString(36).toUpperCase()}`;
-      navigation.replace("Success", { flow, contextLabel, amountMinor, reference, completedAt: Date.now() });
+      navigation.replace("Success", { flow, contextLabel, amountMinor, feeMinor, reference, completedAt: Date.now() });
     }, 400);
   }
 

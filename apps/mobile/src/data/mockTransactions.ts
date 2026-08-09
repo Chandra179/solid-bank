@@ -58,6 +58,19 @@ export function listRecentTransactions(): Transaction[] {
   return RECENT_TRANSACTIONS.map(withLabel);
 }
 
+let nextMainHistorySeq = 1;
+
+// Backs VerifyPinScreen's submit() alongside adjustAccountBalance — a
+// balance that moved with no matching row in Home/Transactions would look
+// unexplained the same way a pocket balance change without a history entry
+// did before recordPocketTransaction existed. Unshifted (not pushed) so the
+// newest completed move shows up first, matching how every other list here
+// is already ordered newest-first.
+export function recordTransaction(name: string, amountMinor: number, category?: string): void {
+  const entry: RawTransaction = { id: `tx_m${nextMainHistorySeq++}`, name, occurredAt: Date.now(), amountMinor, category };
+  RECENT_TRANSACTIONS.unshift(entry);
+}
+
 export function listPocketTransactions(pocketId: string): Transaction[] {
   return (POCKET_HISTORY[pocketId] ?? []).map(withLabel);
 }

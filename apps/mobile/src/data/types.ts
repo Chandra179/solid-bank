@@ -16,6 +16,18 @@ export type Pocket = {
   // an honest stand-in for "the weekly job ran" rather than pretending a
   // real cron exists.
   autoSaveMinor?: number;
+  // When this pocket was created — the reference point pacing measures
+  // elapsed time from (see utils/pocketPacing.ts: expected progress is
+  // elapsed-since-createdAt over targetDate-minus-createdAt). Always set,
+  // unlike targetDate, since "no pacing" and "no creation time" aren't the
+  // same thing — a pocket with no goal date still has a real start date.
+  createdAt: number;
+  // Optional goal deadline, in ms epoch. Pockets without one render with
+  // steady, non-evaluative progress (no "behind schedule" framing is
+  // possible without a date to measure against) — see PocketCard/
+  // PocketDetailScreen for how targetDate presence changes the progress
+  // bar's color.
+  targetDate?: number;
 };
 
 // Deliberately has no `icon` field — which icon a transaction renders with

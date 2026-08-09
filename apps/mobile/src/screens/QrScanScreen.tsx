@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
 import { IconChevronLeft, IconQrCode } from "../components/icons";
 import { resolveMockQrCode } from "@/data";
+import { getQrisFeeMinor } from "@/utils/fees";
 
 type Props = NativeStackScreenProps<RootStackParamList, "QrScan">;
 
@@ -45,6 +46,12 @@ export default function QrScanScreen({ navigation }: Props) {
     const t = setTimeout(() => {
       setScanning(false);
       const merchant = resolveMockQrCode();
+      // Decided once, here — the one place that actually knows this
+      // transfer is a QRIS payment rather than a beneficiary transfer or
+      // pocket move — then carried through as `feeMinor` rather than
+      // re-derived at Confirm/Receipt. See utils/fees.ts for what decides
+      // the value.
+      const feeMinor = getQrisFeeMinor();
       if (merchant.amountMinor !== undefined) {
         navigation.replace("Confirm", {
           flow: "transfer",
@@ -52,6 +59,7 @@ export default function QrScanScreen({ navigation }: Props) {
           contextLabel: `To ${merchant.name}`,
           contextSubLabel: merchant.category,
           amountMinor: merchant.amountMinor,
+          feeMinor,
         });
       } else {
         navigation.replace("AmountEntry", {
@@ -59,6 +67,7 @@ export default function QrScanScreen({ navigation }: Props) {
           contextId: merchant.id,
           contextLabel: `To ${merchant.name}`,
           contextSubLabel: merchant.category,
+          feeMinor,
         });
       }
     }, SCAN_DELAY_MS);

@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../../theme/colors";
 import { IconChevronLeft } from "../../components/icons";
 import Button from "../../components/Button";
+import { updateUserProfile } from "@/data";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfileSetup">;
 
@@ -67,7 +68,18 @@ export default function ProfileSetupScreen({ navigation }: Props) {
       <View className="flex-1" />
 
       <View className="px-6 pb-4">
-        <Button label="Continue" variant="primary" disabled={!isValid} onPress={() => navigation.navigate("KtpScan")} />
+        <Button
+          label="Continue"
+          variant="primary"
+          disabled={!isValid}
+          onPress={() => {
+            // Same fix as PhoneEntryScreen: this was validated and then
+            // discarded, so Profile always showed the hardcoded "Jack"
+            // regardless of the name typed here.
+            updateUserProfile({ name: name.trim() });
+            navigation.navigate("KtpScan");
+          }}
+        />
       </View>
     </SafeAreaView>
   );

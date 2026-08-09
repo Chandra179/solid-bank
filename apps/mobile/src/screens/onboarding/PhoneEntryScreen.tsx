@@ -8,6 +8,7 @@ import { colors } from "../../theme/colors";
 import { IconChevronLeft } from "../../components/icons";
 import NumericKeypad from "../../components/NumericKeypad";
 import Button from "../../components/Button";
+import { updateUserProfile } from "@/data";
 
 const MAX_DIGITS = 13; // Indonesian mobile numbers run up to ~13 digits after the country code
 const MIN_DIGITS = 9;
@@ -78,7 +79,12 @@ export default function PhoneEntryScreen({ navigation }: Props) {
           label="Continue"
           variant="primary"
           disabled={!isValid}
-          onPress={() => navigation.navigate("Otp", { phone: `+62${digits}` })}
+          onPress={() => {
+            // Was validated and then thrown away — Profile kept showing the
+            // hardcoded demo phone number no matter what was typed here.
+            updateUserProfile({ phone: `+62 ${formatPhone(digits)}` });
+            navigation.navigate("Otp", { phone: `+62${digits}` });
+          }}
         />
       </View>
     </SafeAreaView>

@@ -18,7 +18,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Receipt">;
 // screen is a record of what happened rather than a live re-render of
 // "now."
 export default function ReceiptScreen({ navigation, route }: Props) {
-  const { flow, contextLabel, amountMinor, reference, completedAt } = route.params;
+  const { flow, contextLabel, amountMinor, feeMinor = 0, reference, completedAt } = route.params;
   const copy = getMoneyFlowCopy(flow);
 
   const completedLabel = new Date(completedAt).toLocaleString("id-ID", {
@@ -75,7 +75,16 @@ export default function ReceiptScreen({ navigation, route }: Props) {
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
             <Text className="text-body text-slate-500">Fee</Text>
-            <Text className="text-body font-semibold text-slate-900">Rp 0</Text>
+            {/* Same real feeMinor + "Free"-when-zero treatment as
+                ConfirmScreen — kept consistent since this is a record of
+                the same transaction that screen previewed, not a
+                recomputation of it. */}
+            <Text
+              className="text-body font-semibold"
+              style={{ color: feeMinor > 0 ? colors.neutral900 : colors.success500 }}
+            >
+              {feeMinor > 0 ? formatIDR(feeMinor) : "Free"}
+            </Text>
           </View>
         </View>
       </ScrollView>

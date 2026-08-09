@@ -4,8 +4,28 @@ body,
   height: 100%;
 }
 
+body {
+  margin: 0;
+  /* Backdrop visible outside the phone frame below on wide viewports. */
+  background-color: #e2e8f0;
+}
+
 #root {
   display: flex;
+  /* Bug fix: screens here assume a phone-width viewport — e.g.
+     KtpScanScreen's capture guide is `aspect-[1.586] w-full`, sized off
+     the *screen's* width. With no cap, "w-full" resolved to the full
+     desktop browser width, and 1.586:1 turned that into a box taller than
+     the browser window, forcing the whole KYC screen to scroll with the
+     framing guide cut off top and bottom — exactly the kind of layout a
+     KTP/selfie capture step can't afford to get wrong. Capping the app
+     shell to a phone-sized width on web fixes this at the source for every
+     current and future screen, not just the one that happened to surface
+     it first. 430px matches a large modern phone (iPhone 14 Pro Max-class)
+     viewport width; native builds are unaffected since this is web-only CSS.
+     */
+  max-width: 430px;
+  margin: 0 auto;
 }
 
 @tailwind base;

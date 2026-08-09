@@ -11,6 +11,7 @@ import BottomNav from "../components/BottomNav";
 import SelectRow from "../components/SelectRow";
 import { getAccountSummary, getUserProfile } from "@/data";
 import { useSessionStore } from "../store/session";
+import { getInitials } from "@/utils/initials";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Profile">;
 
@@ -23,7 +24,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const user = getUserProfile();
   const account = getAccountSummary();
   const isVerified = user.kycStatus === "verified";
-  const initials = user.name.slice(0, 2).toUpperCase();
+  const initials = getInitials(user.name);
   const logOut = useSessionStore((s) => s.clear);
 
   return (

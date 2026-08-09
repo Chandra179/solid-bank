@@ -14,13 +14,25 @@ type MoneyMoveContext = {
   // AmountEntryScreen falls back to the account balance for `transfer` when
   // this is absent, so existing Transfer/Top Up callers don't need to change.
   maxAmountMinor?: number;
+  // Set only by QrScanScreen (via utils/fees.ts) — every other entry point
+  // (pocket moves, beneficiary transfers, top-ups) is free by product
+  // decision (see utils/fees.ts) and leaves this undefined, which
+  // Confirm/Receipt both treat the same as 0.
+  feeMinor?: number;
 };
 
 // What SuccessScreen and ReceiptScreen both need — VerifyPinScreen is the
 // only place that generates `reference`/`completedAt`, at the moment a
 // submission actually succeeds, so the receipt reflects when the money
 // really moved rather than whenever the receipt happens to be viewed.
-type CompletedMoneyMove = { flow: MoneyFlow; contextLabel: string; amountMinor: number; reference: string; completedAt: number };
+type CompletedMoneyMove = {
+  flow: MoneyFlow;
+  contextLabel: string;
+  amountMinor: number;
+  feeMinor?: number;
+  reference: string;
+  completedAt: number;
+};
 
 export type RootStackParamList = {
   // Main app (isAuthenticated === true)

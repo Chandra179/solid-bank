@@ -12,6 +12,7 @@ import EmptyState from "../components/EmptyState";
 import { adjustPocketBalance, getPocket, listPockets, listPocketTransactions, recordPocketTransaction } from "@/data";
 import { formatIDR } from "@/utils/currency";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { getPocketPaceMessage, getPocketPaceStatus, pocketPaceColor } from "@/utils/pocketPacing";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
@@ -31,6 +32,12 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
   const pocket = getPocket(route.params.pocketId) ?? listPockets()[0];
   const history = listPocketTransactions(pocket.id);
   const pct = pocket.targetMinor > 0 ? Math.min(1, pocket.savedMinor / pocket.targetMinor) : 0;
+  const paceStatus = getPocketPaceStatus(pocket);
+  const paceColor = pocketPaceColor(paceStatus);
+  const targetDateLabel = pocket.targetDate
+    ? new Date(pocket.targetDate).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+    : undefined;
+  const paceMessage = getPocketPaceMessage(paceStatus, targetDateLabel);
 
   // The growth mechanic on top of pockets: there's no real background
   // scheduler in this mock layer, so "one week's auto-save ran" is
@@ -84,9 +91,17 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
           <View className="h-2 w-full rounded-full bg-slate-100">
             <View
               className="h-2 rounded-full"
-              style={{ width: `${pct * 100}%`, backgroundColor: colors.success500 }}
+              style={{ width: `${pct * 100}%`, backgroundColor: paceColor }}
             />
           </View>
+          {/* Only pockets with a target date get an evaluative pace
+              message (see utils/pocketPacing.ts) — otherwise this is null
+              and nothing renders, same as before target dates existed. */}
+          {paceMessage ? (
+            <Text className="text-caption font-semibold" style={{ color: paceColor }}>
+              {paceMessage}
+            </Text>
+          ) : null}
 
           <View className="flex-row pt-2" style={{ gap: 12 }}>
             <Button

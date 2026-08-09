@@ -8,13 +8,14 @@ export {
   listRecentTransactions,
   listPocketTransactions,
   recordPocketTransaction,
+  recordTransaction,
   getCategoryBreakdown,
 } from "./mockTransactions";
 export type { CategoryBreakdown } from "./mockTransactions";
 export { listBeneficiaries, addBeneficiary } from "./mockBeneficiaries";
 export { listFundingSources } from "./mockFundingSources";
-export { getAccountSummary } from "./mockAccount";
-export { getUserProfile } from "./mockUser";
+export { getAccountSummary, adjustAccountBalance } from "./mockAccount";
+export { getUserProfile, updateUserProfile } from "./mockUser";
 export { resolveMockQrCode } from "./mockMerchants";
 export { listNotifications, getUnreadNotificationCount, markNotificationRead } from "./mockNotifications";
 export { listCards, getCard, setCardFrozen } from "./mockCards";

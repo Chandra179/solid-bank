@@ -29,7 +29,7 @@ function formatRupiah(rupiah: number) {
 // not which flow it's in beyond validation rules (Transfer can't exceed
 // the available balance; Top Up has no such ceiling).
 export default function AmountEntryScreen({ navigation, route }: Props) {
-  const { flow, contextId, contextLabel, contextSubLabel, maxAmountMinor } = route.params;
+  const { flow, contextId, contextLabel, contextSubLabel, maxAmountMinor, feeMinor } = route.params;
   const [digits, setDigits] = useState(""); // raw rupiah digits, no decimals
 
   const amountRupiah = digits === "" ? 0 : parseInt(digits, 10);
@@ -112,7 +112,9 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
           label="Continue"
           variant="primary"
           disabled={!isValid}
-          onPress={() => navigation.navigate("Confirm", { flow, contextId, contextLabel, contextSubLabel, amountMinor })}
+          onPress={() =>
+            navigation.navigate("Confirm", { flow, contextId, contextLabel, contextSubLabel, amountMinor, feeMinor })
+          }
         />
       </View>
     </SafeAreaView>

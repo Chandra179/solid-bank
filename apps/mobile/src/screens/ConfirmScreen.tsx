@@ -24,7 +24,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Confirm">;
 // money moves. Review-and-confirm and step-up authentication are two
 // different jobs; splitting them keeps each screen doing one thing.
 export default function ConfirmScreen({ navigation, route }: Props) {
-  const { flow, contextId, contextLabel, contextSubLabel, amountMinor } = route.params;
+  const { flow, contextId, contextLabel, contextSubLabel, amountMinor, feeMinor = 0 } = route.params;
   const copy = getMoneyFlowCopy(flow);
 
   return (
@@ -63,7 +63,20 @@ export default function ConfirmScreen({ navigation, route }: Props) {
         <View className="h-px bg-slate-100" />
         <View className="flex-row items-center justify-between px-4 py-4">
           <Text className="text-body text-slate-500">Fee</Text>
-          <Text className="text-body font-semibold text-slate-900">Rp 0</Text>
+          {/* Every flow except QRIS pay is fee-free by product decision
+              (utils/fees.ts) — a flat "Rp 0" in the same neutral color as
+              every other row read like an unset/placeholder value rather
+              than a deliberate promise, so a zero fee gets the same
+              success-green "Free" treatment waived costs get elsewhere in
+              the app. A real (nonzero) fee shows in the normal color like
+              Amount above it, not green — green here specifically means
+              "waived," not just "a number." */}
+          <Text
+            className="text-body font-semibold"
+            style={{ color: feeMinor > 0 ? colors.neutral900 : colors.success500 }}
+          >
+            {feeMinor > 0 ? formatIDR(feeMinor) : "Free"}
+          </Text>
         </View>
       </View>
 
@@ -73,7 +86,9 @@ export default function ConfirmScreen({ navigation, route }: Props) {
         <Button
           label="Confirm"
           variant="primary"
-          onPress={() => navigation.navigate("VerifyPin", { flow, contextId, contextLabel, contextSubLabel, amountMinor })}
+          onPress={() =>
+            navigation.navigate("VerifyPin", { flow, contextId, contextLabel, contextSubLabel, amountMinor, feeMinor })
+          }
         />
         <Pressable onPress={() => navigation.goBack()} className="items-center py-2">
           <Text className="text-body font-semibold text-slate-500">Cancel</Text>
