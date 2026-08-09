@@ -9,8 +9,8 @@ import { IconPlus, IconPocket } from "../components/icons";
 import PocketCard from "../components/PocketCard";
 import BottomNav from "../components/BottomNav";
 import EmptyState from "../components/EmptyState";
-import { listPockets } from "@/data";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import LoadingState from "../components/LoadingState";
+import { usePockets } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Pockets">;
 
@@ -21,13 +21,9 @@ type Props = NativeStackScreenProps<RootStackParamList, "Pockets">;
 // built for Home's horizontal row; this just gives that same data a
 // full, dedicated list view.
 export default function PocketsScreen({ navigation }: Props) {
-  // See useRefreshOnFocus for why: this screen stays mounted across
-  // navigations, so without a focus-triggered re-render, a pocket created
-  // via CreatePocketScreen doesn't show up here until the screen is torn
-  // down and remounted.
-  useRefreshOnFocus();
+  const { data: pockets, isLoading } = usePockets();
 
-  const pockets = listPockets();
+  if (isLoading || !pockets) return <LoadingState />;
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>

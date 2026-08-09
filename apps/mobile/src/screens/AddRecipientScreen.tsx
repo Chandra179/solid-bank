@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft, IconUser } from "../components/icons";
 import Button from "../components/Button";
 import { addBeneficiary } from "@/data";
+import { useInvalidateData } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AddRecipient">;
 
@@ -23,6 +24,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
   const [name, setName] = useState("");
   const [bank, setBank] = useState(BANKS[0]);
   const [accountNumber, setAccountNumber] = useState("");
+  const invalidate = useInvalidateData();
 
   const isValid = name.trim().length > 1 && accountNumber.trim().length >= 4;
 
@@ -30,6 +32,11 @@ export default function AddRecipientScreen({ navigation }: Props) {
     if (!isValid) return;
     const last4 = accountNumber.trim().slice(-4);
     addBeneficiary(name.trim(), `•••• ${last4} · ${bank}`);
+    // TransferScreen's beneficiary list now comes from useBeneficiaries()
+    // (see @/data/queries) instead of the old useRefreshOnFocus poke, so
+    // this has to explicitly invalidate rather than relying on a focus
+    // effect to pick up the new row.
+    invalidate();
     navigation.goBack();
   }
 

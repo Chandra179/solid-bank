@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -9,29 +9,26 @@ import { IconArrowDownLeft, IconArrowUpRight, IconBolt, IconChevronLeft, IconEdi
 import Button from "../components/Button";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
-import { adjustPocketBalance, getPocket, listPockets, listPocketTransactions, recordPocketTransaction } from "@/data";
+import LoadingState from "../components/LoadingState";
+import { adjustPocketBalance, getPocket, recordPocketTransaction } from "@/data";
 import { formatIDR } from "@/utils/currency";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { usePockets, usePocketTransactions, useInvalidateData } from "@/data/queries";
 import { getPocketPaceMessage, getPocketPaceStatus, pocketPaceColor } from "@/utils/pocketPacing";
 import { getInitials } from "@/utils/initials";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
 export default function PocketDetailScreen({ navigation, route }: Props) {
-  // See useRefreshOnFocus for why: without this, adding money to this
-  // pocket and landing back here (Success -> Done -> ... -> back to this
-  // screen) would still show the pre-transfer balance until remounted.
-  useRefreshOnFocus();
-  // Separate manual counter for handleBoost below — that mutation happens
-  // without a navigation round-trip, so it needs its own re-render trigger
-  // rather than relying on the focus effect.
-  const [, forceRefresh] = useState(0);
+  const { data: pockets, isLoading: pocketsLoading } = usePockets();
+  const { data: history = [], isLoading: historyLoading } = usePocketTransactions(route.params.pocketId);
+  const invalidate = useInvalidateData();
+
+  if (pocketsLoading || historyLoading || !pockets) return <LoadingState />;
 
   // Falls back to the first pocket only as a defensive guard against a bad
   // id ever reaching this screen — every real navigation call passes a
   // known pocket id, so this shouldn't be reachable in practice.
-  const pocket = getPocket(route.params.pocketId) ?? listPockets()[0];
-  const history = listPocketTransactions(pocket.id);
+  const pocket = getPocket(route.params.pocketId) ?? pockets[0];
   const pct = pocket.targetMinor > 0 ? Math.min(1, pocket.savedMinor / pocket.targetMinor) : 0;
   const paceStatus = getPocketPaceStatus(pocket);
   const paceColor = pocketPaceColor(paceStatus);
@@ -51,7 +48,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
     if (!pocket.autoSaveMinor) return;
     adjustPocketBalance(pocket.id, pocket.autoSaveMinor);
     recordPocketTransaction(pocket.id, "Auto-save boost", pocket.autoSaveMinor);
-    forceRefresh((n) => n + 1);
+    invalidate();
   }
 
   return (

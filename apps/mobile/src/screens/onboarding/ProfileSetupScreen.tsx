@@ -8,6 +8,7 @@ import { colors } from "../../theme/colors";
 import { IconChevronLeft } from "../../components/icons";
 import Button from "../../components/Button";
 import { updateUserProfile } from "@/data";
+import { useInvalidateData } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfileSetup">;
 
@@ -21,6 +22,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const isValid = name.trim().length > 1 && EMAIL_RE.test(email);
+  const invalidate = useInvalidateData();
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
@@ -77,6 +79,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
             // discarded, so Profile always showed the hardcoded "Jack"
             // regardless of the name typed here.
             updateUserProfile({ name: name.trim() });
+            invalidate();
             navigation.navigate("KtpScan");
           }}
         />

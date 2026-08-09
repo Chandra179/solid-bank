@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -7,7 +7,9 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconArrowDownLeft, IconChevronLeft, IconInbox, IconPocket, IconQrCode, IconShield } from "../components/icons";
 import EmptyState from "../components/EmptyState";
-import { listNotifications, markNotificationRead } from "@/data";
+import LoadingState from "../components/LoadingState";
+import { markNotificationRead } from "@/data";
+import { useNotifications, useInvalidateData } from "@/data/queries";
 import type { NotificationCategory } from "@/data/mockNotifications";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Notifications">;
@@ -26,13 +28,15 @@ const CATEGORY_ICON: Record<NotificationCategory, (color: string) => React.React
 // picks up the change immediately since this screen mutates the same
 // module-level array it just read, no navigation/focus round-trip needed.
 export default function NotificationsScreen({ navigation }: Props) {
-  const [, forceRefresh] = useState(0);
-  const notifications = listNotifications();
+  const { data: notifications, isLoading } = useNotifications();
+  const invalidate = useInvalidateData();
 
   function handlePress(id: string) {
     markNotificationRead(id);
-    forceRefresh((n) => n + 1);
+    invalidate();
   }
+
+  if (isLoading || !notifications) return <LoadingState />;
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>

@@ -10,12 +10,15 @@
     "web:build": "vite build && vite preview",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "gen:types": "openapi-typescript ../api/docs/openapi.json -o src/api/types.gen.ts"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.0",
     "@react-navigation/native-stack": "^6.9.0",
+    "@tanstack/react-query": "^5.59.0",
     "nativewind": "^4.0.36",
     "react": "19.2.3",
     "react-native": "^0.86.2",
@@ -34,7 +37,6 @@
     "@react-native/eslint-config": "0.86.2",
     "@react-native/metro-config": "0.86.2",
     "@react-native/typescript-config": "0.86.2",
-    "@types/jest": "^29.5.12",
     "@types/node": "^20.14.0",
     "@types/react": "^19.1.1",
     "@vitejs/plugin-react": "^5.2.0",
@@ -46,7 +48,8 @@
     "react-native-web": "^0.21.2",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.6.3",
-    "vite": "^8.2.1"
+    "vite": "^8.2.1",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": ">=18"

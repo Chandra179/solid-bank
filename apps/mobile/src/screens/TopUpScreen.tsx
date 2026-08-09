@@ -7,8 +7,8 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconCard, IconChevronLeft, IconWallet } from "../components/icons";
 import SelectRow from "../components/SelectRow";
-import { listFundingSources, listCards } from "@/data";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import LoadingState from "../components/LoadingState";
+import { useFundingSources, useCards } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 
@@ -16,20 +16,21 @@ type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 // short flat list (no search) since a user only has a handful of funding
 // sources, unlike the potentially long beneficiary list on Transfer.
 export default function TopUpScreen({ navigation }: Props) {
-  // See useRefreshOnFocus for why: freezing the card on CardsScreen and
-  // coming straight back here should immediately show it as unavailable,
-  // not the stale pre-freeze state.
-  useRefreshOnFocus();
+  const { data: sources = [], isLoading: sourcesLoading } = useFundingSources();
+  const { data: cards = [], isLoading: cardsLoading } = useCards();
 
-  const sources = listFundingSources();
   // The "Debit Card" funding source and CardsScreen's card are the same
   // physical card (linked via Card.fundingSourceId) — freezing it there
   // should actually block it as a top-up source here, not just say so.
+  // Reading cards through useCards() (rather than a direct listCards()
+  // call) is what makes this reflect a freeze toggled on CardsScreen
+  // immediately: freezing there calls useInvalidateData(), which busts this
+  // screen's cached cards query too.
   const frozenSourceIds = new Set(
-    listCards()
-      .filter((c) => c.frozen && c.fundingSourceId)
-      .map((c) => c.fundingSourceId)
+    cards.filter((c) => c.frozen && c.fundingSourceId).map((c) => c.fundingSourceId)
   );
+
+  if (sourcesLoading || cardsLoading) return <LoadingState />;
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>

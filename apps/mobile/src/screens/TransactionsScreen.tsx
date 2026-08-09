@@ -8,8 +8,8 @@ import { colors } from "../theme/colors";
 import { IconArrowDownLeft, IconBag, IconChevronLeft, IconInbox, IconPieChart } from "../components/icons";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
-import { listRecentTransactions } from "@/data";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import LoadingState from "../components/LoadingState";
+import { useRecentTransactions } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transactions">;
 
@@ -19,9 +19,9 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transactions">;
 // a second, fuller view onto the same list rather than a separate feed to
 // maintain (same relationship PocketsScreen has to Home's pocket row).
 export default function TransactionsScreen({ navigation }: Props) {
-  useRefreshOnFocus();
+  const { data: transactions, isLoading } = useRecentTransactions();
 
-  const transactions = listRecentTransactions();
+  if (isLoading || !transactions) return <LoadingState />;
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>

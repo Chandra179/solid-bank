@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Switch, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -8,8 +8,9 @@ import { colors } from "../theme/colors";
 import { IconAlert, IconPlus, IconShield } from "../components/icons";
 import BottomNav from "../components/BottomNav";
 import SelectRow from "../components/SelectRow";
-import { listCards, setCardFrozen } from "@/data";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import LoadingState from "../components/LoadingState";
+import { setCardFrozen } from "@/data";
+import { useCards, useInvalidateData } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Cards">;
 
@@ -21,13 +22,12 @@ type Props = NativeStackScreenProps<RootStackParamList, "Cards">;
 // ComingSoon gaps — a fraud-ops workflow and physical card issuance are
 // both real separate features, not something to fake with a dead button.
 export default function CardsScreen({ navigation }: Props) {
-  // See useRefreshOnFocus for why: without this, a freeze toggled here and
-  // then re-checked after navigating away and back would still show the
-  // stale value until the screen fully remounted.
-  useRefreshOnFocus();
-  const [, forceRefresh] = useState(0);
+  const { data: cards, isLoading } = useCards();
+  const invalidate = useInvalidateData();
 
-  const card = listCards()[0];
+  const card = cards?.[0];
+
+  if (isLoading) return <LoadingState />;
 
   if (!card) {
     return (
@@ -98,7 +98,7 @@ export default function CardsScreen({ navigation }: Props) {
             value={card.frozen}
             onValueChange={(next) => {
               setCardFrozen(card.id, next);
-              forceRefresh((n) => n + 1);
+              invalidate();
             }}
             trackColor={{ true: colors.brand700, false: colors.neutral200 }}
           />

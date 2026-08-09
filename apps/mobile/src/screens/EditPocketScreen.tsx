@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft, IconPocket } from "../components/icons";
 import Button from "../components/Button";
 import { getPocket, listPockets, updatePocket } from "@/data";
+import { useInvalidateData } from "@/data/queries";
 import { formatDateInput, parseDateInput } from "@/utils/dateInput";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditPocket">;
@@ -36,6 +37,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
     pocket.autoSaveMinor ? String(Math.floor(pocket.autoSaveMinor / 100)) : ""
   );
   const [targetDateText, setTargetDateText] = useState(pocket.targetDate ? formatDateInput(pocket.targetDate) : "");
+  const invalidate = useInvalidateData();
 
   const goalRupiah = goalDigits === "" ? 0 : parseInt(goalDigits, 10);
   const autoSaveRupiah = autoSaveDigits === "" ? 0 : parseInt(autoSaveDigits, 10);
@@ -69,6 +71,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
       // it was cleared out rather than left blank from the start.
       ...(targetDateChanged ? { targetDate: targetDateMinor ?? null } : {}),
     });
+    invalidate();
     navigation.goBack();
   }
 

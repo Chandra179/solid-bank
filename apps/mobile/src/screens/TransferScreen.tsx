@@ -8,8 +8,8 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft, IconPlus, IconPocket, IconSearch, IconUser } from "../components/icons";
 import SelectRow from "../components/SelectRow";
 import EmptyState from "../components/EmptyState";
-import { listBeneficiaries, listPockets } from "@/data";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import LoadingState from "../components/LoadingState";
+import { usePockets, useBeneficiaries } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 
@@ -19,17 +19,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 // external beneficiaries are a searchable list below. Both lead into the
 // same shared AmountEntry screen.
 export default function TransferScreen({ navigation }: Props) {
-  // See useRefreshOnFocus for why: without this, a beneficiary added via
-  // AddRecipientScreen wouldn't show up here until a full remount.
-  useRefreshOnFocus();
-
   const [query, setQuery] = useState("");
-  const pockets = listPockets();
-  const beneficiaries = listBeneficiaries();
+  const { data: pockets = [], isLoading: pocketsLoading } = usePockets();
+  const { data: beneficiaries = [], isLoading: beneficiariesLoading } = useBeneficiaries();
 
   const filteredBeneficiaries = beneficiaries.filter((b) =>
     b.name.toLowerCase().includes(query.toLowerCase())
   );
+
+  if (pocketsLoading || beneficiariesLoading) return <LoadingState />;
 
   function goToAmount(contextId: string, contextLabel: string, contextSubLabel?: string) {
     navigation.navigate("AmountEntry", { flow: "transfer", contextId, contextLabel, contextSubLabel });

@@ -9,6 +9,7 @@ import { IconChevronLeft } from "../../components/icons";
 import NumericKeypad from "../../components/NumericKeypad";
 import Button from "../../components/Button";
 import { updateUserProfile } from "@/data";
+import { useInvalidateData } from "@/data/queries";
 
 const MAX_DIGITS = 13; // Indonesian mobile numbers run up to ~13 digits after the country code
 const MIN_DIGITS = 9;
@@ -25,6 +26,7 @@ function formatPhone(digits: string) {
 export default function PhoneEntryScreen({ navigation }: Props) {
   const [digits, setDigits] = useState("");
   const isValid = digits.length >= MIN_DIGITS;
+  const invalidate = useInvalidateData();
 
   function appendDigit(d: string) {
     setDigits((prev) => (prev.length >= MAX_DIGITS ? prev : prev + d));
@@ -83,6 +85,7 @@ export default function PhoneEntryScreen({ navigation }: Props) {
             // Was validated and then thrown away — Profile kept showing the
             // hardcoded demo phone number no matter what was typed here.
             updateUserProfile({ phone: `+62 ${formatPhone(digits)}` });
+            invalidate();
             navigation.navigate("Otp", { phone: `+62${digits}` });
           }}
         />

@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../../theme/colors";
 import { IconPocket } from "../../components/icons";
 import Button from "../../components/Button";
+import { useTranslation } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
@@ -18,25 +19,24 @@ type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 // number is already registered. No separate password-based Login screen
 // exists or is needed here.
 export default function WelcomeScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   return (
     <SafeAreaView className="flex-1 bg-brand-700 px-6" edges={["top", "bottom"]}>
       <View className="flex-1 items-center justify-center" style={{ gap: 16 }}>
         <View className="h-20 w-20 items-center justify-center rounded-3xl bg-white/15">
           <IconPocket size={36} color={colors.neutral0} />
         </View>
-        <Text className="text-3xl font-bold text-white">Solid Bank</Text>
-        <Text className="max-w-[260px] text-center text-label text-brand-50">
-          Save toward your goals, move money, and keep everything in one place.
-        </Text>
+        <Text className="text-3xl font-bold text-white">{t("welcome.appName")}</Text>
+        <Text className="max-w-[260px] text-center text-label text-brand-50">{t("welcome.tagline")}</Text>
       </View>
 
       <View className="pb-6" style={{ gap: 12 }}>
-        <Button label="Get Started" variant="secondary" onPress={() => navigation.navigate("PhoneEntry")} />
+        <Button label={t("welcome.getStarted")} variant="secondary" onPress={() => navigation.navigate("PhoneEntry")} />
         <Text
           onPress={() => navigation.navigate("PhoneEntry")}
           className="text-center text-body font-semibold text-white"
         >
-          I already have an account
+          {t("welcome.haveAccount")}
         </Text>
       </View>
     </SafeAreaView>

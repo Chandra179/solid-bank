@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -22,32 +22,36 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
   function appendDigit(d: string) {
     if (advancing.current) return;
     setError(null);
-    setPin((prev) => {
-      if (prev.length >= PIN_LENGTH) return prev;
-      const next = prev + d;
-      if (next.length === PIN_LENGTH) {
-        advancing.current = true;
-        setTimeout(() => {
-          if (next === originalPin) {
-            // This is the only place the PIN actually gets persisted —
-            // see the caveat in store/session.ts about why this is a demo
-            // simplification, not a real security pattern.
-            persistPin(originalPin);
-            navigation.navigate("OnboardingComplete");
-          } else {
-            setError("PINs don't match. Try again.");
-            setPin("");
-            advancing.current = false;
-          }
-        }, 250);
-      }
-      return next;
-    });
+    setPin((prev) => (prev.length >= PIN_LENGTH ? prev : prev + d));
   }
   function backspace() {
     setError(null);
     setPin((prev) => prev.slice(0, -1));
   }
+
+  // Side effect kept out of the setPin updater above — updater functions
+  // must stay pure, and calling navigate()/persistPin() from inside one can
+  // fire twice if the updater ever gets invoked more than once for the same
+  // transition, which showed up as the confirm screen visibly double-firing
+  // its transition into OnboardingComplete.
+  useEffect(() => {
+    if (pin.length !== PIN_LENGTH || advancing.current) return;
+    advancing.current = true;
+    const timer = setTimeout(() => {
+      if (pin === originalPin) {
+        // This is the only place the PIN actually gets persisted — see the
+        // caveat in store/session.ts about why this is a demo simplification,
+        // not a real security pattern.
+        persistPin(originalPin);
+        navigation.navigate("OnboardingComplete");
+      } else {
+        setError("PINs don't match. Try again.");
+        setPin("");
+        advancing.current = false;
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [pin, originalPin, persistPin, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>

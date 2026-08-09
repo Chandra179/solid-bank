@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -20,7 +20,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "ChangePinNew">;
 // security improvement over onboarding's SetPinScreen, which has no prior
 // PIN to compare against.
 export default function ChangePinNewScreen({ navigation }: Props) {
-  const currentPin = useSessionStore((s) => s.pin);
+  const verifyPin = useSessionStore((s) => s.verifyPin);
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const advancing = useRef(false);
@@ -28,28 +28,29 @@ export default function ChangePinNewScreen({ navigation }: Props) {
   function appendDigit(d: string) {
     if (advancing.current) return;
     setError(null);
-    setPin((prev) => {
-      if (prev.length >= PIN_LENGTH) return prev;
-      const next = prev + d;
-      if (next.length === PIN_LENGTH) {
-        advancing.current = true;
-        setTimeout(() => {
-          if (next === currentPin) {
-            setError("Choose a different PIN than your current one.");
-            setPin("");
-            advancing.current = false;
-            return;
-          }
-          navigation.navigate("ChangePinConfirm", { newPin: next });
-        }, 250);
-      }
-      return next;
-    });
+    setPin((prev) => (prev.length >= PIN_LENGTH ? prev : prev + d));
   }
   function backspace() {
     setError(null);
     setPin((prev) => prev.slice(0, -1));
   }
+
+  // See onboarding's ConfirmPinScreen for why this side effect lives in a
+  // useEffect rather than inside the setPin updater above.
+  useEffect(() => {
+    if (pin.length !== PIN_LENGTH || advancing.current) return;
+    advancing.current = true;
+    const timer = setTimeout(() => {
+      if (verifyPin(pin)) {
+        setError("Choose a different PIN than your current one.");
+        setPin("");
+        advancing.current = false;
+        return;
+      }
+      navigation.navigate("ChangePinConfirm", { newPin: pin });
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [pin, verifyPin, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>

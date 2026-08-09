@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconChevronLeft } from "../components/icons";
 import Button from "../components/Button";
+import LoadingState from "../components/LoadingState";
 import { getAccountSummary, getBiller, lookupMockBillAmount } from "@/data";
 import { formatIDR } from "@/utils/currency";
 
@@ -107,11 +108,15 @@ export default function BillInputScreen({ navigation, route }: Props) {
         {error ? <Text className="text-caption font-medium text-red-600">{error}</Text> : null}
       </View>
 
-      <View className="flex-1" />
+      {/* The one real "check bill" round-trip in this flow (see
+          handleContinue) — everything else in this mock layer resolves
+          instantly, so this is the one place on this screen the shared
+          LoadingState pattern (docs/conventions.md) actually gets used. */}
+      {checking ? <LoadingState inline /> : <View className="flex-1" />}
 
       <View className="px-6 pb-4">
         <Button
-          label={biller.amountMode === "user-entered" ? "Continue" : "Check bill"}
+          label={biller.amountMode === "user-entered" ? "Continue" : checking ? "Checking…" : "Check bill"}
           variant="primary"
           disabled={!isValid || checking}
           onPress={handleContinue}

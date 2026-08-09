@@ -21,7 +21,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "ChangePin">;
 // for why this is three dedicated screens rather than reusing onboarding's
 // SetPin/ConfirmPin pair directly.
 export default function ChangePinScreen({ navigation }: Props) {
-  const storedPin = useSessionStore((s) => s.pin);
+  const verifyPin = useSessionStore((s) => s.verifyPin);
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const advancing = useRef(false);
@@ -35,7 +35,7 @@ export default function ChangePinScreen({ navigation }: Props) {
       if (next.length === PIN_LENGTH) {
         advancing.current = true;
         setTimeout(() => {
-          if (next === storedPin) {
+          if (verifyPin(next)) {
             navigation.navigate("ChangePinNew");
           } else {
             setError("Incorrect PIN. Try again.");

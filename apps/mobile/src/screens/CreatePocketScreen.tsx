@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft, IconPocket, IconCheck } from "../components/icons";
 import Button from "../components/Button";
 import { addPocket } from "@/data";
+import { useInvalidateData } from "@/data/queries";
 import { parseDateInput } from "@/utils/dateInput";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CreatePocket">;
@@ -38,6 +39,7 @@ export default function CreatePocketScreen({ navigation }: Props) {
   const [shared, setShared] = useState(false);
   const [participantNames, setParticipantNames] = useState<string[]>([]);
   const [participantInput, setParticipantInput] = useState("");
+  const invalidate = useInvalidateData();
 
   const goalRupiah = goalDigits === "" ? 0 : parseInt(goalDigits, 10);
   // Optional field: empty is always fine (a pocket with no deadline just
@@ -60,6 +62,7 @@ export default function CreatePocketScreen({ navigation }: Props) {
   function handleCreate() {
     if (!isValid) return;
     const pocket = addPocket(name.trim(), goalRupiah * 100, targetDateMinor, shared ? participantNames : undefined);
+    invalidate();
     // replace, not navigate — stepping back from the new pocket's detail
     // screen should land on the list it was created from, not back on a
     // blank creation form.

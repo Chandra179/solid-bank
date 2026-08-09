@@ -141,3 +141,92 @@ skew differently once there are real users.
       to the same segment (co-working discount, business-tool trial, cafe
       QRIS cashback) rather than a generic points mall. New `RewardsScreen`,
       reached from a "Rewards" row on Profile.
+
+## Scalability / UX engineering pass
+
+Follow-up from a senior UI/UX + frontend design review of the app as it
+stood after the product-ideas pass above. Each item below was a concern
+raised in that review.
+
+- [x] **Real caching/invalidation layer, replacing `useRefreshOnFocus`.**
+      Added `@tanstack/react-query` (now a real dependency — run `npm
+      install` before starting the dev server again) and a query layer in
+      `src/data/queries.ts`: one hook per resource (`usePockets()`,
+      `useAccountSummary()`, etc.) plus a single `useInvalidateData()` every
+      mutation calls right after it writes. Migrated all 7 screens that used
+      to poll for changes via `useFocusEffect` + a local counter
+      (CardsScreen, TransferScreen, PocketDetailScreen, TopUpScreen,
+      HomeScreen, TransactionsScreen, PocketsScreen), and wired invalidation
+      into every mutation site (PIN-verified money moves, pocket create/
+      edit/boost, card freeze, adding a recipient, marking a notification
+      read, and the onboarding profile-update steps). `useRefreshOnFocus` is
+      retired — the hook file stays for reference but nothing imports it
+      anymore. See `docs/conventions.md`'s "Data fetching" section for the
+      pattern going forward.
+- [x] **PIN no longer stored in plaintext.** `store/session.ts` now holds
+      `hashPin(pin)` (a synchronous FNV-1a hash in the new
+      `src/utils/pinHash.ts`), not the raw digits, and exposes
+      `setPin(rawPin)` / `verifyPin(rawPin)` instead of a raw `pin` field —
+      VerifyPinScreen and ChangePinScreen both go through `verifyPin` now.
+      Still explicitly a demo simplification, not real security (see the
+      comments in both files for exactly what this does and doesn't
+      protect against) — a real build verifies a PIN server-side or via the
+      device's secure enclave, never a client-side hash compare.
+- [x] **Home's action row is a scalable grid, not a squeeze-to-fit row.**
+      Was `flex-row justify-between`, which silently re-spaced every icon
+      each time one was added (visible when Bills went in as a 5th item).
+      Now a fixed-width (`25%`) `flex-wrap` grid — the next action added
+      grows a second row instead of squeezing the first. Pockets moved to
+      row 2 since it's already one tap away via `BottomNav`'s own tab, which
+      freed a first-row slot for Bills without costing an extra tap in the
+      common case.
+- [x] **Shared `LoadingState` component, applied everywhere a query can be
+      mid-fetch.** New `src/components/LoadingState.tsx` — one spinner
+      pattern (full-screen or `inline`), used as the loading guard on every
+      screen migrated to the query hooks above, plus BillInputScreen's mock
+      bill-inquiry "checking" state (the one real async round-trip in this
+      app today).
+- [x] **`docs/conventions.md`** — written down the IA and loading-state
+      rules above (data fetching/invalidation, loading states, Home's
+      action-row grid, PIN handling) so the next screen someone adds follows
+      the same shape instead of re-deriving it.
+- [x] **Vitest + unit tests for core money-movement logic.** Added `vitest`
+      (`npm run test` / `npm run test:watch`), a standalone
+      `vitest.config.ts` (deliberately separate from `vite.config.ts` — the
+      RN-web plugin stack there doesn't apply to plain-TS unit tests, and
+      loading it through `vitest/config`'s own `defineConfig` sidesteps an
+      ESM/CJS resolution conflict this repo's non-`"type": "module"`
+      `package.json` otherwise hits). 69 tests across the actual
+      money-movement primitives: `adjustAccountBalance`/`adjustPocketBalance`
+      (mockAccount.ts/mockPockets.ts — the functions VerifyPinScreen calls on
+      every completed transfer/top-up/withdrawal/bill payment), `addPocket`/
+      `updatePocket`, `recordTransaction`/`recordPocketTransaction`/
+      `getCategoryBreakdown`, plus the supporting pure logic those depend on
+      (`formatIDR`/`formatSignedIDR`, `getQrisFeeMinor`, `getPocketPaceStatus`/
+      `getPocketPaceMessage`, `parseDateInput`/`formatDateInput`,
+      `hashPin`, and the new i18n `t()`). Removed the dangling `@types/jest`
+      devDependency (nothing used it) and dropped `"jest"` from
+      `tsconfig.json`'s `types`.
+- [ ] **Migrate `BottomNav` to real `@react-navigation/bottom-tabs`** — still
+      not done; the real library is an installed-but-unused dependency while
+      `components/BottomNav.tsx` is still hand-rolled.
+- [x] **i18n infrastructure, defaulting to Bahasa Indonesia.** New
+      `src/i18n/` — `locales/id.ts` (default) and `locales/en.ts` (fallback,
+      `satisfies` id.ts's inferred shape so the two locale files can't drift
+      out of sync), a `t(key, params)` function with dot-path keys
+      autocompleted/type-checked against id.ts (`moneyMove.flow.transfer.
+      successTitle`, not a raw string), `{{token}}` interpolation, and a
+      `useTranslation()` hook backed by a small Zustand store (so a future
+      language switcher just needs to call `setLocale` — every call site
+      already re-renders on change). Wired through the highest-traffic
+      "core flow" paths: `WelcomeScreen`, `HomeScreen`'s header/quick-actions/
+      spending-insights/pockets/transactions copy, `getGreeting()`, and the
+      whole Confirm → VerifyPin → Success chain via `moneyFlowCopy.ts` (one
+      central lookup already fed all three of those screens' flow-specific
+      copy, so translating it there localizes that entire chain in one
+      place) plus `VerifyPinScreen`'s own title/subtitle/error copy. Every
+      other screen (Transfer, TopUp, Bills, Pockets, Cards, Profile,
+      onboarding beyond Welcome, etc.) is still hardcoded English — extending
+      `id.ts`/`en.ts` with those screens' strings and swapping in `t()` calls
+      is mechanical repetition of the same pattern, not a design question,
+      so it's left as follow-up rather than done half-consistently here.

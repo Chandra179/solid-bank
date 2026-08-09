@@ -10,6 +10,8 @@ import NumericKeypad from "../components/NumericKeypad";
 import DigitEntry from "../components/DigitEntry";
 import { useSessionStore } from "../store/session";
 import { getPocket, adjustPocketBalance, adjustAccountBalance, recordTransaction } from "@/data";
+import { useInvalidateData } from "@/data/queries";
+import { useTranslation } from "@/i18n";
 
 const PIN_LENGTH = 6;
 
@@ -23,12 +25,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "VerifyPin">;
 // owns the actual submission, since PIN verification is the real last gate
 // before money moves, not the review step before it.
 export default function VerifyPinScreen({ navigation, route }: Props) {
+  const { t } = useTranslation();
   const { flow, contextId, contextLabel, amountMinor, feeMinor = 0 } = route.params;
-  const storedPin = useSessionStore((s) => s.pin);
+  const pinHash = useSessionStore((s) => s.pinHash);
+  const verifyPin = useSessionStore((s) => s.verifyPin);
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const advancing = useRef(false);
+  const invalidate = useInvalidateData();
 
   function submit() {
     setSubmitting(true);
@@ -118,6 +123,13 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
         recordTransaction("QRIS fee", -feeMinor, "Fees");
       }
 
+      // Every write above went straight into the mock data arrays, bypassing
+      // React Query entirely (this whole block is still synchronous mock
+      // logic, not a real mutation call) — invalidate once here so every
+      // cached read (account balance, pocket balances, transaction lists)
+      // refetches before Home/Pockets/Transactions are seen again.
+      invalidate();
+
       // Synthetic reference/timestamp standing in for what a real backend
       // response would return (an idempotency/transaction id + server
       // timestamp) — generated here, once, at the moment submission
@@ -138,20 +150,20 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       if (next.length === PIN_LENGTH) {
         advancing.current = true;
         setTimeout(() => {
-          if (!storedPin) {
+          if (!pinHash) {
             // Shouldn't be reachable — the auth-gated navigator in
             // App.tsx only lets an onboarded (and therefore PIN-having)
             // user reach this screen. Fails safe rather than silently
             // accepting any PIN if that invariant is ever broken.
-            setError("No PIN is set up on this device. Go back and try again.");
+            setError(t("moneyMove.noPinSetUp"));
             setPin("");
             advancing.current = false;
             return;
           }
-          if (next === storedPin) {
+          if (verifyPin(next)) {
             submit();
           } else {
-            setError("Incorrect PIN. Try again.");
+            setError(t("moneyMove.incorrectPin"));
             setPin("");
             advancing.current = false;
           }
@@ -179,17 +191,9 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       </View>
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="text-2xl font-semibold text-slate-900">Enter your PIN</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("moneyMove.verifyPinTitle")}</Text>
         <Text className="text-body text-slate-500">
-          Confirm it's you before this{" "}
-          {flow === "transfer"
-            ? "transfer"
-            : flow === "withdraw"
-              ? "withdrawal"
-              : flow === "billpay"
-                ? "payment"
-                : "top up"}{" "}
-          goes through.
+          {t("moneyMove.verifyPinSubtitle", { flowNoun: t(`moneyMove.flowNoun.${flow}`) })}
         </Text>
       </View>
 
@@ -199,7 +203,7 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
         {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}
-        {submitting ? <Text className="text-body font-medium text-slate-500">Confirming…</Text> : null}
+        {submitting ? <Text className="text-body font-medium text-slate-500">{t("moneyMove.confirming")}</Text> : null}
       </View>
 
       <View className="flex-1" />

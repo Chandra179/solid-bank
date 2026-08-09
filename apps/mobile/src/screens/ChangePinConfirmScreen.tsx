@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -30,29 +30,30 @@ export default function ChangePinConfirmScreen({ navigation, route }: Props) {
   function appendDigit(d: string) {
     if (advancing.current) return;
     setError(null);
-    setPin((prev) => {
-      if (prev.length >= PIN_LENGTH) return prev;
-      const next = prev + d;
-      if (next.length === PIN_LENGTH) {
-        advancing.current = true;
-        setTimeout(() => {
-          if (next === newPin) {
-            persistPin(newPin);
-            navigation.navigate("Security", { pinJustChanged: true });
-          } else {
-            setError("PINs don't match. Try again.");
-            setPin("");
-            advancing.current = false;
-          }
-        }, 250);
-      }
-      return next;
-    });
+    setPin((prev) => (prev.length >= PIN_LENGTH ? prev : prev + d));
   }
   function backspace() {
     setError(null);
     setPin((prev) => prev.slice(0, -1));
   }
+
+  // See ConfirmPinScreen (onboarding) for why this side effect lives in a
+  // useEffect rather than inside the setPin updater above.
+  useEffect(() => {
+    if (pin.length !== PIN_LENGTH || advancing.current) return;
+    advancing.current = true;
+    const timer = setTimeout(() => {
+      if (pin === newPin) {
+        persistPin(newPin);
+        navigation.navigate("Security", { pinJustChanged: true });
+      } else {
+        setError("PINs don't match. Try again.");
+        setPin("");
+        advancing.current = false;
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [pin, newPin, persistPin, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
