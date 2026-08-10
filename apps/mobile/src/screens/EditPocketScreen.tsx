@@ -82,7 +82,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -90,7 +90,9 @@ export default function EditPocketScreen({ navigation, route }: Props) {
 
       <View className="items-center px-6 pt-2" style={{ gap: 8 }}>
         <View className="h-14 w-14 items-center justify-center rounded-full bg-brand-50">
-          <IconPocket size={24} color={colors.brand700} />
+          {/* size 22, not 24 — matches every other IconPocket in an h-14
+              w-14 badge per docs/conventions.md's icon-to-badge sizing note. */}
+          <IconPocket size={22} color={colors.brand700} />
         </View>
         <Text className="text-2xl font-semibold text-slate-900">Edit pocket</Text>
         <Text className="text-center text-body text-slate-500">
@@ -105,7 +107,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
             value={name}
             onChangeText={setName}
             placeholder="e.g. New Phone"
-            placeholderTextColor={colors.neutral400}
+            placeholderTextColor={colors.neutral500}
             maxLength={40}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
@@ -118,7 +120,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
               value={formatRupiahInput(goalDigits)}
               onChangeText={handleGoalChange}
               placeholder="0"
-              placeholderTextColor={colors.neutral400}
+              placeholderTextColor={colors.neutral500}
               keyboardType="number-pad"
               className="ml-2 flex-1 text-label text-slate-900"
             />
@@ -132,7 +134,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
               value={formatRupiahInput(autoSaveDigits)}
               onChangeText={handleAutoSaveChange}
               placeholder="Off"
-              placeholderTextColor={colors.neutral400}
+              placeholderTextColor={colors.neutral500}
               keyboardType="number-pad"
               className="ml-2 flex-1 text-label text-slate-900"
             />
@@ -148,7 +150,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
             value={targetDateText}
             onChangeText={setTargetDateText}
             placeholder="YYYY-MM-DD"
-            placeholderTextColor={colors.neutral400}
+            placeholderTextColor={colors.neutral500}
             maxLength={10}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />

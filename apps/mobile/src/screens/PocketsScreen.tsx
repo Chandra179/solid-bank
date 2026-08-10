@@ -33,7 +33,7 @@ export default function PocketsScreen({ navigation }: Props) {
           onPress={() => navigation.navigate("CreatePocket")}
           accessibilityLabel="Create a pocket"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconPlus size={20} color={colors.neutral700} />
         </Pressable>

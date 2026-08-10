@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconCheck, IconChevronLeft, IconHelp } from "../components/icons";
 import Button from "../components/Button";
 import { submitSupportMessage } from "@/data";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ContactSupport">;
 
@@ -35,13 +36,13 @@ export default function ContactSupportScreen({ navigation }: Props) {
           <View className="h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: colors.success100 }}>
             <IconCheck size={28} color={colors.success500} />
           </View>
-          <Text className="text-xl font-semibold text-slate-900">Message sent</Text>
+          <Text className="text-xl font-semibold text-slate-900">{t("contactSupport.sentTitle")}</Text>
           <Text className="max-w-[280px] text-center text-body text-slate-500">
-            We've got it — expect a reply within one business day. In the meantime, the FAQs might already have your answer.
+            {t("contactSupport.sentMessage")}
           </Text>
         </View>
         <View className="w-full pb-4">
-          <Button label="Done" variant="primary" onPress={() => navigation.goBack()} />
+          <Button label={t("contactSupport.done")} variant="primary" onPress={() => navigation.goBack()} />
         </View>
       </SafeAreaView>
     );
@@ -52,13 +53,13 @@ export default function ContactSupportScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Contact support</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("contactSupport.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
@@ -67,7 +68,7 @@ export default function ContactSupportScreen({ navigation }: Props) {
           <IconHelp size={24} color={colors.brand700} />
         </View>
         <Text className="text-center text-body text-slate-500">
-          Not live chat — send a message and we'll get back to you within one business day.
+          {t("contactSupport.intro")}
         </Text>
       </View>
 
@@ -75,8 +76,8 @@ export default function ContactSupportScreen({ navigation }: Props) {
         <TextInput
           value={message}
           onChangeText={setMessage}
-          placeholder="What do you need help with?"
-          placeholderTextColor={colors.neutral400}
+          placeholder={t("contactSupport.placeholder")}
+          placeholderTextColor={colors.neutral500}
           multiline
           textAlignVertical="top"
           maxLength={500}
@@ -86,7 +87,7 @@ export default function ContactSupportScreen({ navigation }: Props) {
       </View>
 
       <View className="px-6 pb-4">
-        <Button label="Send message" variant="primary" disabled={!canSend} onPress={handleSend} />
+        <Button label={t("contactSupport.send")} variant="primary" disabled={!canSend} onPress={handleSend} />
       </View>
     </SafeAreaView>
   );

@@ -230,3 +230,77 @@ raised in that review.
       `id.ts`/`en.ts` with those screens' strings and swapping in `t()` calls
       is mechanical repetition of the same pattern, not a design question,
       so it's left as follow-up rather than done half-consistently here.
+- [x] **Design-system debt: hardcoded colors, icon-size drift, an
+      undocumented spacing scale.** An audit across every screen/component
+      found: two hardcoded hex colors with no token equivalent
+      (`CreatePocketScreen`'s border, `ProfileScreen`'s pending-verification
+      badge — added `colors.warning100` for the latter); `IconPocket`/
+      `IconSearch` rendered a size or two off the established convention in
+      a few badges/empty-states (`CreatePocketScreen`, `EditPocketScreen`,
+      `TransferScreen`); and `theme/spacing.ts`'s own comment claimed
+      `gap: 6`/`gap: 10` were one-off values, when in fact they're real,
+      load-bearing scale steps used across a dozen+ files each — registered
+      as `spacing.xxs`/`spacing.sm2` rather than left undocumented. Back-
+      button pattern, header-row variants, EmptyState/LoadingState adoption,
+      and Button variant usage were all already consistent — no changes
+      needed there. Left as a conscious scope decision: the ~15+ existing
+      literal `gap: 6`/`gap: 10` usages were not swapped to reference the
+      new tokens — same numeric value either way, so that's pure mechanical
+      churn with no visual or functional difference.
+- [x] **WCAG 2.1 AA pass.** An audit against 1.4.1 (Use of Color), 1.4.3/
+      1.4.11 (Contrast), 2.5.5 (Target Size), 4.1.2 (Name/Role/Value), and
+      4.1.3 (Status Messages) found and fixed: `success500`/`warning500`
+      failed 4.5:1 as *text* on white (they're fine as fills, which only
+      need 3:1) — added `success600`/`warning600`/`warning100` text-safe
+      variants and swapped them in everywhere those colors labeled text
+      (`ProfileScreen`'s verification badge, `pocketPacing.ts`'s new
+      `pocketPaceTextColor()`); `ComingSoon`'s caption used `neutral400`
+      (2.56:1, fails) instead of `neutral500` (4.76:1); 31 files' icon-button
+      back/action `Pressable`s were `h-10 w-10` (40px, under the 44px
+      minimum) — bumped to `h-11 w-11` app-wide; every pocket's progress bar
+      conveyed its on-track/behind/overdue pace through color alone with no
+      text fallback — `pocketPacing.ts` gained `pocketPaceShortLabel()`,
+      now wired into `PocketCard.tsx` as a caption next to the "saved of
+      target" line; `NumericKeypad`'s digit keys had no
+      `accessibilityRole`/`accessibilityLabel` (only the delete key did) —
+      added to all of them; and PIN-entry error text (`VerifyPinScreen`,
+      `ChangePinScreen`/`ChangePinNewScreen`/`ChangePinConfirmScreen`,
+      onboarding's `ConfirmPinScreen`, `OtpScreen`) had no
+      `accessibilityLiveRegion`, so a screen reader user wouldn't hear
+      "PINs don't match" unless they happened to re-focus that text — added
+      `accessibilityLiveRegion="assertive"` to all of them. Moderate-priority
+      item still open: `TextInput`s across `CreatePocketScreen`,
+      `ProfileSetupScreen`, `AddRecipientScreen`, `TransferScreen`,
+      `BillInputScreen`, `EditPocketScreen` still rely on visible labels/
+      placeholders without an explicit `accessibilityLabel` (3.3.2/1.3.1) —
+      lower severity than the fixes above since sighted-label association
+      already works, left as follow-up.
+- [x] **i18n coverage extended to nearly every remaining screen.** Added
+      ~30 new namespaced key groups to `id.ts`/`en.ts` (`transfer`,
+      `amountEntry`, `bills`, `cards`, `changePin`/`changePinNew`/
+      `changePinConfirm`, `confirm`, `contactSupport`, `errorScreen`,
+      `help` (incl. its FAQ copy), `notificationSettings`, `profile`,
+      `qrScan`, `receipt`, `rewards`, `security`, `spendingInsights`,
+      `success`, `nav` (BottomNav's tab labels), `pocketCard`, and a full
+      `onboarding.*` tree for every onboarding screen past Welcome —
+      `phoneEntry`, `otp`, `ktpScan`, `selfie`, `kycPending`, `setPin`,
+      `confirmPin`, `complete`) and wired `t()`/`useTranslation()` calls
+      through all of them, closing the gap the previous i18n pass left
+      open. Also added the `pocketPace.*` keys `pocketPacing.ts` already
+      called `t()` with mid-session (that file was translated before the
+      corresponding locale keys existed) and updated
+      `pocketPacing.test.ts`'s assertions from the old hardcoded-English
+      strings to the id-locale ones `getPocketPaceMessage()` now actually
+      returns by default. `SpendingInsights`' transaction-count line needed
+      real pluralization (English "1 transaction" vs "2 transactions" —
+      Indonesian doesn't inflect for plural) — handled with a `{{suffix}}`
+      param computed in the caller rather than extending the `t()` system's
+      interpolation to a full ICU/plural-rules library for one call site.
+      Still not translated, discovered too late in this pass to fold in:
+      `ComingSoon`, `TopUpScreen`, `AddRecipientScreen`,
+      `TransactionsScreen`, `NotificationsScreen`, `EditPocketScreen`,
+      `PocketDetailScreen`, `CreatePocketScreen`, `ProfileSetupScreen`, and
+      `BillInputScreen` — none of these import `t()` yet, so their screen
+      copy (beyond the "Go back" accessibility label, fixed everywhere via
+      the WCAG touch-target sed pass) is still hardcoded English. Left as
+      the next i18n follow-up rather than rushed through unread.

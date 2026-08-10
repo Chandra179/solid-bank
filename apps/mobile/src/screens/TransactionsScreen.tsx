@@ -30,7 +30,7 @@ export default function TransactionsScreen({ navigation }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -39,7 +39,7 @@ export default function TransactionsScreen({ navigation }: Props) {
           onPress={() => navigation.navigate("SpendingInsights")}
           accessibilityLabel="Spending insights"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconPieChart size={18} color={colors.neutral700} />
         </Pressable>

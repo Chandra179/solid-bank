@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconCheck, IconChevronLeft, IconShield } from "../components/icons";
 import SelectRow from "../components/SelectRow";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Security">;
 
@@ -43,13 +44,13 @@ export default function SecurityScreen({ navigation, route }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Security</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("security.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
@@ -60,7 +61,7 @@ export default function SecurityScreen({ navigation, route }: Props) {
         >
           <IconCheck size={16} color={colors.success500} />
           <Text className="text-body font-semibold" style={{ color: colors.success500 }}>
-            PIN updated.
+            {t("security.pinUpdated")}
           </Text>
         </View>
       ) : null}
@@ -68,8 +69,8 @@ export default function SecurityScreen({ navigation, route }: Props) {
       <View className="mx-6 mt-4 rounded-2xl border border-slate-200 px-4">
         <View className="flex-row items-center justify-between py-4">
           <View className="flex-1 pr-4" style={{ gap: 2 }}>
-            <Text className="text-label font-semibold text-slate-900">Biometric login</Text>
-            <Text className="text-caption text-slate-500">Use Face/Touch ID instead of your PIN to sign in.</Text>
+            <Text className="text-label font-semibold text-slate-900">{t("security.biometricLogin")}</Text>
+            <Text className="text-caption text-slate-500">{t("security.biometricLoginSubtitle")}</Text>
           </View>
           <Switch
             value={biometricsEnabled}
@@ -79,16 +80,16 @@ export default function SecurityScreen({ navigation, route }: Props) {
         </View>
         <View className="h-px bg-slate-100" />
         <SelectRow
-          title="Change PIN"
-          subtitle="Update your 6-digit login PIN"
+          title={t("security.changePin")}
+          subtitle={t("security.changePinSubtitle")}
           icon={<IconShield size={18} color={colors.neutral500} />}
           onPress={() => navigation.navigate("ChangePin")}
         />
       </View>
 
       <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4 py-4" style={{ gap: 2 }}>
-        <Text className="text-label font-semibold text-slate-900">This device</Text>
-        <Text className="text-caption text-slate-500">Signed in and verified — no other active sessions.</Text>
+        <Text className="text-label font-semibold text-slate-900">{t("security.thisDevice")}</Text>
+        <Text className="text-caption text-slate-500">{t("security.thisDeviceSubtitle")}</Text>
       </View>
     </SafeAreaView>
   );

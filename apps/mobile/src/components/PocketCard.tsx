@@ -4,8 +4,9 @@ import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
 import { IconPocket } from "./icons";
 import { formatIDR } from "@/utils/currency";
-import { getPocketPaceStatus, pocketPaceColor } from "@/utils/pocketPacing";
+import { getPocketPaceStatus, pocketPaceColor, pocketPaceShortLabel, pocketPaceTextColor } from "@/utils/pocketPacing";
 import type { Pocket } from "@/data";
+import { t } from "@/i18n";
 
 export type { Pocket };
 
@@ -29,7 +30,15 @@ export default function PocketCard({ pocket, onPress, variant = "compact" }: Poc
   // keep the old steady-green look (getPocketPaceStatus returns "no-target"
   // for those, which pocketPaceColor maps back to success-green) since
   // there's nothing to be "behind" without a date to measure against.
-  const paceColor = pocketPaceColor(getPocketPaceStatus(pocket));
+  const paceStatus = getPocketPaceStatus(pocket);
+  const paceColor = pocketPaceColor(paceStatus);
+  // WCAG 1.4.1 (Use of Color) fix: the progress bar's color alone used to
+  // be the only signal of how a pocket was pacing — a colorblind user had
+  // no way to tell "on track" green from "behind" amber/red. This short
+  // caption (null for no-target/funded, where there's nothing to be
+  // behind on) gives the same information as text, using pocketPaceTextColor
+  // rather than the fill color since captions need 4.5:1, not just 3:1.
+  const paceLabel = pocketPaceShortLabel(paceStatus);
   return (
     <Pressable
       onPress={onPress}
@@ -48,7 +57,7 @@ export default function PocketCard({ pocket, onPress, variant = "compact" }: Poc
             Pocket.participants. */}
         {pocket.participants && pocket.participants.length > 0 ? (
           <View className="rounded-full bg-slate-100 px-2 py-0.5">
-            <Text className="text-caption font-semibold text-slate-500">Shared</Text>
+            <Text className="text-caption font-semibold text-slate-500">{t("pocketCard.shared")}</Text>
           </View>
         ) : null}
       </View>
@@ -58,9 +67,16 @@ export default function PocketCard({ pocket, onPress, variant = "compact" }: Poc
           style={{ width: `${pct * 100}%`, backgroundColor: paceColor }}
         />
       </View>
-      <Text className="text-caption text-slate-500">
-        {formatIDR(pocket.savedMinor)} of {formatIDR(pocket.targetMinor)}
-      </Text>
+      <View className="flex-row items-center justify-between">
+        <Text className="text-caption text-slate-500">
+          {t("pocketCard.savedOfTarget", { saved: formatIDR(pocket.savedMinor), target: formatIDR(pocket.targetMinor) })}
+        </Text>
+        {paceLabel ? (
+          <Text className="text-caption font-semibold" style={{ color: pocketPaceTextColor(paceStatus) }}>
+            {paceLabel}
+          </Text>
+        ) : null}
+      </View>
     </Pressable>
   );
 }

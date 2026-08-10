@@ -9,6 +9,7 @@ import { IconCheck } from "../components/icons";
 import Button from "../components/Button";
 import { formatIDR } from "@/utils/currency";
 import { getMoneyFlowCopy } from "@/utils/moneyFlowCopy";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Success">;
 
@@ -31,9 +32,9 @@ export default function SuccessScreen({ navigation, route }: Props) {
       </View>
 
       <View className="w-full pb-4" style={{ gap: 12 }}>
-        <Button label="Done" variant="primary" onPress={() => navigation.popToTop()} />
+        <Button label={t("success.done")} variant="primary" onPress={() => navigation.popToTop()} />
         <Pressable onPress={() => navigation.navigate("Receipt", route.params)} className="items-center py-2">
-          <Text className="text-body font-semibold text-slate-500">View receipt</Text>
+          <Text className="text-body font-semibold text-slate-500">{t("success.viewReceipt")}</Text>
         </Pressable>
       </View>
     </SafeAreaView>

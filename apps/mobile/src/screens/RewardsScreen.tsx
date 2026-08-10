@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft, IconGift } from "../components/icons";
 import { getRewardsSummary, listPerks } from "@/data";
 import { formatIDR } from "@/utils/currency";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Rewards">;
 
@@ -27,13 +28,13 @@ export default function RewardsScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Rewards</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("rewards.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
@@ -42,16 +43,15 @@ export default function RewardsScreen({ navigation }: Props) {
           <View className="h-14 w-14 items-center justify-center rounded-full bg-brand-50">
             <IconGift size={24} color={colors.brand700} />
           </View>
-          <Text className="text-body text-slate-500">Cashback earned · last {summary.periodDays} days</Text>
+          <Text className="text-body text-slate-500">{t("rewards.cashbackEarned", { days: summary.periodDays })}</Text>
           <Text className="text-4xl font-bold text-slate-900">{formatIDR(summary.cashbackEarnedMinor)}</Text>
           <Text className="text-caption text-center text-slate-500">
-            Automatic — bonus cashback on the categories freelancers spend on most: business
-            subscriptions, client-meeting coffee, and getting around.
+            {t("rewards.autoDesc")}
           </Text>
         </View>
 
         <View className="px-6 pt-6">
-          <Text className="pb-2 text-lg font-semibold text-slate-900">Perks for you</Text>
+          <Text className="pb-2 text-lg font-semibold text-slate-900">{t("rewards.perksForYou")}</Text>
           <View className="rounded-2xl border border-slate-200 px-4">
             {perks.map((perk, i) => (
               <View key={perk.id}>

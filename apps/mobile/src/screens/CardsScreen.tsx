@@ -11,6 +11,7 @@ import SelectRow from "../components/SelectRow";
 import LoadingState from "../components/LoadingState";
 import { setCardFrozen } from "@/data";
 import { useCards, useInvalidateData } from "@/data/queries";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Cards">;
 
@@ -33,10 +34,10 @@ export default function CardsScreen({ navigation }: Props) {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
         <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
-          <Text className="text-2xl font-semibold text-slate-900">Cards</Text>
+          <Text className="text-2xl font-semibold text-slate-900">{t("cards.title")}</Text>
         </View>
         <View className="flex-1 items-center justify-center px-6">
-          <Text className="text-body text-slate-500">No cards to show.</Text>
+          <Text className="text-body text-slate-500">{t("cards.noCards")}</Text>
         </View>
         <BottomNav
           active="cards"
@@ -53,7 +54,7 @@ export default function CardsScreen({ navigation }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
-        <Text className="text-2xl font-semibold text-slate-900">Cards</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("cards.title")}</Text>
       </View>
 
       <View className="px-6 pt-4">
@@ -68,17 +69,17 @@ export default function CardsScreen({ navigation }: Props) {
           <Text className="text-2xl font-semibold tracking-widest text-white">•••• •••• •••• {card.last4}</Text>
           <View className="flex-row items-center justify-between">
             <View style={{ gap: 2 }}>
-              <Text className="text-caption text-brand-50">Card holder</Text>
+              <Text className="text-caption text-brand-50">{t("cards.cardHolder")}</Text>
               <Text className="text-body font-semibold text-white">{card.holderName}</Text>
             </View>
             <View style={{ gap: 2 }}>
-              <Text className="text-caption text-brand-50">Expires</Text>
+              <Text className="text-caption text-brand-50">{t("cards.expires")}</Text>
               <Text className="text-body font-semibold text-white">{card.expiry}</Text>
             </View>
           </View>
           {card.frozen ? (
             <View className="self-start rounded-full bg-white/15 px-3 py-1">
-              <Text className="text-caption font-semibold text-white">Frozen</Text>
+              <Text className="text-caption font-semibold text-white">{t("cards.frozen")}</Text>
             </View>
           ) : null}
         </View>
@@ -87,11 +88,9 @@ export default function CardsScreen({ navigation }: Props) {
       <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
         <View className="flex-row items-center justify-between py-4">
           <View className="flex-1 pr-4" style={{ gap: 2 }}>
-            <Text className="text-label font-semibold text-slate-900">Freeze card</Text>
+            <Text className="text-label font-semibold text-slate-900">{t("cards.freezeCard")}</Text>
             <Text className="text-caption text-slate-500">
-              {card.frozen
-                ? "New transactions are blocked until you unfreeze it."
-                : "Temporarily block new transactions — reversible any time."}
+              {card.frozen ? t("cards.freezeCardOnDesc") : t("cards.freezeCardOffDesc")}
             </Text>
           </View>
           <Switch
@@ -107,26 +106,26 @@ export default function CardsScreen({ navigation }: Props) {
 
       <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
         <SelectRow
-          title="Report lost or stolen"
-          subtitle="Block this card and start a replacement"
+          title={t("cards.reportLostTitle")}
+          subtitle={t("cards.reportLostSubtitle")}
           icon={<IconAlert size={18} color={colors.neutral500} />}
           onPress={() =>
             navigation.navigate("ComingSoon", {
-              title: "Report lost or stolen",
-              message: "Fraud reporting isn't wired up yet — this needs a real ops workflow behind it, not just a UI screen.",
+              title: t("cards.reportLostTitle"),
+              message: t("cards.reportLostMessage"),
               icon: "card",
             })
           }
         />
         <View className="h-px bg-slate-100" />
         <SelectRow
-          title="Order a new card"
-          subtitle="Physical card issuance"
+          title={t("cards.orderNewTitle")}
+          subtitle={t("cards.orderNewSubtitle")}
           icon={<IconPlus size={18} color={colors.neutral500} />}
           onPress={() =>
             navigation.navigate("ComingSoon", {
-              title: "Order a new card",
-              message: "Card issuance isn't part of this build yet.",
+              title: t("cards.orderNewTitle"),
+              message: t("cards.orderNewMessage"),
               icon: "card",
             })
           }
@@ -136,7 +135,7 @@ export default function CardsScreen({ navigation }: Props) {
       <View className="mx-6 mt-6 flex-row items-start rounded-2xl border border-slate-200 px-4 py-4" style={{ gap: 10 }}>
         <IconShield size={16} color={colors.neutral500} />
         <Text className="flex-1 text-caption text-slate-500">
-          This is the same card shown as "Debit Card" when topping up — freezing it here also blocks it as a top-up source.
+          {t("cards.debitCardNote")}
         </Text>
       </View>
 

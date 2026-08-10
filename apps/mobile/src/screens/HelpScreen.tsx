@@ -7,17 +7,20 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconChevronLeft, IconHelp } from "../components/icons";
 import SelectRow from "../components/SelectRow";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Help">;
 
 type Faq = { q: string; a: string };
 
-const FAQS: Faq[] = [
-  { q: "How do I create a pocket?", a: "From Home or the Pockets tab, tap the \"+\" button and give it a name and a savings goal. You can add money to it right away." },
-  { q: "Is QRIS free to use?", a: "Scanning and paying a QRIS code has no extra fee in this app." },
-  { q: "Can I withdraw money from a pocket?", a: "Yes — open the pocket and tap Withdraw. It moves money back out, capped at whatever's currently saved in that pocket." },
-  { q: "How do I change my PIN?", a: "Go to Profile → Security → Change PIN. You'll confirm your current PIN first, then set and confirm a new one." },
-];
+function getFaqs(): Faq[] {
+  return [
+    { q: t("help.faqs.createPocketQ"), a: t("help.faqs.createPocketA") },
+    { q: t("help.faqs.qrisFreeQ"), a: t("help.faqs.qrisFreeA") },
+    { q: t("help.faqs.withdrawQ"), a: t("help.faqs.withdrawA") },
+    { q: t("help.faqs.changePinQ"), a: t("help.faqs.changePinA") },
+  ];
+}
 
 // Real destination behind Profile's Help row — a static FAQ accordion
 // (local expand/collapse state, no backend). "Contact support" now opens a
@@ -27,25 +30,26 @@ const FAQS: Faq[] = [
 // captured message instead of a form that goes nowhere.
 export default function HelpScreen({ navigation }: Props) {
   const [expanded, setExpanded] = useState<number | null>(null);
+  const faqs = getFaqs();
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Help</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("help.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       <ScrollView className="flex-1">
         <View className="mx-6 mt-4 rounded-2xl border border-slate-200 px-4">
-          {FAQS.map((faq, i) => (
+          {faqs.map((faq, i) => (
             <React.Fragment key={faq.q}>
               {i > 0 ? <View className="h-px bg-slate-100" /> : null}
               <Pressable onPress={() => setExpanded((prev) => (prev === i ? null : i))} className="py-4">
@@ -58,8 +62,8 @@ export default function HelpScreen({ navigation }: Props) {
 
         <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
           <SelectRow
-            title="Contact support"
-            subtitle="Send us a message"
+            title={t("help.contactSupport")}
+            subtitle={t("help.sendUsAMessage")}
             icon={<IconHelp size={18} color={colors.neutral500} />}
             onPress={() => navigation.navigate("ContactSupport")}
           />

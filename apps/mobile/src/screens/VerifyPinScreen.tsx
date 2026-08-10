@@ -182,9 +182,9 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -202,7 +202,7 @@ export default function VerifyPinScreen({ navigation, route }: Props) {
           flex-1 space. */}
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
-        {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}
+        {error ? <Text className="text-body font-medium text-red-600" accessibilityLiveRegion="assertive">{error}</Text> : null}
         {submitting ? <Text className="text-body font-medium text-slate-500">{t("moneyMove.confirming")}</Text> : null}
       </View>
 

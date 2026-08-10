@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft, IconReceipt } from "../components/icons";
 import SelectRow from "../components/SelectRow";
 import { listBillers } from "@/data";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Bills">;
 
@@ -24,18 +25,18 @@ export default function BillsScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Bills</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("bills.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       <View className="flex-1 px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="pb-1 text-body font-semibold text-slate-500">Choose a biller</Text>
+        <Text className="pb-1 text-body font-semibold text-slate-500">{t("bills.chooseABiller")}</Text>
         {billers.map((b) => (
           <SelectRow
             key={b.type}
@@ -46,7 +47,7 @@ export default function BillsScreen({ navigation }: Props) {
           />
         ))}
         <View className="flex-1" />
-        <Text className="pb-6 text-center text-caption text-slate-500">More billers coming soon.</Text>
+        <Text className="pb-6 text-center text-caption text-slate-500">{t("bills.moreComingSoon")}</Text>
       </View>
     </SafeAreaView>
   );

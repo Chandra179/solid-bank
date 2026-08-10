@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../../theme/colors";
 import { IconCamera, IconCheck, IconChevronLeft } from "../../components/icons";
 import Button from "../../components/Button";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "KtpScan">;
 
@@ -24,19 +25,19 @@ export default function KtpScanScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Scan your KTP</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("onboarding.ktpScan.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       <View className="px-6 pb-2 pt-2">
         <Text className="text-center text-body text-slate-500">
-          {captured ? "Make sure all four corners are visible and text is readable." : "Align your KTP within the frame."}
+          {captured ? t("onboarding.ktpScan.capturedPrompt") : t("onboarding.ktpScan.alignPrompt")}
         </Text>
       </View>
 
@@ -59,15 +60,15 @@ export default function KtpScanScreen({ navigation }: Props) {
       <View className="px-6 pb-4" style={{ gap: 12 }}>
         {captured ? (
           <>
-            <Button label="Use this photo" variant="primary" onPress={() => navigation.navigate("Selfie")} />
+            <Button label={t("onboarding.ktpScan.usePhoto")} variant="primary" onPress={() => navigation.navigate("Selfie")} />
             <Pressable onPress={() => setCaptured(false)} className="items-center py-2">
-              <Text className="text-body font-semibold text-slate-500">Retake</Text>
+              <Text className="text-body font-semibold text-slate-500">{t("onboarding.ktpScan.retake")}</Text>
             </Pressable>
           </>
         ) : (
           <Pressable
             onPress={() => setCaptured(true)}
-            accessibilityLabel="Take photo of your KTP"
+            accessibilityLabel={t("onboarding.ktpScan.takePhotoLabel")}
             accessibilityRole="button"
             className="h-16 w-16 items-center justify-center self-center rounded-full bg-brand-700"
           >

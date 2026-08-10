@@ -9,6 +9,7 @@ import { colors } from "../theme/colors";
 import Button from "../components/Button";
 import { formatIDR } from "@/utils/currency";
 import { getMoneyFlowCopy } from "@/utils/moneyFlowCopy";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Confirm">;
 
@@ -32,13 +33,13 @@ export default function ConfirmScreen({ navigation, route }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Review</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("confirm.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
@@ -57,12 +58,12 @@ export default function ConfirmScreen({ navigation, route }: Props) {
         </View>
         <View className="h-px bg-slate-100" />
         <View className="flex-row items-center justify-between px-4 py-4">
-          <Text className="text-body text-slate-500">Amount</Text>
+          <Text className="text-body text-slate-500">{t("confirm.amount")}</Text>
           <Text className="text-body font-semibold text-slate-900">{formatIDR(amountMinor)}</Text>
         </View>
         <View className="h-px bg-slate-100" />
         <View className="flex-row items-center justify-between px-4 py-4">
-          <Text className="text-body text-slate-500">Fee</Text>
+          <Text className="text-body text-slate-500">{t("confirm.fee")}</Text>
           {/* Every flow except QRIS pay is fee-free by product decision
               (utils/fees.ts) — a flat "Rp 0" in the same neutral color as
               every other row read like an unset/placeholder value rather
@@ -75,7 +76,7 @@ export default function ConfirmScreen({ navigation, route }: Props) {
             className="text-body font-semibold"
             style={{ color: feeMinor > 0 ? colors.neutral900 : colors.success500 }}
           >
-            {feeMinor > 0 ? formatIDR(feeMinor) : "Free"}
+            {feeMinor > 0 ? formatIDR(feeMinor) : t("confirm.free")}
           </Text>
         </View>
       </View>
@@ -84,14 +85,14 @@ export default function ConfirmScreen({ navigation, route }: Props) {
 
       <View className="px-6 pb-4" style={{ gap: 12 }}>
         <Button
-          label="Confirm"
+          label={t("confirm.confirmBtn")}
           variant="primary"
           onPress={() =>
             navigation.navigate("VerifyPin", { flow, contextId, contextLabel, contextSubLabel, amountMinor, feeMinor })
           }
         />
         <Pressable onPress={() => navigation.goBack()} className="items-center py-2">
-          <Text className="text-body font-semibold text-slate-500">Cancel</Text>
+          <Text className="text-body font-semibold text-slate-500">{t("common.cancel")}</Text>
         </Pressable>
       </View>
     </SafeAreaView>

@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../theme/colors";
 import { IconAlert } from "../components/icons";
 import Button from "../components/Button";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MoneyMoveError">;
 
@@ -25,15 +26,15 @@ export default function ErrorScreen({ navigation, route }: Props) {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-red-100">
           <IconAlert size={28} color={colors.danger500} />
         </View>
-        <Text className="text-xl font-semibold text-slate-900">Something went wrong</Text>
+        <Text className="text-xl font-semibold text-slate-900">{t("errorScreen.title")}</Text>
         <Text className="max-w-[280px] text-center text-body text-slate-500">{reason}</Text>
-        <Text className="text-caption text-slate-500">No money has left your account.</Text>
+        <Text className="text-caption text-slate-500">{t("errorScreen.noMoneyLeft")}</Text>
       </View>
 
       <View className="w-full pb-4" style={{ gap: 12 }}>
-        <Button label="Try Again" variant="primary" onPress={() => navigation.goBack()} />
+        <Button label={t("errorScreen.tryAgain")} variant="primary" onPress={() => navigation.goBack()} />
         <Pressable onPress={() => navigation.popToTop()} className="items-center py-2">
-          <Text className="text-body font-semibold text-slate-500">Cancel</Text>
+          <Text className="text-body font-semibold text-slate-500">{t("common.cancel")}</Text>
         </Pressable>
       </View>
     </SafeAreaView>

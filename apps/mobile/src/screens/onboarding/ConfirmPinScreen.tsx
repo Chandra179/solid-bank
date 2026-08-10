@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import NumericKeypad from "../../components/NumericKeypad";
 import DigitEntry from "../../components/DigitEntry";
 import { useSessionStore } from "../../store/session";
+import { t } from "../../i18n";
 
 const PIN_LENGTH = 6;
 
@@ -45,7 +46,7 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
         persistPin(originalPin);
         navigation.navigate("OnboardingComplete");
       } else {
-        setError("PINs don't match. Try again.");
+        setError(t("onboarding.confirmPin.mismatch"));
         setPin("");
         advancing.current = false;
       }
@@ -56,15 +57,15 @@ export default function ConfirmPinScreen({ navigation, route }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="text-2xl font-semibold text-slate-900">Confirm your PIN</Text>
-        <Text className="text-body text-slate-500">Enter it once more to make sure it's right.</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("onboarding.confirmPin.title")}</Text>
+        <Text className="text-body text-slate-500">{t("onboarding.confirmPin.subtitle")}</Text>
       </View>
 
       {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)
           rather than vertically centered in the leftover flex-1 space. */}
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
-        {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}
+        {error ? <Text className="text-body font-medium text-red-600" accessibilityLiveRegion="assertive">{error}</Text> : null}
       </View>
 
       <View className="flex-1" />

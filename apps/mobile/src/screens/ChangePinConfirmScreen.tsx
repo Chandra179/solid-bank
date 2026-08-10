@@ -9,6 +9,7 @@ import { IconChevronLeft } from "../components/icons";
 import NumericKeypad from "../components/NumericKeypad";
 import DigitEntry from "../components/DigitEntry";
 import { useSessionStore } from "../store/session";
+import { t } from "@/i18n";
 
 const PIN_LENGTH = 6;
 
@@ -47,7 +48,7 @@ export default function ChangePinConfirmScreen({ navigation, route }: Props) {
         persistPin(newPin);
         navigation.navigate("Security", { pinJustChanged: true });
       } else {
-        setError("PINs don't match. Try again.");
+        setError(t("changePinConfirm.mismatch"));
         setPin("");
         advancing.current = false;
       }
@@ -60,22 +61,22 @@ export default function ChangePinConfirmScreen({ navigation, route }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
       </View>
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="text-2xl font-semibold text-slate-900">Confirm your new PIN</Text>
-        <Text className="text-body text-slate-500">Enter it once more to make sure it's right.</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("changePinConfirm.title")}</Text>
+        <Text className="text-body text-slate-500">{t("changePinConfirm.subtitle")}</Text>
       </View>
 
       <View className="items-center px-6 pt-12" style={{ gap: 12 }}>
         <DigitEntry length={PIN_LENGTH} value={pin} masked />
-        {error ? <Text className="text-body font-medium text-red-600">{error}</Text> : null}
+        {error ? <Text className="text-body font-medium text-red-600" accessibilityLiveRegion="assertive">{error}</Text> : null}
       </View>
 
       <View className="flex-1" />

@@ -64,8 +64,13 @@ describe("getPocketPaceMessage", () => {
     expect(getPocketPaceMessage("no-target", "1 January 2026")).toBeNull();
   });
 
+  // getPocketPaceMessage now routes through t() (src/i18n), which defaults
+  // to the "id" (Bahasa Indonesia) locale — see src/i18n/index.ts's
+  // DEFAULT_LOCALE comment for why this app ships id-first. These
+  // assertions were updated from the old hardcoded-English strings to match
+  // the id.ts locale's pocketPace.* translations.
   it("returns a static message for 'funded' even without a date label", () => {
-    expect(getPocketPaceMessage("funded")).toBe("Goal reached!");
+    expect(getPocketPaceMessage("funded")).toBe("Target tercapai!");
   });
 
   it("returns null for 'on-track'/'behind'/'overdue' when there's no date label to reference", () => {

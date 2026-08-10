@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconCheck, IconChevronLeft } from "../components/icons";
 import { formatIDR } from "@/utils/currency";
 import { getMoneyFlowCopy } from "@/utils/moneyFlowCopy";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Receipt">;
 
@@ -31,13 +32,13 @@ export default function ReceiptScreen({ navigation, route }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Receipt</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("receipt.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
@@ -47,7 +48,7 @@ export default function ReceiptScreen({ navigation, route }: Props) {
             <IconCheck size={24} color={colors.success500} />
           </View>
           <Text className="text-body font-semibold text-success-600" style={{ color: colors.success500 }}>
-            Completed
+            {t("receipt.completed")}
           </Text>
           <Text className="text-4xl font-bold text-slate-900">{formatIDR(amountMinor)}</Text>
         </View>
@@ -59,22 +60,22 @@ export default function ReceiptScreen({ navigation, route }: Props) {
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">Type</Text>
+            <Text className="text-body text-slate-500">{t("receipt.type")}</Text>
             <Text className="text-body font-semibold text-slate-900">{copy.typeLabel}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">Date</Text>
+            <Text className="text-body text-slate-500">{t("receipt.date")}</Text>
             <Text className="text-body font-semibold text-slate-900">{completedLabel}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">Reference</Text>
+            <Text className="text-body text-slate-500">{t("receipt.reference")}</Text>
             <Text className="text-body font-semibold text-slate-900">{reference}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">Fee</Text>
+            <Text className="text-body text-slate-500">{t("receipt.fee")}</Text>
             {/* Same real feeMinor + "Free"-when-zero treatment as
                 ConfirmScreen — kept consistent since this is a record of
                 the same transaction that screen previewed, not a
@@ -83,7 +84,7 @@ export default function ReceiptScreen({ navigation, route }: Props) {
               className="text-body font-semibold"
               style={{ color: feeMinor > 0 ? colors.neutral900 : colors.success500 }}
             >
-              {feeMinor > 0 ? formatIDR(feeMinor) : "Free"}
+              {feeMinor > 0 ? formatIDR(feeMinor) : t("receipt.free")}
             </Text>
           </View>
         </View>

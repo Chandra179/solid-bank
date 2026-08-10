@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconChevronLeft } from "../components/icons";
 import NumericKeypad from "../components/NumericKeypad";
 import Button from "../components/Button";
+import { t } from "@/i18n";
 
 // Standing in for the mobile balance shown on Home (Rp 8.240.500), used
 // only to power the "Max" quick-amount chip and the insufficient-funds
@@ -61,9 +62,9 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -81,7 +82,7 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
         </View>
         {exceedsBalance ? (
           <Text className="text-body font-medium text-red-600">
-            {flow === "withdraw" ? "Exceeds pocket balance" : "Exceeds available balance"}
+            {flow === "withdraw" ? t("amountEntry.exceedsPocketBalance") : t("amountEntry.exceedsAvailableBalance")}
           </Text>
         ) : null}
 
@@ -97,7 +98,7 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
           ))}
           {cap !== undefined ? (
             <Pressable onPress={setMax} className="rounded-full border border-slate-200 px-4 py-2">
-              <Text className="text-body font-medium text-slate-700">Max</Text>
+              <Text className="text-body font-medium text-slate-700">{t("amountEntry.max")}</Text>
             </Pressable>
           ) : null}
         </View>
@@ -109,7 +110,7 @@ export default function AmountEntryScreen({ navigation, route }: Props) {
 
       <View className="px-6 pb-4 pt-4">
         <Button
-          label="Continue"
+          label={t("common.continue")}
           variant="primary"
           disabled={!isValid}
           onPress={() =>

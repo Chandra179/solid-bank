@@ -7,6 +7,7 @@ import type { RootStackParamList } from "@/navigation/types";
 import { colors } from "../../theme/colors";
 import { IconShield } from "../../components/icons";
 import Button from "../../components/Button";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "KycPending">;
 
@@ -24,15 +25,14 @@ export default function KycPendingScreen({ navigation }: Props) {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-brand-50">
           <IconShield size={28} color={colors.brand700} />
         </View>
-        <Text className="text-xl font-semibold text-slate-900">Verifying your identity</Text>
+        <Text className="text-xl font-semibold text-slate-900">{t("onboarding.kycPending.title")}</Text>
         <Text className="max-w-[280px] text-center text-body text-slate-500">
-          This usually takes a few minutes. We'll let you know once it's done — you can finish setting up your
-          account in the meantime.
+          {t("onboarding.kycPending.message")}
         </Text>
       </View>
 
       <View className="w-full pb-4">
-        <Button label="Continue" variant="primary" onPress={() => navigation.navigate("SetPin")} />
+        <Button label={t("common.continue")} variant="primary" onPress={() => navigation.navigate("SetPin")} />
       </View>
     </SafeAreaView>
   );

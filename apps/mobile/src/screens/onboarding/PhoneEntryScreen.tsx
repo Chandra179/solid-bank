@@ -10,6 +10,7 @@ import NumericKeypad from "../../components/NumericKeypad";
 import Button from "../../components/Button";
 import { updateUserProfile } from "@/data";
 import { useInvalidateData } from "@/data/queries";
+import { t } from "@/i18n";
 
 const MAX_DIGITS = 13; // Indonesian mobile numbers run up to ~13 digits after the country code
 const MIN_DIGITS = 9;
@@ -40,17 +41,17 @@ export default function PhoneEntryScreen({ navigation }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
       </View>
 
       <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="text-2xl font-semibold text-slate-900">What's your number?</Text>
-        <Text className="text-body text-slate-500">We'll send a one-time code to verify it's you.</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("onboarding.phoneEntry.title")}</Text>
+        <Text className="text-body text-slate-500">{t("onboarding.phoneEntry.subtitle")}</Text>
       </View>
 
       {/* Anchored a fixed distance below the title instead of centered in
@@ -65,7 +66,7 @@ export default function PhoneEntryScreen({ navigation }: Props) {
             <Text className="text-lg font-semibold text-slate-900">+62</Text>
           </View>
           <Text className="text-2xl font-semibold text-slate-900">
-            {digits.length > 0 ? formatPhone(digits) : "8XX XXX XXXX"}
+            {digits.length > 0 ? formatPhone(digits) : t("onboarding.phoneEntry.placeholder")}
           </Text>
         </View>
       </View>
@@ -78,7 +79,7 @@ export default function PhoneEntryScreen({ navigation }: Props) {
 
       <View className="px-6 pb-4 pt-4">
         <Button
-          label="Continue"
+          label={t("common.continue")}
           variant="primary"
           disabled={!isValid}
           onPress={() => {

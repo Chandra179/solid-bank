@@ -31,7 +31,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -49,7 +49,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
             value={name}
             onChangeText={setName}
             placeholder="As shown on your KTP"
-            placeholderTextColor={colors.neutral400}
+            placeholderTextColor={colors.neutral500}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
@@ -59,7 +59,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
             value={email}
             onChangeText={setEmail}
             placeholder="you@example.com"
-            placeholderTextColor={colors.neutral400}
+            placeholderTextColor={colors.neutral500}
             autoCapitalize="none"
             keyboardType="email-address"
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"

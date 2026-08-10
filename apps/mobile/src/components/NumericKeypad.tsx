@@ -44,6 +44,8 @@ export default function NumericKeypad({ onDigit, onBackspace }: NumericKeypadPro
               <Pressable
                 key={j}
                 onPress={() => onDigit(key)}
+                accessibilityLabel={key}
+                accessibilityRole="button"
                 className="h-16 w-20 items-center justify-center rounded-2xl active:bg-slate-100"
               >
                 <Text className="text-2xl font-semibold text-slate-900">{key}</Text>

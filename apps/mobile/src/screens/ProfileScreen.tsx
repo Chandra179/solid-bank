@@ -12,6 +12,7 @@ import SelectRow from "../components/SelectRow";
 import { getAccountSummary, getUserProfile } from "@/data";
 import { useSessionStore } from "../store/session";
 import { getInitials } from "@/utils/initials";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Profile">;
 
@@ -31,7 +32,7 @@ export default function ProfileScreen({ navigation }: Props) {
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 8 }}>
         <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
-          <Text className="text-2xl font-semibold text-slate-900">Profile</Text>
+          <Text className="text-2xl font-semibold text-slate-900">{t("profile.title")}</Text>
         </View>
 
         <View className="items-center px-6 pb-4 pt-4" style={{ gap: 12 }}>
@@ -46,26 +47,31 @@ export default function ProfileScreen({ navigation }: Props) {
 
         <View className="mx-6 mt-2 rounded-2xl border border-slate-200">
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">Account number</Text>
+            <Text className="text-body text-slate-500">{t("profile.accountNumber")}</Text>
             <Text className="text-body font-semibold text-slate-900">{account.accountMask}</Text>
           </View>
           <View className="h-px bg-slate-100" />
           <View className="flex-row items-center justify-between px-4 py-4">
-            <Text className="text-body text-slate-500">Identity verification</Text>
+            <Text className="text-body text-slate-500">{t("profile.identityVerification")}</Text>
             <View
               className="flex-row items-center rounded-full px-3 py-1"
-              style={{ gap: 4, backgroundColor: isVerified ? colors.success100 : "#fef3c7" }}
+              style={{ gap: 4, backgroundColor: isVerified ? colors.success100 : colors.warning100 }}
             >
               {isVerified ? (
                 <IconCheck size={12} color={colors.success500} />
               ) : (
                 <IconShield size={12} color={colors.warning500} />
               )}
+              {/* success500/warning500 read fine as the icon fill above
+                  (3:1 non-text threshold) but fail 4.5:1 as text on this
+                  light badge background — the -600 variants pass and stay
+                  visually the same "status color," just darker (see
+                  theme/colors.ts). */}
               <Text
                 className="text-caption font-semibold"
-                style={{ color: isVerified ? colors.success500 : colors.warning500 }}
+                style={{ color: isVerified ? colors.success600 : colors.warning600 }}
               >
-                {isVerified ? "Verified" : "Pending"}
+                {isVerified ? t("profile.verified") : t("profile.pending")}
               </Text>
             </View>
           </View>
@@ -73,36 +79,36 @@ export default function ProfileScreen({ navigation }: Props) {
 
         <View className="mx-6 mt-6 rounded-2xl border border-slate-200 px-4">
           <SelectRow
-            title="Rewards"
-            subtitle="Cashback and perks for freelancers"
+            title={t("profile.rewards")}
+            subtitle={t("profile.rewardsSubtitle")}
             icon={<IconGift size={18} color={colors.neutral500} />}
             onPress={() => navigation.navigate("Rewards")}
           />
           <View className="h-px bg-slate-100" />
           <SelectRow
-            title="Security"
-            subtitle="PIN, biometrics, device management"
+            title={t("profile.security")}
+            subtitle={t("profile.securitySubtitle")}
             icon={<IconShield size={18} color={colors.neutral500} />}
             onPress={() => navigation.navigate("Security")}
           />
           <View className="h-px bg-slate-100" />
           <SelectRow
-            title="Notifications"
-            subtitle="Alerts, limits, marketing preferences"
+            title={t("profile.notifications")}
+            subtitle={t("profile.notificationsSubtitle")}
             icon={<IconBell size={18} color={colors.neutral500} />}
             onPress={() => navigation.navigate("NotificationSettings")}
           />
           <View className="h-px bg-slate-100" />
           <SelectRow
-            title="Help"
-            subtitle="Support, FAQs, contact us"
+            title={t("profile.help")}
+            subtitle={t("profile.helpSubtitle")}
             icon={<IconHelp size={18} color={colors.neutral500} />}
             onPress={() => navigation.navigate("Help")}
           />
         </View>
 
         <View className="px-6 pt-6 pb-4">
-          <Button label="Log out" variant="danger" onPress={logOut} />
+          <Button label={t("profile.logOut")} variant="danger" onPress={logOut} />
         </View>
       </ScrollView>
       <BottomNav

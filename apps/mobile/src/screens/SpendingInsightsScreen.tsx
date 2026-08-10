@@ -9,6 +9,7 @@ import { IconChevronLeft, IconInbox } from "../components/icons";
 import EmptyState from "../components/EmptyState";
 import { getCategoryBreakdown } from "@/data";
 import { formatIDR } from "@/utils/currency";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SpendingInsights">;
 
@@ -35,28 +36,28 @@ export default function SpendingInsightsScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Spending Insights</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("spendingInsights.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       {breakdown.length === 0 ? (
         <EmptyState
           icon={<IconInbox size={22} color={colors.neutral500} />}
-          title="Nothing to break down yet"
-          subtitle="Spend from your account and it'll show up here by category."
+          title={t("spendingInsights.emptyTitle")}
+          subtitle={t("spendingInsights.emptySubtitle")}
         />
       ) : (
         <ScrollView className="flex-1">
           <View className="items-center px-6 pb-2 pt-4" style={{ gap: 2 }}>
-            <Text className="text-body text-slate-500">Last {PERIOD_DAYS} days</Text>
+            <Text className="text-body text-slate-500">{t("spendingInsights.lastNDays", { days: PERIOD_DAYS })}</Text>
             <Text className="text-4xl font-bold text-slate-900">{formatIDR(totalMinor)}</Text>
-            <Text className="text-caption text-slate-500">spent across {breakdown.length} categories</Text>
+            <Text className="text-caption text-slate-500">{t("spendingInsights.spentAcross", { count: breakdown.length })}</Text>
           </View>
 
           <View className="mx-6 mt-4 rounded-2xl border border-slate-200 px-4">
@@ -73,7 +74,7 @@ export default function SpendingInsightsScreen({ navigation }: Props) {
                     <View className="h-2 rounded-full" style={{ width: `${pct * 100}%`, backgroundColor: barColor }} />
                   </View>
                   <Text className="text-caption text-slate-500">
-                    {Math.round(pct * 100)}% · {c.count} transaction{c.count === 1 ? "" : "s"}
+                    {Math.round(pct * 100)}% · {t("spendingInsights.transactionCount", { count: c.count, suffix: c.count === 1 ? "" : "s" })}
                   </Text>
                   {i < breakdown.length - 1 ? <View className="h-px bg-slate-100" style={{ marginTop: 8 }} /> : null}
                 </View>

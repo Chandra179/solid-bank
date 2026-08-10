@@ -18,6 +18,17 @@ export const colors = {
 
   success100: "#dcfce7",
   success500: "#16a34a",
+  // "-600 as text" pair for every status color: success500/warning500 are
+  // fill/UI-indicator colors (progress bars, dots) where WCAG only needs
+  // 3:1 against their background — both fail 4.5:1 if used as text on
+  // white. Use these two whenever a status color needs to render as a
+  // label/caption rather than a fill (see PocketCard's "Behind"/"Overdue"
+  // captions). warning500/success500 stay as-is for fills so existing
+  // progress-bar contrast (already verified against neutral100) doesn't
+  // shift.
+  success600: "#15803d",
+  warning100: "#fef3c7",
   warning500: "#d97706",
+  warning600: "#b45309",
   danger500: "#dc2626",
 } as const;

@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { colors } from "../theme/colors";
 import { IconCard, IconGrid, IconHome, IconProfile } from "./icons";
+import { t } from "../i18n";
 
 export type NavKey = "home" | "pockets" | "cards" | "profile";
 
@@ -10,12 +11,14 @@ type BottomNavProps = {
   onChange?: (key: NavKey) => void;
 };
 
-const ITEMS: { key: NavKey; label: string; Icon: typeof IconHome }[] = [
-  { key: "home", label: "Home", Icon: IconHome },
-  { key: "pockets", label: "Pockets", Icon: IconGrid },
-  { key: "cards", label: "Cards", Icon: IconCard },
-  { key: "profile", label: "Profile", Icon: IconProfile },
-];
+function getItems(): { key: NavKey; label: string; Icon: typeof IconHome }[] {
+  return [
+    { key: "home", label: t("nav.home"), Icon: IconHome },
+    { key: "pockets", label: t("nav.pockets"), Icon: IconGrid },
+    { key: "cards", label: t("nav.cards"), Icon: IconCard },
+    { key: "profile", label: t("nav.profile"), Icon: IconProfile },
+  ];
+}
 
 // Presentational bottom bar matching the Figma BottomNavItem row. Not wired
 // to @react-navigation/bottom-tabs (not in package.json) — swap this out
@@ -24,7 +27,7 @@ const ITEMS: { key: NavKey; label: string; Icon: typeof IconHome }[] = [
 export default function BottomNav({ active, onChange }: BottomNavProps) {
   return (
     <View className="flex-row justify-between border-t border-slate-200 bg-white px-8 pb-6 pt-3">
-      {ITEMS.map(({ key, label, Icon }) => {
+      {getItems().map(({ key, label, Icon }) => {
         const isActive = key === active;
         const color = isActive ? colors.brand700 : colors.neutral400;
         return (

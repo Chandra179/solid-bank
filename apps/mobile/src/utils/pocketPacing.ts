@@ -1,4 +1,5 @@
 import { colors } from "@/theme/colors";
+import { t } from "@/i18n";
 
 // Was flagged in TODO.md: every pocket's progress bar rendered in the same
 // green regardless of how close it actually was to its goal or deadline,
@@ -36,6 +37,9 @@ export function getPocketPaceStatus(pocket: PaceInput, now: number = Date.now())
   return actualFraction >= expectedFraction - GRACE ? "on-track" : "behind";
 }
 
+// Fill color — used on the progress-bar track itself, which only needs
+// WCAG's 3:1 non-text contrast threshold (1.4.11), not 4.5:1. Don't reuse
+// this for text; see pocketPaceTextColor below for that.
 export function pocketPaceColor(status: PocketPaceStatus): string {
   switch (status) {
     case "behind":
@@ -50,19 +54,62 @@ export function pocketPaceColor(status: PocketPaceStatus): string {
   }
 }
 
+// Text-safe variant of pocketPaceColor — warning500/success500 fail 4.5:1
+// as text on white (a WCAG audit flagged this), so pocketPaceShortLabel's
+// caption below uses these -600 shades instead of the fill color, even
+// though both fill and caption represent "the same" status color.
+export function pocketPaceTextColor(status: PocketPaceStatus): string {
+  switch (status) {
+    case "behind":
+      return colors.warning600;
+    case "overdue":
+      return colors.danger500; // already passes 4.5:1 on white — no -600 needed
+    case "funded":
+    case "on-track":
+    case "no-target":
+    default:
+      return colors.success600;
+  }
+}
+
 // Short status line for PocketDetailScreen, which has room for one;
 // PocketCard (Home's horizontal row, Pockets' list) stays color-only —
 // a caption-sized card is too cramped for this much text.
 export function getPocketPaceMessage(status: PocketPaceStatus, targetDateLabel?: string): string | null {
   switch (status) {
     case "funded":
-      return "Goal reached!";
+      return t("pocketPace.goalReached");
     case "on-track":
-      return targetDateLabel ? `On track for ${targetDateLabel}` : null;
+      return targetDateLabel ? t("pocketPace.onTrackFor", { date: targetDateLabel }) : null;
     case "behind":
-      return targetDateLabel ? `Behind pace — add more to catch up by ${targetDateLabel}` : null;
+      return targetDateLabel ? t("pocketPace.behindPace", { date: targetDateLabel }) : null;
     case "overdue":
-      return targetDateLabel ? `Past your target date of ${targetDateLabel}` : null;
+      return targetDateLabel ? t("pocketPace.pastTarget", { date: targetDateLabel }) : null;
+    case "no-target":
+    default:
+      return null;
+  }
+}
+
+// One- or two-word caption for PocketCard (Home's horizontal row, Pockets'
+// list) — those cards are too cramped for getPocketPaceMessage's full
+// sentence, but a WCAG audit correctly flagged that a color-only progress
+// bar with no text at all fails 1.4.1 (color can't be the only way pace
+// state is conveyed). This is the compact middle ground: short enough for
+// a card caption, present often enough that a colorblind user isn't
+// relying on hue alone. Returns null for "no-target"/"funded" — a pocket
+// with nothing to be behind on, or one that's already done, doesn't need a
+// pace caption at all (the existing "saved of target" line already covers
+// that case).
+export function pocketPaceShortLabel(status: PocketPaceStatus): string | null {
+  switch (status) {
+    case "on-track":
+      return t("pocketPace.short.onTrack");
+    case "behind":
+      return t("pocketPace.short.behind");
+    case "overdue":
+      return t("pocketPace.short.overdue");
+    case "funded":
     case "no-target":
     default:
       return null;

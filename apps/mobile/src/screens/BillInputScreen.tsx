@@ -80,7 +80,7 @@ export default function BillInputScreen({ navigation, route }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -101,7 +101,7 @@ export default function BillInputScreen({ navigation, route }: Props) {
           value={number}
           onChangeText={handleChange}
           placeholder={biller.placeholder}
-          placeholderTextColor={colors.neutral400}
+          placeholderTextColor={colors.neutral500}
           keyboardType="number-pad"
           className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
         />

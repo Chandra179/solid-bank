@@ -9,6 +9,7 @@ import { spacing } from "../theme/spacing";
 import { IconChevronLeft, IconQrCode } from "../components/icons";
 import { resolveMockQrCode } from "@/data";
 import { getQrisFeeMinor } from "@/utils/fees";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "QrScan">;
 
@@ -79,33 +80,33 @@ export default function QrScanScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Scan QR</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("qrScan.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       <View className="px-6 pb-2 pt-2">
         <Text className="text-center text-body text-slate-500">
-          Point your camera at a QRIS code to pay.
+          {t("qrScan.prompt")}
         </Text>
       </View>
 
       <View className="flex-1 items-center justify-center px-6">
         <View
           className="h-72 w-72 items-center justify-center rounded-2xl bg-slate-900"
-          accessibilityLabel={scanning ? "Scanning for QR code" : "QR code detected"}
+          accessibilityLabel={scanning ? t("qrScan.scanningLabel") : t("qrScan.foundLabel")}
         >
           <View className="h-56 w-56 items-center justify-center rounded-xl border-2 border-dashed border-white/60">
             <IconQrCode size={64} color={colors.neutral0} />
           </View>
         </View>
         <Text className="pt-6 text-body font-medium text-slate-500" style={{ gap: spacing.sm }}>
-          {scanning ? "Scanning…" : "QR code found"}
+          {scanning ? t("qrScan.scanning") : t("qrScan.found")}
         </Text>
       </View>
     </SafeAreaView>

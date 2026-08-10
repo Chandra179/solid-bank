@@ -10,6 +10,7 @@ import SelectRow from "../components/SelectRow";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
 import { usePockets, useBeneficiaries } from "@/data/queries";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 
@@ -42,13 +43,13 @@ export default function TransferScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Transfer</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("transfer.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
@@ -58,8 +59,8 @@ export default function TransferScreen({ navigation }: Props) {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Search name or account number"
-            placeholderTextColor={colors.neutral400}
+            placeholder={t("transfer.searchPlaceholder")}
+            placeholderTextColor={colors.neutral500}
             className="flex-1 text-body text-slate-900"
           />
         </View>
@@ -67,7 +68,7 @@ export default function TransferScreen({ navigation }: Props) {
 
       <ScrollView className="flex-1">
         <View className="pt-4" style={{ gap: 12 }}>
-          <Text className="px-6 text-body font-semibold text-slate-500">Your Pockets</Text>
+          <Text className="px-6 text-body font-semibold text-slate-500">{t("transfer.yourPockets")}</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -76,7 +77,7 @@ export default function TransferScreen({ navigation }: Props) {
             {pockets.map((p) => (
               <Pressable
                 key={p.id}
-                onPress={() => goToAmount(p.id, `To ${p.name}`)}
+                onPress={() => goToAmount(p.id, t("transfer.toRecipient", { name: p.name }))}
                 className="items-center"
                 style={{ gap: 8, width: 72 }}
               >
@@ -92,13 +93,15 @@ export default function TransferScreen({ navigation }: Props) {
         </View>
 
         <View className="px-6 pt-6" style={{ gap: 4 }}>
-          <Text className="pb-1 text-body font-semibold text-slate-500">Beneficiaries</Text>
+          <Text className="pb-1 text-body font-semibold text-slate-500">{t("transfer.beneficiaries")}</Text>
           {query.length > 0 && filteredBeneficiaries.length === 0 ? (
+            // size 22, not 20 — matches every other EmptyState icon size
+            // used across the app.
             <EmptyState
-              icon={<IconSearch size={20} color={colors.neutral500} />}
-              title={`No results for "${query}"`}
-              subtitle="Check the spelling, or add them as a new recipient."
-              actionLabel="Add new recipient"
+              icon={<IconSearch size={22} color={colors.neutral500} />}
+              title={t("transfer.noResultsFor", { query })}
+              subtitle={t("transfer.noResultsSubtitle")}
+              actionLabel={t("transfer.addNewRecipient")}
               onAction={goToAddRecipient}
             />
           ) : (
@@ -109,11 +112,11 @@ export default function TransferScreen({ navigation }: Props) {
                   title={b.name}
                   subtitle={b.subtitle}
                   icon={<IconUser size={18} color={colors.neutral500} />}
-                  onPress={() => goToAmount(b.id, `To ${b.name}`, b.subtitle)}
+                  onPress={() => goToAmount(b.id, t("transfer.toRecipient", { name: b.name }), b.subtitle)}
                 />
               ))}
               <SelectRow
-                title="Add new recipient"
+                title={t("transfer.addNewRecipient")}
                 icon={<IconPlus size={18} color={colors.brand700} />}
                 onPress={goToAddRecipient}
               />

@@ -6,6 +6,7 @@ import { colors } from "../../theme/colors";
 import { IconCheck } from "../../components/icons";
 import Button from "../../components/Button";
 import { useSessionStore } from "../../store/session";
+import { t } from "../../i18n";
 
 // Last screen of onboarding. Tapping through here is what actually flips
 // useSessionStore's isAuthenticated flag — App.tsx watches that flag to
@@ -23,14 +24,14 @@ export default function OnboardingCompleteScreen() {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-green-100">
           <IconCheck size={28} color={colors.success500} />
         </View>
-        <Text className="text-xl font-semibold text-slate-900">You're all set</Text>
+        <Text className="text-xl font-semibold text-slate-900">{t("onboarding.complete.title")}</Text>
         <Text className="max-w-[280px] text-center text-body text-slate-500">
-          Your account is ready. Full limits unlock once identity verification finishes — we'll notify you.
+          {t("onboarding.complete.message")}
         </Text>
       </View>
 
       <View className="w-full pb-4">
-        <Button label="Start Banking" variant="primary" onPress={() => setUser("demo-user")} />
+        <Button label={t("onboarding.complete.startBanking")} variant="primary" onPress={() => setUser("demo-user")} />
       </View>
     </SafeAreaView>
   );

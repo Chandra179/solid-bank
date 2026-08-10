@@ -6,6 +6,7 @@ import type { RootStackParamList } from "@/navigation/types";
 
 import NumericKeypad from "../../components/NumericKeypad";
 import DigitEntry from "../../components/DigitEntry";
+import { t } from "../../i18n";
 
 const PIN_LENGTH = 6;
 
@@ -39,8 +40,8 @@ export default function SetPinScreen({ navigation }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="text-2xl font-semibold text-slate-900">Create a PIN</Text>
-        <Text className="text-body text-slate-500">You'll use this to confirm transfers and top ups.</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("onboarding.setPin.title")}</Text>
+        <Text className="text-body text-slate-500">{t("onboarding.setPin.subtitle")}</Text>
       </View>
 
       {/* See PhoneEntryScreen for why this is top-anchored (fixed pt-12)

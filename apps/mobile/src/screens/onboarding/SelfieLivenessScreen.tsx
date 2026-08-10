@@ -6,6 +6,7 @@ import type { RootStackParamList } from "@/navigation/types";
 
 import { colors } from "../../theme/colors";
 import { IconCamera } from "../../components/icons";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Selfie">;
 type Stage = "framing" | "checking";
@@ -27,12 +28,12 @@ export default function SelfieLivenessScreen({ navigation }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <View className="px-6 pb-2 pt-5">
-        <Text className="text-center text-lg font-semibold text-slate-900">Take a selfie</Text>
+        <Text className="text-center text-lg font-semibold text-slate-900">{t("onboarding.selfie.title")}</Text>
       </View>
 
       <View className="px-6 pb-2 pt-2">
         <Text className="text-center text-body text-slate-500">
-          {stage === "framing" ? "Center your face and hold still." : "Checking, hold still…"}
+          {stage === "framing" ? t("onboarding.selfie.framingPrompt") : t("onboarding.selfie.checkingPrompt")}
         </Text>
       </View>
 
@@ -49,14 +50,14 @@ export default function SelfieLivenessScreen({ navigation }: Props) {
         {stage === "framing" ? (
           <Pressable
             onPress={() => setStage("checking")}
-            accessibilityLabel="Take selfie"
+            accessibilityLabel={t("onboarding.selfie.takeSelfieLabel")}
             accessibilityRole="button"
             className="h-16 w-16 items-center justify-center rounded-full bg-brand-700"
           >
             <IconCamera size={26} color={colors.neutral0} />
           </Pressable>
         ) : (
-          <Text className="text-body font-medium text-slate-500">Verifying liveness…</Text>
+          <Text className="text-body font-medium text-slate-500">{t("onboarding.selfie.verifying")}</Text>
         )}
       </View>
     </SafeAreaView>

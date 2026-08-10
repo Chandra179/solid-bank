@@ -26,7 +26,7 @@ export default function ComingSoon({ title, icon, message }: ComingSoonProps) {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -35,7 +35,12 @@ export default function ComingSoon({ title, icon, message }: ComingSoonProps) {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-brand-50">{icon}</View>
         <Text className="pt-4 text-xl font-semibold text-slate-900">{title}</Text>
         <Text className="pt-2 text-center text-body text-slate-500">{message}</Text>
-        <Text className="pt-1 text-center text-body text-slate-500" style={{ color: colors.neutral400 }}>
+        {/* Was colors.neutral400 (2.56:1 on white) — real, readable body
+            text needs the same 4.5:1 minimum as the message line above it,
+            not a fainter "less important" treatment. neutral500 (4.76:1)
+            passes and still reads as secondary next to text-slate-500's
+            slightly darker default. */}
+        <Text className="pt-1 text-center text-body" style={{ color: colors.neutral500 }}>
           Coming soon.
         </Text>
       </View>

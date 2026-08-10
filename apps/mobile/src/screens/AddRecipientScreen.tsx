@@ -47,7 +47,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
           accessibilityRole="button"
-          className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+          className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
@@ -70,7 +70,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
             value={name}
             onChangeText={setName}
             placeholder="e.g. Budi Santoso"
-            placeholderTextColor={colors.neutral400}
+            placeholderTextColor={colors.neutral500}
             maxLength={40}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
@@ -104,7 +104,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
             value={accountNumber}
             onChangeText={(t) => setAccountNumber(t.replace(/\D/g, "").slice(0, 20))}
             placeholder="1234567890"
-            placeholderTextColor={colors.neutral400}
+            placeholderTextColor={colors.neutral500}
             keyboardType="number-pad"
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />

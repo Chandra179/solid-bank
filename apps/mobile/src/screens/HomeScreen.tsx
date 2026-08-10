@@ -74,7 +74,7 @@ export default function HomeScreen({ navigation }: Props) {
             onPress={() => navigation.navigate("Notifications")}
             accessibilityLabel={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
             accessibilityRole="button"
-            className="h-10 w-10 items-center justify-center rounded-2xl bg-slate-100"
+            className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
           >
             <IconBell size={20} color={colors.neutral700} />
             {unreadCount > 0 ? (
