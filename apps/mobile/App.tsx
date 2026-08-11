@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./src/theme/global.css"; // NativeWind picks up Tailwind classes via this
 
 import RootNavigator from "./src/navigation/RootNavigator";
+import ErrorBoundary from "./src/components/ErrorBoundary";
 
 // One shared cache for every mock-data read in the app (see
 // src/data/queries.ts) — replaces the old per-screen useRefreshOnFocus
@@ -33,7 +34,13 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <RootNavigator />
+        {/* Was a real gap: nothing caught a render-time throw anywhere in
+            the tree, so any uncaught error white-screened the whole app.
+            See ErrorBoundary's own comment for what "Try again" does and
+            doesn't reset. */}
+        <ErrorBoundary>
+          <RootNavigator />
+        </ErrorBoundary>
       </SafeAreaProvider>
     </QueryClientProvider>
   );

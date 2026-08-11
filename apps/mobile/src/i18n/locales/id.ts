@@ -142,6 +142,17 @@ const id = {
     noMoneyLeft: "Belum ada uang yang keluar dari rekeningmu.",
     tryAgain: "Coba Lagi",
   },
+  errorState: {
+    // Generic query-failure fallback (ErrorState) — distinct from
+    // errorScreen.* above, which is specifically the money-move failure
+    // screen (has its own "no money has left your account" reassurance
+    // that wouldn't make sense on, say, a failed Pockets list load).
+    title: "Gagal memuat",
+    message: "Terjadi kesalahan saat memuat ini. Periksa koneksimu dan coba lagi.",
+    retry: "Coba lagi",
+    boundaryTitle: "Aplikasi mengalami kesalahan",
+    boundaryMessage: "Bagian ini gagal ditampilkan. Kamu bisa coba muat ulang di bawah ini.",
+  },
   help: {
     title: "Bantuan",
     contactSupport: "Hubungi dukungan",

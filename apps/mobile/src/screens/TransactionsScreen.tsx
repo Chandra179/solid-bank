@@ -9,6 +9,7 @@ import { IconArrowDownLeft, IconBag, IconChevronLeft, IconInbox, IconPieChart } 
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { useRecentTransactions } from "@/data/queries";
 import { t } from "@/i18n";
 
@@ -20,8 +21,11 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transactions">;
 // a second, fuller view onto the same list rather than a separate feed to
 // maintain (same relationship PocketsScreen has to Home's pocket row).
 export default function TransactionsScreen({ navigation }: Props) {
-  const { data: transactions, isLoading } = useRecentTransactions();
+  const { data: transactions, isLoading, isError, refetch } = useRecentTransactions();
 
+  // isError checked before the `!transactions` loading fallback — see
+  // PocketsScreen for why.
+  if (isError) return <ErrorState onRetry={refetch} />;
   if (isLoading || !transactions) return <LoadingState />;
 
   return (

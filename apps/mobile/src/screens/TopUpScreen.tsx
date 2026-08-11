@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconCard, IconChevronLeft, IconWallet } from "../components/icons";
 import SelectRow from "../components/SelectRow";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { useFundingSources, useCards } from "@/data/queries";
 import { t } from "@/i18n";
 
@@ -17,8 +18,13 @@ type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 // short flat list (no search) since a user only has a handful of funding
 // sources, unlike the potentially long beneficiary list on Transfer.
 export default function TopUpScreen({ navigation }: Props) {
-  const { data: sources = [], isLoading: sourcesLoading } = useFundingSources();
-  const { data: cards = [], isLoading: cardsLoading } = useCards();
+  const {
+    data: sources = [],
+    isLoading: sourcesLoading,
+    isError: sourcesError,
+    refetch: refetchSources,
+  } = useFundingSources();
+  const { data: cards = [], isLoading: cardsLoading, isError: cardsError, refetch: refetchCards } = useCards();
 
   // The "Debit Card" funding source and CardsScreen's card are the same
   // physical card (linked via Card.fundingSourceId) — freezing it there
@@ -31,6 +37,16 @@ export default function TopUpScreen({ navigation }: Props) {
     cards.filter((c) => c.frozen && c.fundingSourceId).map((c) => c.fundingSourceId)
   );
 
+  if (sourcesError || cardsError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          refetchSources();
+          refetchCards();
+        }}
+      />
+    );
+  }
   if (sourcesLoading || cardsLoading) return <LoadingState />;
 
   return (

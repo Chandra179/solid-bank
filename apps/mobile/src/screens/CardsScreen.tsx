@@ -9,6 +9,7 @@ import { IconAlert, IconPlus, IconShield } from "../components/icons";
 import BottomNav from "../components/BottomNav";
 import SelectRow from "../components/SelectRow";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { setCardFrozen } from "@/data";
 import { useCards, useInvalidateData } from "@/data/queries";
 import { t } from "@/i18n";
@@ -23,12 +24,13 @@ type Props = NativeStackScreenProps<RootStackParamList, "Cards">;
 // ComingSoon gaps — a fraud-ops workflow and physical card issuance are
 // both real separate features, not something to fake with a dead button.
 export default function CardsScreen({ navigation }: Props) {
-  const { data: cards, isLoading } = useCards();
+  const { data: cards, isLoading, isError, refetch } = useCards();
   const invalidate = useInvalidateData();
 
   const card = cards?.[0];
 
   if (isLoading) return <LoadingState />;
+  if (isError) return <ErrorState onRetry={refetch} />;
 
   if (!card) {
     return (

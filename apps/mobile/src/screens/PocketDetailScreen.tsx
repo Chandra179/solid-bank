@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { adjustPocketBalance, getPocket, recordPocketTransaction, requestPocketContribution } from "@/data";
 import { formatIDR } from "@/utils/currency";
 import { usePockets, usePocketTransactions, useInvalidateData } from "@/data/queries";
@@ -21,10 +22,28 @@ import { t } from "@/i18n";
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
 export default function PocketDetailScreen({ navigation, route }: Props) {
-  const { data: pockets, isLoading: pocketsLoading } = usePockets();
-  const { data: history = [], isLoading: historyLoading } = usePocketTransactions(route.params.pocketId);
+  const { data: pockets, isLoading: pocketsLoading, isError: pocketsError, refetch: refetchPockets } = usePockets();
+  const {
+    data: history = [],
+    isLoading: historyLoading,
+    isError: historyError,
+    refetch: refetchHistory,
+  } = usePocketTransactions(route.params.pocketId);
   const invalidate = useInvalidateData();
 
+  // isError checked before the `!pockets` loading fallback — see
+  // PocketsScreen for why. Retries both queries since either one failing
+  // means this screen has nothing valid to show.
+  if (pocketsError || historyError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          refetchPockets();
+          refetchHistory();
+        }}
+      />
+    );
+  }
   if (pocketsLoading || historyLoading || !pockets) return <LoadingState />;
 
   // Falls back to the first pocket only as a defensive guard against a bad

@@ -8,6 +8,7 @@ import { colors } from "../theme/colors";
 import { IconArrowDownLeft, IconChevronLeft, IconInbox, IconPocket, IconQrCode, IconShield } from "../components/icons";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { markNotificationRead } from "@/data";
 import { useNotifications, useInvalidateData } from "@/data/queries";
 import type { NotificationCategory } from "@/data/mockNotifications";
@@ -29,7 +30,7 @@ const CATEGORY_ICON: Record<NotificationCategory, (color: string) => React.React
 // picks up the change immediately since this screen mutates the same
 // module-level array it just read, no navigation/focus round-trip needed.
 export default function NotificationsScreen({ navigation }: Props) {
-  const { data: notifications, isLoading } = useNotifications();
+  const { data: notifications, isLoading, isError, refetch } = useNotifications();
   const invalidate = useInvalidateData();
 
   function handlePress(id: string) {
@@ -37,6 +38,10 @@ export default function NotificationsScreen({ navigation }: Props) {
     invalidate();
   }
 
+  // isError checked before the `!notifications` loading fallback — see
+  // PocketsScreen for why (`data` is undefined in both the loading AND
+  // the error case, so isLoading-only guards would swallow a real error).
+  if (isError) return <ErrorState onRetry={refetch} />;
   if (isLoading || !notifications) return <LoadingState />;
 
   return (

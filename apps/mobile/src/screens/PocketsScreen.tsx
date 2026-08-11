@@ -10,6 +10,7 @@ import PocketCard from "../components/PocketCard";
 import BottomNav from "../components/BottomNav";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { usePockets } from "@/data/queries";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Pockets">;
@@ -21,8 +22,14 @@ type Props = NativeStackScreenProps<RootStackParamList, "Pockets">;
 // built for Home's horizontal row; this just gives that same data a
 // full, dedicated list view.
 export default function PocketsScreen({ navigation }: Props) {
-  const { data: pockets, isLoading } = usePockets();
+  const { data: pockets, isLoading, isError, refetch } = usePockets();
 
+  // isError checked before the `!pockets` loading fallback below —
+  // isLoading/isError/success are mutually exclusive query states, but
+  // `data` is undefined in both the loading AND the error case, so
+  // `isLoading || !pockets` alone would swallow a real error into an
+  // infinite-looking spinner instead of ever reaching ErrorState.
+  if (isError) return <ErrorState onRetry={refetch} />;
   if (isLoading || !pockets) return <LoadingState />;
 
   return (

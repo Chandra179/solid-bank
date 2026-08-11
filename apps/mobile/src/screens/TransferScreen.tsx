@@ -9,6 +9,7 @@ import { IconChevronLeft, IconPlus, IconPocket, IconSearch, IconUser } from "../
 import SelectRow from "../components/SelectRow";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 import { usePockets, useBeneficiaries } from "@/data/queries";
 import { t } from "@/i18n";
 
@@ -21,13 +22,33 @@ type Props = NativeStackScreenProps<RootStackParamList, "Transfer">;
 // same shared AmountEntry screen.
 export default function TransferScreen({ navigation }: Props) {
   const [query, setQuery] = useState("");
-  const { data: pockets = [], isLoading: pocketsLoading } = usePockets();
-  const { data: beneficiaries = [], isLoading: beneficiariesLoading } = useBeneficiaries();
+  const {
+    data: pockets = [],
+    isLoading: pocketsLoading,
+    isError: pocketsError,
+    refetch: refetchPockets,
+  } = usePockets();
+  const {
+    data: beneficiaries = [],
+    isLoading: beneficiariesLoading,
+    isError: beneficiariesError,
+    refetch: refetchBeneficiaries,
+  } = useBeneficiaries();
 
   const filteredBeneficiaries = beneficiaries.filter((b) =>
     b.name.toLowerCase().includes(query.toLowerCase())
   );
 
+  if (pocketsError || beneficiariesError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          refetchPockets();
+          refetchBeneficiaries();
+        }}
+      />
+    );
+  }
   if (pocketsLoading || beneficiariesLoading) return <LoadingState />;
 
   function goToAmount(contextId: string, contextLabel: string, contextSubLabel?: string) {

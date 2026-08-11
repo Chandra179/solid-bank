@@ -332,3 +332,76 @@ raised in that review.
       changed). Closes the one item flagged in `product-decisions.md` as
       undermining the shared-pockets story for the freelancer segment: its
       core action wasn't fake data, but *was* a fake interaction.
+
+## Tech debt / scalability / maintainability / performance pass
+
+Prompted by a fresh audit of the repo (not just this file) rather than a
+walkthrough of the running app — actual `grep`/`wc` checks against the
+codebase turned up two real, previously-undocumented gaps below.
+
+- [x] **Nothing caught a render-time error anywhere in the app.** Zero
+      `ErrorBoundary`/`componentDidCatch` existed — any uncaught throw
+      white-screened the whole app with no recovery path. Added
+      `src/components/ErrorBoundary.tsx` (necessarily a class component;
+      React has no hook equivalent for `getDerivedStateFromError`/
+      `componentDidCatch`) wrapping `RootNavigator` in `App.tsx`, inside
+      `SafeAreaProvider` so its own fallback UI can still use
+      `SafeAreaView`. "Try again" only resets local state and re-renders
+      `children` — it does not reset navigation state or the query cache,
+      so an error caused by bad params/corrupted cache will throw again
+      immediately. That's an intentional, documented limitation (see the
+      component's own comment), not a claim that every error is
+      recoverable this way.
+- [x] **No screen anywhere checked `isError` on a query hook.** Every one
+      of the 7 screens that already guard on `isLoading` (`CardsScreen`,
+      `NotificationsScreen`, `PocketDetailScreen`, `PocketsScreen`,
+      `TopUpScreen`, `TransactionsScreen`, `TransferScreen`) only ever
+      checked loading state — with `retry: false` set globally
+      (`App.tsx`'s `queryClient`), a real query failure had no failure UI
+      behind it at all, just an unhandled `undefined` read. Added
+      `src/components/ErrorState.tsx` (the `isError` counterpart to the
+      existing `LoadingState`, same `inline` prop shape) and wired
+      `isError`/`refetch` into all 7 screens. Caught a real ordering bug
+      while doing this: several screens' existing guard was shaped
+      `if (isLoading || !data) return <LoadingState />`, and `data` is
+      undefined in the error case too — checking `isError` *after* that
+      line would never be reached, silently showing an infinite-looking
+      spinner instead of the new error state. Fixed by checking `isError`
+      first everywhere this pattern existed (`PocketsScreen`,
+      `NotificationsScreen`, `TransactionsScreen`, `PocketDetailScreen`,
+      `TransferScreen`) — noted inline at each site so the next screen
+      added follows the same order rather than reintroducing the bug.
+      Every one of these query hooks is still backed by a mock function
+      that never actually throws, so `onRetry` has never fired in
+      practice — it's wired to each hook's real `refetch`, so it'll be
+      correct rather than a fake button the day a real API call can
+      genuinely fail. The other ~34 screens that read query hooks without
+      an explicit `isLoading` guard (`HomeScreen`, `ProfileScreen`, etc.)
+      are out of scope for this pass — a broader pattern change, not a
+      bug fix, and a reasonable follow-up once those screens' own data
+      shapes are revisited.
+- [x] **`npm run lint` had no config behind it.** `package.json` defines
+      the script and lists `@react-native/eslint-config` as a
+      devDependency, but no `.eslintrc*`/`eslint.config.*` file existed
+      anywhere in the repo — running lint has been erroring or silently
+      no-opping this whole project, so nothing has actually been linted
+      despite the tooling being present. Added `.eslintrc.js` extending
+      `@react-native`, with `react-native/no-inline-styles` turned off
+      (NativeWind can't reach RN's `gap` via className — inline
+      `style={{ gap }}` is this codebase's deliberate, documented pattern
+      across 100+ call sites, not something worth flagging). Not verified
+      against a real `npm run lint` run — this sandbox has no
+      `node_modules` staged, so worth running for real before trusting it
+      catches what it's supposed to.
+- Noted but not acted on this pass, since each is a "revisit before the
+  mock layer becomes a real API" item rather than a bug: no list
+  virtualization anywhere (`ScrollView` + `.map()` across 11 screens —
+  invisible at mock-data scale, a real cliff once transaction/notification
+  history has hundreds of real rows); no code-splitting on the web build
+  (41 screens all bundle together); zero `useMemo`/`useCallback` anywhere
+  (fine today, worth revisiting once `SpendingInsightsScreen`'s category
+  math or `PocketDetailScreen`'s pace calculation run against real data
+  volumes); and the i18n locale files (~400 lines each) and
+  `navigation/types.ts` (~130 lines, 41 screens) are approaching a size
+  where a domain split would help legibility, though neither is genuinely
+  unwieldy yet.

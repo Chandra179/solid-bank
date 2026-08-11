@@ -145,6 +145,17 @@ const en = {
     noMoneyLeft: "No money has left your account.",
     tryAgain: "Try Again",
   },
+  errorState: {
+    // Generic query-failure fallback (ErrorState) — distinct from
+    // errorScreen.* above, which is specifically the money-move failure
+    // screen (has its own "no money has left your account" reassurance
+    // that wouldn't make sense on, say, a failed Pockets list load).
+    title: "Couldn't load this",
+    message: "Something went wrong loading this. Check your connection and try again.",
+    retry: "Try again",
+    boundaryTitle: "The app hit a problem",
+    boundaryMessage: "This part of the screen failed to load. You can try reloading it below.",
+  },
   help: {
     title: "Help",
     contactSupport: "Contact support",
