@@ -35,11 +35,15 @@ export type Pocket = {
   // among a small collective. Undefined means "not shared," same
   // optional-field convention as autoSaveMinor/targetDate. `contributedMinor`
   // per participant is illustrative/mock — there's no real multi-user auth
-  // or contribution-tracking backend behind this yet (see
-  // PocketDetailScreen's "Request a contribution" being a ComingSoon
-  // placeholder, not a real invite flow), so it's additive display data
-  // rather than something this layer reconciles against savedMinor.
-  participants?: { id: string; name: string; contributedMinor: number }[];
+  // or contribution-tracking backend behind this yet, so it's additive
+  // display data rather than something this layer reconciles against
+  // savedMinor. `requestedAt` backs PocketDetailScreen's per-participant
+  // "Request a contribution" action (see mockPockets.ts's
+  // requestPocketContribution) — genuinely real within what this mock layer
+  // can do (records that a request happened, flips the row to a "Requested"
+  // state), short of an actual push/notify to another real account, which
+  // needs multi-user auth this app doesn't have.
+  participants?: { id: string; name: string; contributedMinor: number; requestedAt?: number }[];
 };
 
 // Deliberately has no `icon` field — which icon a transaction renders with

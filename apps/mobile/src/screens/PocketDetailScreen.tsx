@@ -10,11 +10,13 @@ import Button from "../components/Button";
 import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
-import { adjustPocketBalance, getPocket, recordPocketTransaction } from "@/data";
+import { adjustPocketBalance, getPocket, recordPocketTransaction, requestPocketContribution } from "@/data";
 import { formatIDR } from "@/utils/currency";
 import { usePockets, usePocketTransactions, useInvalidateData } from "@/data/queries";
 import { getPocketPaceMessage, getPocketPaceStatus, pocketPaceColor } from "@/utils/pocketPacing";
 import { getInitials } from "@/utils/initials";
+import { formatRelativeDate } from "@/utils/relativeDate";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PocketDetail">;
 
@@ -51,6 +53,19 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
     invalidate();
   }
 
+  // Real, if modest, action behind "Request a contribution" — was a
+  // ComingSoon placeholder. There's no multi-user auth/push infrastructure
+  // to actually notify Rani or Deni's own device (still true, still a real
+  // gap for a future backend), but recording that a request happened is
+  // something this mock layer can do honestly: requestPocketContribution
+  // sets a real timestamp per participant, and the row below reflects it
+  // (button -> "Requested ..." label) the same way every other mutation in
+  // this app does.
+  function handleRequestContribution(participantId: string) {
+    requestPocketContribution(pocket.id, participantId);
+    invalidate();
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScrollView className="flex-1">
@@ -58,16 +73,16 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
         <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
           <Pressable
             onPress={() => navigation.goBack()}
-            accessibilityLabel="Go back"
+            accessibilityLabel={t("common.goBack")}
             accessibilityRole="button"
             className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
           >
             <IconChevronLeft size={20} color={colors.neutral700} />
           </Pressable>
-          <Text className="text-lg font-semibold text-slate-900">Pocket</Text>
+          <Text className="text-lg font-semibold text-slate-900">{t("pocketDetail.title")}</Text>
           <Pressable
             onPress={() => navigation.navigate("EditPocket", { pocketId: pocket.id })}
-            accessibilityLabel="Edit pocket"
+            accessibilityLabel={t("pocketDetail.editLabel")}
             accessibilityRole="button"
             className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
           >
@@ -83,7 +98,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
           <Text className="text-2xl font-semibold text-slate-900">{pocket.name}</Text>
           <Text className="text-4xl font-bold text-slate-900">{formatIDR(pocket.savedMinor)}</Text>
           <Text className="text-body text-slate-500">
-            of {formatIDR(pocket.targetMinor)} goal · {Math.round(pct * 100)}%
+            {t("pocketDetail.ofGoal", { target: formatIDR(pocket.targetMinor), pct: Math.round(pct * 100) })}
           </Text>
 
           <View className="h-2 w-full rounded-full bg-slate-100">
@@ -103,7 +118,7 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
 
           <View className="flex-row pt-2" style={{ gap: 12 }}>
             <Button
-              label="Add Money"
+              label={t("pocketDetail.addMoney")}
               variant="primary"
               onPress={() =>
                 // Same flow/contextLabel shape TransferScreen's own "Your
@@ -111,18 +126,18 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
                 // — this button is just a second entry point into that
                 // same AmountEntry -> Confirm -> VerifyPin chain, not a
                 // separate flow to maintain.
-                navigation.navigate("AmountEntry", { flow: "transfer", contextId: pocket.id, contextLabel: `To ${pocket.name}` })
+                navigation.navigate("AmountEntry", { flow: "transfer", contextId: pocket.id, contextLabel: t("pocketDetail.toPocket", { name: pocket.name }) })
               }
             />
             <Button
-              label="Withdraw"
+              label={t("pocketDetail.withdraw")}
               variant="secondary"
               disabled={pocket.savedMinor <= 0}
               onPress={() =>
                 navigation.navigate("AmountEntry", {
                   flow: "withdraw",
                   contextId: pocket.id,
-                  contextLabel: `From ${pocket.name}`,
+                  contextLabel: t("pocketDetail.fromPocket", { name: pocket.name }),
                   maxAmountMinor: pocket.savedMinor,
                 })
               }
@@ -138,11 +153,11 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
                 <IconBolt size={16} color={colors.brand700} />
               </View>
               <View className="flex-1" style={{ gap: 2 }}>
-                <Text className="text-label font-semibold text-slate-900">Auto-save is on</Text>
-                <Text className="text-caption text-slate-500">{formatIDR(pocket.autoSaveMinor)} / week</Text>
+                <Text className="text-label font-semibold text-slate-900">{t("pocketDetail.autoSaveOn")}</Text>
+                <Text className="text-caption text-slate-500">{t("pocketDetail.perWeek", { amount: formatIDR(pocket.autoSaveMinor) })}</Text>
               </View>
             </View>
-            <Button label="Boost now" variant="secondary" onPress={handleBoost} />
+            <Button label={t("pocketDetail.boostNow")} variant="secondary" onPress={handleBoost} />
           </View>
         ) : (
           <Pressable
@@ -154,60 +169,70 @@ export default function PocketDetailScreen({ navigation, route }: Props) {
               <IconBolt size={16} color={colors.neutral500} />
             </View>
             <View className="flex-1" style={{ gap: 2 }}>
-              <Text className="text-label font-semibold text-slate-900">Set up auto-save</Text>
-              <Text className="text-caption text-slate-500">Grow this pocket automatically every week.</Text>
+              <Text className="text-label font-semibold text-slate-900">{t("pocketDetail.setUpAutoSave")}</Text>
+              <Text className="text-caption text-slate-500">{t("pocketDetail.setUpAutoSaveDesc")}</Text>
             </View>
           </Pressable>
         )}
 
         {/* Shared/group pockets — participants are mock/display data (see
-            data/types.ts's Pocket.participants comment for why); "Request a
-            contribution" is a genuine ComingSoon gap rather than a fake
-            action, since a real per-participant invite/notify flow needs
-            infrastructure (multi-user auth, push) this app doesn't have. */}
+            data/types.ts's Pocket.participants comment for why). "Request a
+            contribution" used to be a single button behind a ComingSoon
+            placeholder; now it's a real per-participant action —
+            requestPocketContribution records a genuine timestamp, and each
+            row reflects it (button -> "Requested ..." label) instead of
+            every tap leading to the same dead end. Still short of an actual
+            notify-the-other-person effect, which needs multi-user auth/push
+            this app doesn't have — "You" never gets a request button since
+            you can't request a contribution from yourself. */}
         {pocket.participants && pocket.participants.length > 0 ? (
           <View className="mx-6 mb-2 rounded-2xl border border-slate-200 p-4" style={{ gap: 12 }}>
             <View className="flex-row items-center justify-between">
-              <Text className="text-label font-semibold text-slate-900">Shared with</Text>
-              <Text className="text-caption text-slate-500">{pocket.participants.length} people</Text>
+              <Text className="text-label font-semibold text-slate-900">{t("pocketDetail.sharedWith")}</Text>
+              <Text className="text-caption text-slate-500">{t("pocketDetail.peopleCount", { count: pocket.participants.length })}</Text>
             </View>
             <View style={{ gap: 10 }}>
               {pocket.participants.map((p) => (
                 <View key={p.id} className="flex-row items-center justify-between">
-                  <View className="flex-row items-center" style={{ gap: 10 }}>
+                  <View className="flex-1 flex-row items-center pr-3" style={{ gap: 10 }}>
                     <View className="h-8 w-8 items-center justify-center rounded-full bg-brand-50">
                       <Text className="text-caption font-bold text-brand-700">{getInitials(p.name)}</Text>
                     </View>
-                    <Text className="text-label text-slate-900">{p.name}</Text>
+                    <View style={{ gap: 1 }}>
+                      <Text className="text-label text-slate-900">{p.name}</Text>
+                      <Text className="text-caption font-semibold text-slate-500">
+                        {t("pocketDetail.contributed", { amount: formatIDR(p.contributedMinor) })}
+                      </Text>
+                    </View>
                   </View>
-                  <Text className="text-caption font-semibold text-slate-500">
-                    {formatIDR(p.contributedMinor)} contributed
-                  </Text>
+                  {p.id === "you" ? null : p.requestedAt ? (
+                    <Text className="text-caption font-semibold text-slate-500">
+                      {t("pocketDetail.requested", { when: formatRelativeDate(p.requestedAt) })}
+                    </Text>
+                  ) : (
+                    <Pressable
+                      onPress={() => handleRequestContribution(p.id)}
+                      className="rounded-full bg-slate-100 px-3 py-1.5"
+                    >
+                      <Text className="text-caption font-semibold text-slate-700">
+                        {t("pocketDetail.requestContribution")}
+                      </Text>
+                    </Pressable>
+                  )}
                 </View>
               ))}
             </View>
-            <Button
-              label="Request a contribution"
-              variant="secondary"
-              onPress={() =>
-                navigation.navigate("ComingSoon", {
-                  title: "Request a contribution",
-                  message: "Asking a participant to chip in will notify them directly once shared pockets support multiple accounts.",
-                  icon: "help",
-                })
-              }
-            />
           </View>
         ) : null}
 
         {/* History */}
         <View className="pb-8 pt-4" style={{ gap: 4 }}>
-          <Text className="px-6 pb-2 text-lg font-semibold text-slate-900">History</Text>
+          <Text className="px-6 pb-2 text-lg font-semibold text-slate-900">{t("pocketDetail.historyTitle")}</Text>
           {history.length === 0 ? (
             <EmptyState
               icon={<IconInbox size={22} color={colors.neutral500} />}
-              title="No activity yet"
-              subtitle="Money you add to or take from this pocket will show up here."
+              title={t("pocketDetail.noActivityTitle")}
+              subtitle={t("pocketDetail.noActivitySubtitle")}
             />
           ) : (
             <View className="px-6">

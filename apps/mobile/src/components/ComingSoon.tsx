@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../theme/colors";
 import { IconChevronLeft } from "./icons";
+import { t } from "../i18n";
 
 type ComingSoonProps = {
   title: string;
@@ -24,7 +25,7 @@ export default function ComingSoon({ title, icon, message }: ComingSoonProps) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("comingSoon.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
@@ -41,7 +42,7 @@ export default function ComingSoon({ title, icon, message }: ComingSoonProps) {
             passes and still reads as secondary next to text-slate-500's
             slightly darker default. */}
         <Text className="pt-1 text-center text-body" style={{ color: colors.neutral500 }}>
-          Coming soon.
+          {t("common.comingSoon")}.
         </Text>
       </View>
     </SafeAreaView>

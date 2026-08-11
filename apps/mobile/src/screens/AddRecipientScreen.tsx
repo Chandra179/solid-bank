@@ -9,6 +9,7 @@ import { IconChevronLeft, IconUser } from "../components/icons";
 import Button from "../components/Button";
 import { addBeneficiary } from "@/data";
 import { useInvalidateData } from "@/data/queries";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AddRecipient">;
 
@@ -45,7 +46,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
@@ -57,26 +58,26 @@ export default function AddRecipientScreen({ navigation }: Props) {
         <View className="h-14 w-14 items-center justify-center rounded-full bg-brand-50">
           <IconUser size={24} color={colors.brand700} />
         </View>
-        <Text className="text-2xl font-semibold text-slate-900">New recipient</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("addRecipient.title")}</Text>
         <Text className="text-center text-body text-slate-500">
-          Add their details once and transfer to them anytime.
+          {t("addRecipient.subtitle")}
         </Text>
       </View>
 
       <View className="px-6 pt-8" style={{ gap: 16 }}>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Recipient name</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("addRecipient.recipientName")}</Text>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. Budi Santoso"
+            placeholder={t("addRecipient.namePlaceholder")}
             placeholderTextColor={colors.neutral500}
             maxLength={40}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Bank</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("addRecipient.bank")}</Text>
           <View className="flex-row" style={{ gap: 8 }}>
             {BANKS.map((b) => (
               <Pressable
@@ -99,10 +100,10 @@ export default function AddRecipientScreen({ navigation }: Props) {
           </View>
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Account number</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("addRecipient.accountNumber")}</Text>
           <TextInput
             value={accountNumber}
-            onChangeText={(t) => setAccountNumber(t.replace(/\D/g, "").slice(0, 20))}
+            onChangeText={(v) => setAccountNumber(v.replace(/\D/g, "").slice(0, 20))}
             placeholder="1234567890"
             placeholderTextColor={colors.neutral500}
             keyboardType="number-pad"
@@ -114,7 +115,7 @@ export default function AddRecipientScreen({ navigation }: Props) {
       <View className="flex-1" />
 
       <View className="px-6 pb-4">
-        <Button label="Add recipient" variant="primary" disabled={!isValid} onPress={handleAdd} />
+        <Button label={t("addRecipient.addRecipientBtn")} variant="primary" disabled={!isValid} onPress={handleAdd} />
       </View>
     </SafeAreaView>
   );

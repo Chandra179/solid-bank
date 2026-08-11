@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import { getPocket, listPockets, updatePocket } from "@/data";
 import { useInvalidateData } from "@/data/queries";
 import { formatDateInput, parseDateInput } from "@/utils/dateInput";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditPocket">;
 
@@ -80,7 +81,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
@@ -94,26 +95,26 @@ export default function EditPocketScreen({ navigation, route }: Props) {
               w-14 badge per docs/conventions.md's icon-to-badge sizing note. */}
           <IconPocket size={22} color={colors.brand700} />
         </View>
-        <Text className="text-2xl font-semibold text-slate-900">Edit pocket</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("editPocket.title")}</Text>
         <Text className="text-center text-body text-slate-500">
-          Rename this pocket or update its goal — its saved balance won't change.
+          {t("editPocket.subtitle")}
         </Text>
       </View>
 
       <View className="px-6 pt-8" style={{ gap: 16 }}>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Pocket name</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("editPocket.pocketName")}</Text>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. New Phone"
+            placeholder={t("editPocket.namePlaceholder")}
             placeholderTextColor={colors.neutral500}
             maxLength={40}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Goal amount</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("editPocket.goalAmount")}</Text>
           <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
             <Text className="text-label font-medium text-slate-400">Rp</Text>
             <TextInput
@@ -127,40 +128,39 @@ export default function EditPocketScreen({ navigation, route }: Props) {
           </View>
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Weekly auto-save (optional)</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("editPocket.weeklyAutoSave")}</Text>
           <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
             <Text className="text-label font-medium text-slate-400">Rp</Text>
             <TextInput
               value={formatRupiahInput(autoSaveDigits)}
               onChangeText={handleAutoSaveChange}
-              placeholder="Off"
+              placeholder={t("editPocket.autoSaveOff")}
               placeholderTextColor={colors.neutral500}
               keyboardType="number-pad"
               className="ml-2 flex-1 text-label text-slate-900"
             />
           </View>
           <Text className="text-caption text-slate-500">
-            Leave at 0 to turn auto-save off. There's no real weekly job yet — PocketDetail's
-            "Boost now" applies one week's worth on demand instead.
+            {t("editPocket.autoSaveHint")}
           </Text>
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-label font-semibold text-slate-700">Target date (optional)</Text>
+          <Text className="text-label font-semibold text-slate-700">{t("editPocket.targetDate")}</Text>
           <TextInput
             value={targetDateText}
             onChangeText={setTargetDateText}
-            placeholder="YYYY-MM-DD"
+            placeholder={t("editPocket.targetDatePlaceholder")}
             placeholderTextColor={colors.neutral500}
             maxLength={10}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
           {targetDateError ? (
             <Text className="text-caption font-medium text-red-600">
-              Enter a real date as YYYY-MM-DD, or clear this field.
+              {t("editPocket.targetDateError")}
             </Text>
           ) : (
             <Text className="text-caption text-slate-500">
-              Clear this to turn off pacing for this pocket.
+              {t("editPocket.targetDateHint")}
             </Text>
           )}
         </View>
@@ -169,7 +169,7 @@ export default function EditPocketScreen({ navigation, route }: Props) {
       <View className="flex-1" />
 
       <View className="px-6 pb-4">
-        <Button label="Save changes" variant="primary" disabled={!isValid} onPress={handleSave} />
+        <Button label={t("editPocket.saveChanges")} variant="primary" disabled={!isValid} onPress={handleSave} />
       </View>
     </SafeAreaView>
   );

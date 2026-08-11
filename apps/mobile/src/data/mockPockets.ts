@@ -138,3 +138,19 @@ export function updatePocket(
   }
   return pocket;
 }
+
+// Backs PocketDetailScreen's per-participant "Request a contribution"
+// action — was a ComingSoon placeholder ("needs multi-user auth/push this
+// app doesn't have"), which is still true for an actual notify-the-other-
+// person effect, but recording that a request happened is something this
+// mock layer can do honestly: it sets a real timestamp, and the screen
+// reflects it (button -> "Requested ..." label) the same way every other
+// mutation here does. Returns undefined (no-op) for "you" or an unknown
+// participant id — you can't request a contribution from yourself.
+export function requestPocketContribution(pocketId: string, participantId: string): Pocket | undefined {
+  const pocket = POCKETS.find((p) => p.id === pocketId);
+  const participant = pocket?.participants?.find((p) => p.id === participantId);
+  if (!pocket || !participant || participantId === "you") return undefined;
+  participant.requestedAt = Date.now();
+  return pocket;
+}

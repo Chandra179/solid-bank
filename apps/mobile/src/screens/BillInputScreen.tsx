@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import LoadingState from "../components/LoadingState";
 import { getAccountSummary, getBiller, lookupMockBillAmount } from "@/data";
 import { formatIDR } from "@/utils/currency";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "BillInput">;
 
@@ -61,7 +62,7 @@ export default function BillInputScreen({ navigation, route }: Props) {
       const amountMinor = lookupMockBillAmount(number);
       const balanceMinor = getAccountSummary().balanceMinor;
       if (amountMinor > balanceMinor) {
-        setError(`Insufficient balance — this bill is ${formatIDR(amountMinor)}.`);
+        setError(t("billInput.insufficientBalance", { amount: formatIDR(amountMinor) }));
         return;
       }
       navigation.navigate("Confirm", {
@@ -78,7 +79,7 @@ export default function BillInputScreen({ navigation, route }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
@@ -90,8 +91,8 @@ export default function BillInputScreen({ navigation, route }: Props) {
         <Text className="text-2xl font-semibold text-slate-900">{biller.name}</Text>
         <Text className="text-body text-slate-500">
           {biller.amountMode === "user-entered"
-            ? `Enter the ${biller.customerLabel.toLowerCase()} to top up.`
-            : `Enter the ${biller.customerLabel.toLowerCase()} to check and pay this bill.`}
+            ? t("billInput.userEnteredSubtitle", { label: biller.customerLabel.toLowerCase() })
+            : t("billInput.billedSubtitle", { label: biller.customerLabel.toLowerCase() })}
         </Text>
       </View>
 
@@ -116,7 +117,7 @@ export default function BillInputScreen({ navigation, route }: Props) {
 
       <View className="px-6 pb-4">
         <Button
-          label={biller.amountMode === "user-entered" ? "Continue" : checking ? "Checking…" : "Check bill"}
+          label={biller.amountMode === "user-entered" ? t("common.continue") : checking ? t("billInput.checking") : t("billInput.checkBill")}
           variant="primary"
           disabled={!isValid || checking}
           onPress={handleContinue}

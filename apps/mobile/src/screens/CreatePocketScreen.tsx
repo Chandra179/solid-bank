@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import { addPocket } from "@/data";
 import { useInvalidateData } from "@/data/queries";
 import { parseDateInput } from "@/utils/dateInput";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CreatePocket">;
 
@@ -84,7 +85,7 @@ export default function CreatePocketScreen({ navigation }: Props) {
       <View className="px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
@@ -99,26 +100,26 @@ export default function CreatePocketScreen({ navigation }: Props) {
               per docs/conventions.md's icon-to-badge sizing note. */}
           <IconPocket size={22} color={colors.brand700} />
         </View>
-        <Text className="text-2xl font-semibold text-slate-900">New pocket</Text>
+        <Text className="text-2xl font-semibold text-slate-900">{t("createPocket.title")}</Text>
         <Text className="text-center text-body text-slate-500">
-          Give it a name and a goal — you can add money to it right away.
+          {t("createPocket.subtitle")}
         </Text>
       </View>
 
       <View className="px-6 pt-8" style={{ gap: 16 }}>
         <View style={{ gap: 6 }}>
-          <Text className="text-body font-semibold text-slate-700">Pocket name</Text>
+          <Text className="text-body font-semibold text-slate-700">{t("createPocket.pocketName")}</Text>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. New Phone"
+            placeholder={t("createPocket.namePlaceholder")}
             placeholderTextColor={colors.neutral500}
             maxLength={40}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-body font-semibold text-slate-700">Goal amount</Text>
+          <Text className="text-body font-semibold text-slate-700">{t("createPocket.goalAmount")}</Text>
           <View className="flex-row items-center rounded-xl border border-slate-200 px-4 py-3.5">
             <Text className="text-label font-medium text-slate-400">Rp</Text>
             <TextInput
@@ -132,23 +133,22 @@ export default function CreatePocketScreen({ navigation }: Props) {
           </View>
         </View>
         <View style={{ gap: 6 }}>
-          <Text className="text-body font-semibold text-slate-700">Target date (optional)</Text>
+          <Text className="text-body font-semibold text-slate-700">{t("createPocket.targetDate")}</Text>
           <TextInput
             value={targetDateText}
             onChangeText={setTargetDateText}
-            placeholder="YYYY-MM-DD"
+            placeholder={t("createPocket.targetDatePlaceholder")}
             placeholderTextColor={colors.neutral500}
             maxLength={10}
             className="rounded-xl border border-slate-200 px-4 py-3.5 text-label text-slate-900"
           />
           {targetDateError ? (
             <Text className="text-caption font-medium text-red-600">
-              Enter a real future date as YYYY-MM-DD, or leave this blank.
+              {t("createPocket.targetDateError")}
             </Text>
           ) : (
             <Text className="text-caption text-slate-500">
-              Leave blank to skip pacing — with a date, this pocket's progress bar shows whether you're on
-              track.
+              {t("createPocket.targetDateHint")}
             </Text>
           )}
         </View>
@@ -164,8 +164,8 @@ export default function CreatePocketScreen({ navigation }: Props) {
             className="flex-row items-center justify-between rounded-xl border border-slate-200 px-4 py-3.5"
           >
             <View style={{ gap: 2 }}>
-              <Text className="text-label font-semibold text-slate-700">Split with others</Text>
-              <Text className="text-caption text-slate-500">Everyone's contributions count toward the goal.</Text>
+              <Text className="text-label font-semibold text-slate-700">{t("createPocket.splitWithOthers")}</Text>
+              <Text className="text-caption text-slate-500">{t("createPocket.splitWithOthersDesc")}</Text>
             </View>
             <View
               className="h-6 w-6 items-center justify-center rounded-md border"
@@ -184,14 +184,14 @@ export default function CreatePocketScreen({ navigation }: Props) {
                 <TextInput
                   value={participantInput}
                   onChangeText={setParticipantInput}
-                  placeholder="Add a name"
+                  placeholder={t("createPocket.addNamePlaceholder")}
                   placeholderTextColor={colors.neutral500}
                   maxLength={30}
                   onSubmitEditing={addParticipant}
                   className="flex-1 py-1.5 text-label text-slate-900"
                 />
                 <Pressable onPress={addParticipant} className="rounded-full bg-slate-100 px-3 py-1.5">
-                  <Text className="text-caption font-semibold text-slate-700">Add</Text>
+                  <Text className="text-caption font-semibold text-slate-700">{t("createPocket.add")}</Text>
                 </Pressable>
               </View>
               {participantNames.length > 0 ? (
@@ -210,7 +210,7 @@ export default function CreatePocketScreen({ navigation }: Props) {
                 </View>
               ) : (
                 <Text className="text-caption text-slate-500">
-                  Add each person you're splitting this goal with.
+                  {t("createPocket.addEachPerson")}
                 </Text>
               )}
             </View>
@@ -221,7 +221,7 @@ export default function CreatePocketScreen({ navigation }: Props) {
       <View className="flex-1" />
 
       <View className="px-6 pb-4">
-        <Button label="Create pocket" variant="primary" disabled={!isValid} onPress={handleCreate} />
+        <Button label={t("createPocket.createPocketBtn")} variant="primary" disabled={!isValid} onPress={handleCreate} />
       </View>
     </SafeAreaView>
   );

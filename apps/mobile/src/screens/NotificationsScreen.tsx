@@ -11,6 +11,7 @@ import LoadingState from "../components/LoadingState";
 import { markNotificationRead } from "@/data";
 import { useNotifications, useInvalidateData } from "@/data/queries";
 import type { NotificationCategory } from "@/data/mockNotifications";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Notifications">;
 
@@ -43,21 +44,21 @@ export default function NotificationsScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Notifications</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("notificationsScreen.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       {notifications.length === 0 ? (
         <EmptyState
           icon={<IconInbox size={22} color={colors.neutral500} />}
-          title="Nothing yet"
-          subtitle="Account activity and alerts will show up here."
+          title={t("notificationsScreen.emptyTitle")}
+          subtitle={t("notificationsScreen.emptySubtitle")}
         />
       ) : (
         // Wrapped (rather than letting ScrollView sit directly under the
@@ -89,7 +90,7 @@ export default function NotificationsScreen({ navigation }: Props) {
               </Pressable>
             ))}
           </ScrollView>
-          <Text className="pb-4 pt-2 text-center text-caption text-slate-500">That's everything for now.</Text>
+          <Text className="pb-4 pt-2 text-center text-caption text-slate-500">{t("notificationsScreen.thatsEverything")}</Text>
         </View>
       )}
     </SafeAreaView>

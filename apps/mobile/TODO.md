@@ -304,3 +304,31 @@ raised in that review.
       copy (beyond the "Go back" accessibility label, fixed everywhere via
       the WCAG touch-target sed pass) is still hardcoded English. Left as
       the next i18n follow-up rather than rushed through unread.
+- [x] **i18n coverage — the 10 remaining screens from above are now done.**
+      Added `comingSoon`, `topUp`, `addRecipient`, `transactions`,
+      `notificationsScreen`, `editPocket`, `pocketDetail`, `createPocket`,
+      `profileSetup`, and `billInput` namespaces to `id.ts`/`en.ts` and
+      wired `t()` calls through all ten files, closing every screen-level
+      i18n gap the previous pass left open — every screen in the app now
+      imports `t()`. One small, deliberate exception: `utils/relativeDate.ts`
+      (the "3 days ago"/"Today, 14:32" formatter used in transaction history
+      and, now, "Requested 2 hours ago") still returns hardcoded English —
+      it's called from the data layer at mock-data-generation time, not live
+      from a screen, and translating it touches `mockTransactions.test.ts`'s
+      exact-string assertions the same way `pocketPacing.ts` did earlier in
+      this project; left as a scoped follow-up rather than pulled into this
+      pass along with everything else.
+- [x] **"Request a contribution" is a real per-participant action, not a
+      ComingSoon dead end.** `Pocket.participants` entries now carry an
+      optional `requestedAt` timestamp (`data/types.ts`), set by a new
+      `requestPocketContribution(pocketId, participantId)` (`mockPockets.ts`)
+      that `PocketDetailScreen` calls per-participant instead of routing a
+      single button to `ComingSoon`. Each non-"you" participant row shows
+      either a "Request" pill or, once tapped, a "Requested {relative time}"
+      label — a real, honest state change this mock layer can make, not a
+      simulated notification to another person's device (that still needs
+      real multi-user auth/push, which this app doesn't have — the code
+      comment says so explicitly rather than implying more than what
+      changed). Closes the one item flagged in `product-decisions.md` as
+      undermining the shared-pockets story for the freelancer segment: its
+      core action wasn't fake data, but *was* a fake interaction.

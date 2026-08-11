@@ -9,6 +9,7 @@ import { IconCard, IconChevronLeft, IconWallet } from "../components/icons";
 import SelectRow from "../components/SelectRow";
 import LoadingState from "../components/LoadingState";
 import { useFundingSources, useCards } from "@/data/queries";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TopUp">;
 
@@ -37,25 +38,25 @@ export default function TopUpScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Top Up</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("topUp.title")}</Text>
         <View className="h-10 w-10" />
       </View>
 
       <View className="flex-1 px-6 pt-4" style={{ gap: 4 }}>
-        <Text className="pb-1 text-body font-semibold text-slate-500">Choose a source</Text>
+        <Text className="pb-1 text-body font-semibold text-slate-500">{t("topUp.chooseASource")}</Text>
         {sources.map((s) => {
           const frozen = frozenSourceIds.has(s.id);
           return (
             <SelectRow
               key={s.id}
               title={s.name}
-              subtitle={frozen ? "Frozen — unfreeze it in Cards to use this source" : s.subtitle}
+              subtitle={frozen ? t("topUp.frozenSubtitle") : s.subtitle}
               icon={
                 s.kind === "ewallet" ? (
                   <IconWallet size={18} color={colors.neutral500} />
@@ -64,12 +65,12 @@ export default function TopUpScreen({ navigation }: Props) {
                 )
               }
               disabled={frozen}
-              disabledLabel="Frozen"
+              disabledLabel={t("topUp.frozenLabel")}
               onPress={() =>
                 navigation.navigate("AmountEntry", {
                   flow: "topup",
                   contextId: s.id,
-                  contextLabel: `From ${s.name}`,
+                  contextLabel: t("topUp.fromSource", { name: s.name }),
                   contextSubLabel: s.subtitle,
                 })
               }
@@ -81,7 +82,7 @@ export default function TopUpScreen({ navigation }: Props) {
             filler) closes that gap instead of leaving it inert. */}
         <View className="flex-1" />
         <Text className="pb-6 text-center text-caption text-slate-500">
-          More funding sources coming soon.
+          {t("topUp.moreSourcesComingSoon")}
         </Text>
       </View>
     </SafeAreaView>

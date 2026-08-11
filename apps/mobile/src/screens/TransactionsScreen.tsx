@@ -10,6 +10,7 @@ import TransactionRow from "../components/TransactionRow";
 import EmptyState from "../components/EmptyState";
 import LoadingState from "../components/LoadingState";
 import { useRecentTransactions } from "@/data/queries";
+import { t } from "@/i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Transactions">;
 
@@ -28,16 +29,16 @@ export default function TransactionsScreen({ navigation }: Props) {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-5">
         <Pressable
           onPress={() => navigation.goBack()}
-          accessibilityLabel="Go back"
+          accessibilityLabel={t("common.goBack")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
           <IconChevronLeft size={20} color={colors.neutral700} />
         </Pressable>
-        <Text className="text-lg font-semibold text-slate-900">Transactions</Text>
+        <Text className="text-lg font-semibold text-slate-900">{t("transactions.title")}</Text>
         <Pressable
           onPress={() => navigation.navigate("SpendingInsights")}
-          accessibilityLabel="Spending insights"
+          accessibilityLabel={t("transactions.spendingInsightsLabel")}
           accessibilityRole="button"
           className="h-11 w-11 items-center justify-center rounded-2xl bg-slate-100"
         >
@@ -49,8 +50,8 @@ export default function TransactionsScreen({ navigation }: Props) {
         {transactions.length === 0 ? (
           <EmptyState
             icon={<IconInbox size={22} color={colors.neutral500} />}
-            title="No transactions yet"
-            subtitle="Your activity will show up here once you top up or spend."
+            title={t("transactions.noTransactionsTitle")}
+            subtitle={t("transactions.noTransactionsSubtitle")}
           />
         ) : (
           <View className="px-6 pt-2">
